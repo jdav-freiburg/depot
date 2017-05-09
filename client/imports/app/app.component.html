@@ -1,0 +1,30 @@
+
+<md-sidenav-container *ngIf="user">
+
+    <md-sidenav #sidenav mode="side" class="app-sidenav">
+        Sidenav
+    </md-sidenav>
+
+    <md-toolbar color="primary">
+        <button class="app-icon-button" (click)="sidenav.toggle()" md-button>
+            <i class="material-icons app-toolbar-menu">menu</i>
+        </button>
+        Welcome {{user.emails[0].address}}!
+        <span class="app-toolbar-filler"></span>
+        <button class="app-icon-button" (click)="logout()" md-button>
+            <i class="material-icons app-toolbar-menu">power_settings_new</i>
+        </button>
+    </md-toolbar>
+    <div class="app-content">
+        <router-outlet></router-outlet>
+        <items></items>
+    </div>
+</md-sidenav-container>
+<div *ngIf="!user">
+    <md-card>
+        <login></login>
+    </md-card>
+    <md-card>
+        <signup></signup>
+    </md-card>
+</div>

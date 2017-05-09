@@ -1,0 +1,20 @@
+<h2>Sign up</h2>
+
+<form [formGroup]="signupForm" (ngSubmit)="doSignup($event)">
+    <md-input-container>
+        <input mdInput formControlName="email" type="email" placeholder="Your email">
+    </md-input-container>
+    <md-input-container>
+        <input mdInput formControlName="password" type="password" placeholder="Your password">
+    </md-input-container>
+    <md-input-container>
+        <input mdInput formControlName="password2" type="password" placeholder="Repeat your password">
+    </md-input-container>
+    <md-input-container>
+        <input mdInput formControlName="fullName" type="text" placeholder="Your full name">
+    </md-input-container>
+    <md-input-container>
+        <input mdInput formControlName="phone" type="text" placeholder="Your phone number">
+    </md-input-container>
+    <button type="submit" md-button>Sign Up</button>
+</form>
