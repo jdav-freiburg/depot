@@ -18,6 +18,7 @@ import {ItemsFilterPipe} from "./pages/items/items-filter.pipe";
 import {ReservationsFilterPipe} from "./pages/reservations/reservations-filter.pipe";
 import {ReservationsPage} from "./pages/reservations/reservations";
 import {ReservationsDataService} from "./services/reservations-data";
+import {ReservationPage} from "./pages/reservation/reservation";
 
 /*const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -35,6 +36,7 @@ import {ReservationsDataService} from "./services/reservations-data";
         LoginPage,
         SignupPage,
         ReservationsPage,
+        ReservationPage,
         ItemsFilterPipe,
         ReservationsFilterPipe
     ],
@@ -48,6 +50,7 @@ import {ReservationsDataService} from "./services/reservations-data";
         LoginPage,
         SignupPage,
         ReservationsPage,
+        ReservationPage,
     ],
     // Providers
     providers: [

@@ -122,7 +122,10 @@
                 <span class="edit-td">
                     <ion-item>
                         <ion-label floating>Status</ion-label>
-                        <ion-input type="text" formControlName="status"></ion-input>
+                        <ion-select formControlName="status">
+                            <ion-option value="public">public</ion-option>
+                            <ion-option value="hidden">hidden</ion-option>
+                        </ion-select>
                     </ion-item>
                 </span>
                 <span class="edit-td">

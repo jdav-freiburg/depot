@@ -3,9 +3,14 @@
         <ion-title>
             Reservation
         </ion-title>
-        <button ion-button menuToggle>
+        <button ion-button icon-only menuToggle>
             <ion-icon name="menu"></ion-icon>
         </button>
+        <ion-buttons end>
+            <button ion-button icon-only (click)="newItem()">
+                <ion-icon name="calendar"></ion-icon>
+            </button>
+        </ion-buttons>
     </ion-navbar>
 </ion-header>
 
@@ -13,13 +18,14 @@
     <ion-searchbar [(ngModel)]="filter"></ion-searchbar>
     <div class="edit-table">
         <div class="edit-tr">
+            <span class="edit-th">Type</span>
             <span class="edit-th">Name</span>
-            <span class="edit-th">Description</span>
-            <span class="edit-th">Last Service</span>
-            <span class="edit-th">Condition</span>
-            <span class="edit-th">Condition Comment</span>
-            <span class="edit-th">Status</span>
-            <span class="edit-th">Tags</span>
+            <span class="edit-th">Start</span>
+            <span class="edit-th">End</span>
+            <span class="edit-th">UserId</span>
+            <span class="edit-th">GroupId</span>
+            <span class="edit-th">Contacts</span>
+            <span class="edit-th">Items</span>
             <span class="edit-th"></span>
         </div>
         <ng-container *ngFor="let reservation of data | async | reservationsfilter:filter">
@@ -29,11 +35,11 @@
                 <span class="edit-td">{{reservation.start | date: 'dd.MM.yyyy'}}</span>
                 <span class="edit-td">{{reservation.end | date: 'dd.MM.yyyy'}}</span>
                 <span class="edit-td">{{reservation.userId}}</span>
-                <span class="edit-td">{{reservation.group}}</span>
+                <span class="edit-td">{{reservation.groupId}}</span>
                 <span class="edit-td">{{reservation.contact}}</span>
                 <span class="edit-td">{{reservation.items}}</span>
                 <span class="edit-td">
-                    <button ion-button (click)="edit(item)" clear icon-only><ion-icon name="create"></ion-icon></button>
+                    <button ion-button (click)="editItem(reservation._id)" clear icon-only><ion-icon name="create"></ion-icon></button>
                 </span>
             </div>
         </ng-container>
