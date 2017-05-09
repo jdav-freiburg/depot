@@ -1,19 +1,19 @@
 import { Component, OnInit } from "@angular/core";
 import { Observable } from "rxjs";
-import {ItemsDataService} from "./items-data.service";
-import {Item} from "../../../../both/models/item.model";
-import template from "./items.component.html";
-import style from "./items.component.scss";
+import {ItemsDataService} from "../../services/items-data";
+import {Item} from "../../../../../both/models/item.model";
+import template from "./items.html";
+import style from "./items.scss";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import * as _ from "lodash";
-import {UserService} from "../user.service";
+import {UserService} from "../../user.service";
 
 @Component({
-    selector: "items",
+    selector: "items-page",
     template,
     styles: [ style ]
 })
-export class ItemsComponent implements OnInit {
+export class ItemsPage implements OnInit {
     data: Observable<Item[]>;
 
     filter: string = "";

@@ -3,14 +3,17 @@ import {BrowserModule} from "@angular/platform-browser";
 import {AppComponent} from "./app.component";
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {LoginComponent} from "./login/login.component";
+import {LoginPage} from "./pages/login/login";
 import {RouterModule, Routes} from '@angular/router';
-import {SignupComponent} from "./signup/signup.component";
+import {SignupPage} from "./pages/signup/signup";
 import {UserService} from "./user.service";
-import {ItemsComponent} from "./items/items.component";
-import {ItemsDataService} from "./items/items-data.service";
+import {ItemsPage} from "./pages/items/items";
+import {ItemsDataService} from "./services/items-data";
 import {IonicApp, IonicModule, IonicErrorHandler} from 'ionic-angular';
 import {METEOR_PROVIDERS} from "angular2-meteor";
+import {TabsPage} from "./pages/tabs/tabs";
+import {HomePage} from "./pages/home/home";
+import {TabsNouserPage} from "./pages/tabs-nouser/tabs-nouser";
 
 /*const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -21,15 +24,22 @@ import {METEOR_PROVIDERS} from "angular2-meteor";
     // Components, Pipes, Directive
     declarations: [
         AppComponent,
-        ItemsComponent,
-        LoginComponent,
-        SignupComponent
+        TabsPage,
+        TabsNouserPage,
+        HomePage,
+        ItemsPage,
+        LoginPage,
+        SignupPage
     ],
     // Entry Components
     entryComponents: [
-        ItemsComponent,
-        LoginComponent,
-        SignupComponent
+        AppComponent,
+        TabsPage,
+        TabsNouserPage,
+        HomePage,
+        ItemsPage,
+        LoginPage,
+        SignupPage
     ],
     // Providers
     providers: [

@@ -1,14 +1,14 @@
 import { Component, OnInit } from "@angular/core";
-import template from "./signup.component.html";
-import style from "./signup.component.scss";
+import template from "./signup.html";
+import style from "./signup.scss";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
-    selector: "signup",
+    selector: "signup-page",
     template: template,
     styles: [ style ]
 })
-export class SignupComponent implements OnInit {
+export class SignupPage {
     public signupForm: FormGroup;
 
     constructor(private fb: FormBuilder) {
@@ -42,8 +42,5 @@ export class SignupComponent implements OnInit {
             phone: phone,
             fullName: fullName
         });
-    }
-
-    ngOnInit() {
     }
 }

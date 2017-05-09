@@ -1,5 +1,5 @@
 import {Injectable, NgZone} from "@angular/core";
-import {MeteorObservable, ObservableCursor} from "meteor-rxjs";
+import {ObservableCursor} from "meteor-rxjs";
 import { Item } from "../../../../both/models/item.model";
 import { ItemCollection } from "../../../../both/collections/item.collection";
 
@@ -14,12 +14,6 @@ export class ItemsDataService {
             Meteor.subscribe('items');
         });
         this.items = ItemCollection.find({});
-        this.items.subscribe((x) => {
-            console.log("subscribe", x);
-        });
-        this.items.observe((x) => {
-            console.log("observe", x);
-        });
     }
 
     public getItems(): ObservableCursor<Item> {

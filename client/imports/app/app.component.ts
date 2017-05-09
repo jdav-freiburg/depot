@@ -1,10 +1,8 @@
-import { Component } from "@angular/core";
+import {Component, NgZone} from "@angular/core";
 import template from "./app.component.html";
 import style from "./app.component.scss";
-import {Meteor} from "meteor/meteor";
-import {UserService} from "./user.service";
-import {ItemsComponent} from "./items/items.component";
-import {LoginComponent} from "./login/login.component";
+import {TabsPage} from "./pages/tabs/tabs";
+import {TabsNouserPage} from "./pages/tabs-nouser/tabs-nouser";
 
 @Component({
     selector: "app",
@@ -13,16 +11,26 @@ import {LoginComponent} from "./login/login.component";
 })
 export class AppComponent {
     rootPage: any;
+    enableMenu: boolean;
 
-    constructor(private userService: UserService) {
-        this.rootPage = Meteor.user() ? ItemsComponent : LoginComponent;
+    constructor(private zone: NgZone) {
+        this.rootPage = Meteor.user()?TabsPage:TabsNouserPage;
+        this.enableMenu = !!Meteor.user();
+        Accounts.onLogin(() => {
+            zone.run(() => {
+                this.rootPage = TabsPage;
+                this.enableMenu = true;
+            });
+        });
+        Accounts.onLogout(() => {
+            zone.run(() => {
+                this.rootPage = TabsNouserPage;
+                this.enableMenu = false;
+            });
+        });
     }
 
     logout() {
-        Accounts.logout();
-    }
-
-    get user(): Meteor.User {
-        return this.userService.user;
+        Meteor.logout();
     }
 }

@@ -1,14 +1,14 @@
 import { Component, OnInit } from "@angular/core";
-import template from "./login.component.html";
-import style from "./login.component.scss";
+import template from "./login.html";
+import style from "./login.scss";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
-    selector: "login",
+    selector: "login-page",
     template: template,
     styles: [ style ]
 })
-export class LoginComponent implements OnInit {
+export class LoginPage {
     public loginForm: FormGroup;
 
     constructor(private fb: FormBuilder) {
@@ -23,8 +23,5 @@ export class LoginComponent implements OnInit {
         let password = this.loginForm.controls.password.value;
         console.log("Email: ", email);
         Meteor.loginWithPassword(email, password, (user) => { console.log(user); });
-    }
-
-    ngOnInit() {
     }
 }
