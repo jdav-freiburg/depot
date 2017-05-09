@@ -66,6 +66,7 @@ export class ItemsComponent implements OnInit {
         this.editItemForm.controls.externalId.setValue(item.externalId);
         this.editItemForm.controls.condition.setValue(item.condition);
         this.editItemForm.controls.conditionComment.setValue(item.conditionComment);
+        this.editItemForm.controls.lastService.setValue(item.lastService.toISOString());
         this.editItemForm.controls.status.setValue(item.status);
         this.editItemForm.controls.tags.setValue(_.clone(item.tags || []));
     }
@@ -76,6 +77,7 @@ export class ItemsComponent implements OnInit {
         item.externalId = this.editItemForm.controls.externalId.value;
         item.condition = this.editItemForm.controls.condition.value;
         item.conditionComment = this.editItemForm.controls.conditionComment.value;
+        item.lastService = new Date(this.editItemForm.controls.lastService.value);
         item.status = this.editItemForm.controls.status.value;
         item.tags = _.clone(this.editItemForm.controls.tags.value || []);
         this.itemsDataService.update(item);
@@ -93,7 +95,7 @@ export class ItemsComponent implements OnInit {
         let newItem : Item = {
             name: this.newItemForm.controls.name.value,
             description: this.newItemForm.controls.description.value,
-            lastService: new Date(),
+            lastService: new Date(this.newItemForm.controls.lastService.value),
             condition: this.newItemForm.controls.condition.value,
             conditionComment: this.newItemForm.controls.conditionComment.value,
             status: this.newItemForm.controls.status.value,
@@ -102,6 +104,7 @@ export class ItemsComponent implements OnInit {
             picture: null
         };
         this.itemsDataService.add(newItem);
+        this.newItemForm.controls.externalId.setValue('');
         this.newItemForm.controls.name.setValue('');
         /*this.newItemForm.controls.description.setValue('');
         this.newItemForm.controls.lastService.setValue('');

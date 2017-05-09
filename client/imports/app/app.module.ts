@@ -1,22 +1,21 @@
-import {ApplicationRef, NgModule} from "@angular/core";
-import { BrowserModule } from "@angular/platform-browser";
-import { AccountsModule } from "angular2-meteor-accounts-ui";
-import { AppComponent } from "./app.component";
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MdInputModule, MdButtonModule, MdCheckboxModule, MdCardModule, MdSidenavModule } from '@angular/material';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {ErrorHandler, NgModule} from "@angular/core";
+import {BrowserModule} from "@angular/platform-browser";
+import {AppComponent} from "./app.component";
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {LoginComponent} from "./login/login.component";
-import { RouterModule, Routes } from '@angular/router';
+import {RouterModule, Routes} from '@angular/router';
 import {SignupComponent} from "./signup/signup.component";
 import {UserService} from "./user.service";
-import {MaterialChipsModule} from 'angular2-material-chips';
 import {ItemsComponent} from "./items/items.component";
 import {ItemsDataService} from "./items/items-data.service";
+import {IonicApp, IonicModule, IonicErrorHandler} from 'ionic-angular';
+import {METEOR_PROVIDERS} from "angular2-meteor";
 
-const appRoutes: Routes = [
+/*const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },
-];
+];*/
 
 @NgModule({
     // Components, Pipes, Directive
@@ -28,30 +27,28 @@ const appRoutes: Routes = [
     ],
     // Entry Components
     entryComponents: [
-        AppComponent
+        ItemsComponent,
+        LoginComponent,
+        SignupComponent
     ],
     // Providers
     providers: [
+        METEOR_PROVIDERS,
+        { provide: ErrorHandler, useClass: IonicErrorHandler },
         UserService,
         ItemsDataService
     ],
     // Modules
     imports: [
+        IonicModule.forRoot(AppComponent),
         BrowserModule,
-        RouterModule.forRoot(appRoutes),
-        AccountsModule,
+        //RouterModule.forRoot(appRoutes),
         BrowserAnimationsModule,
-        MdInputModule,
-        MdButtonModule,
-        MdCheckboxModule,
-        MdCardModule,
-        MdSidenavModule,
         FormsModule,
-        ReactiveFormsModule,
-        MaterialChipsModule
+        ReactiveFormsModule
     ],
     // Main Component
-    bootstrap: [ AppComponent ]
+    bootstrap: [ IonicApp ]
 })
 export class AppModule {
     constructor() {

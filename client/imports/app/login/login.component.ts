@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
     doLogin(event) {
         let email = this.loginForm.controls.email.value;
         let password = this.loginForm.controls.password.value;
+        console.log("Email: ", email);
         Meteor.loginWithPassword(email, password, (user) => { console.log(user); });
     }
 
