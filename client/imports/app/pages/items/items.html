@@ -11,80 +11,22 @@
 
 <ion-content>
 
-    <ion-item>
-        <ion-label>Filter</ion-label>
-        <ion-input type="text" (ngModel)="filter"></ion-input>
-    </ion-item>
-<div class="edit-table">
-    <div class="edit-tr">
-        <span class="edit-th">externalId</span>
-        <span class="edit-th">Name</span>
-        <span class="edit-th">Description</span>
-        <span class="edit-th">Last Service</span>
-        <span class="edit-th">Condition</span>
-        <span class="edit-th">Condition Comment</span>
-        <span class="edit-th">Status</span>
-        <span class="edit-th">Tags</span>
-        <span class="edit-th" *ngIf="isManager"></span>
-        <span class="edit-th" *ngIf="isManager"></span>
-        <span class="edit-th" *ngIf="isManager"></span>
-    </div>
-    <form class="edit-tr" [formGroup]="newItemForm" (ngSubmit)="add($event)" *ngIf="isManager">
-        <span class="edit-td">
-            <ion-item>
-                <ion-label floating>External ID</ion-label>
-                <ion-input type="text" formControlName="externalId"></ion-input>
-            </ion-item>
-        </span>
-        <span class="edit-td">
-            <ion-item>
-                <ion-label floating>Name</ion-label>
-                <ion-input type="text" formControlName="name"></ion-input>
-            </ion-item>
-        </span>
-        <span class="edit-td">
-            <ion-item>
-                <ion-label floating>Description</ion-label>
-                <ion-input type="text" formControlName="description"></ion-input>
-            </ion-item>
-        </span>
-        <span class="edit-td">
-            <ion-item>
-                <ion-label floating>Last Service</ion-label>
-                <ion-datetime displayFormat="DD.MM.YYYY" formControlName="lastService"></ion-datetime>
-            </ion-item>
-        </span>
-        <span class="edit-td">
-            <ion-item>
-                <ion-label floating>Condition</ion-label>
-                <ion-input type="text" formControlName="condition"></ion-input>
-            </ion-item>
-        </span>
-        <span class="edit-td">
-            <ion-item>
-                <ion-label floating>Condition Comment</ion-label>
-                <ion-input type="text" formControlName="conditionComment"></ion-input>
-            </ion-item>
-        </span>
-        <span class="edit-td">
-            <ion-item>
-                <ion-label floating>Status</ion-label>
-                <ion-input type="text" formControlName="status"></ion-input>
-            </ion-item>
-        </span>
-        <span class="edit-td">
-            <ion-chip>
-                <ion-label>Example Tag</ion-label>
-            </ion-chip>
-        </span>
-        <span class="edit-td">
-            <button ion-button type="submit" clear icon-only><ion-icon name="add-circle"></ion-icon></button>
-        </span>
-        <span class="edit-td"></span>
-        <span class="edit-td"></span>
-    </form>
-    <ng-container *ngFor="let item of data | async">
-        <form *ngIf="isManager && editItemId === item._id" class="edit-tr" [formGroup]="editItemForm" (ngSubmit)="save(item, $event)">
+    <ion-searchbar [(ngModel)]="filter"></ion-searchbar>
+    <div class="edit-table">
+        <div class="edit-tr">
+            <span class="edit-th">externalId</span>
+            <span class="edit-th">Name</span>
+            <span class="edit-th">Description</span>
+            <span class="edit-th">Last Service</span>
+            <span class="edit-th">Condition</span>
+            <span class="edit-th">Condition Comment</span>
+            <span class="edit-th">Status</span>
+            <span class="edit-th">Tags</span>
+            <span class="edit-th" *ngIf="isManager"></span>
+            <span class="edit-th" *ngIf="isManager"></span>
+            <span class="edit-th" *ngIf="isManager"></span>
+        </div>
+        <form class="edit-tr" [formGroup]="newItemForm" (ngSubmit)="add($event)" *ngIf="isManager">
             <span class="edit-td">
                 <ion-item>
                     <ion-label floating>External ID</ion-label>
@@ -133,33 +75,90 @@
                 </ion-chip>
             </span>
             <span class="edit-td">
-                <button ion-button type="submit" clear icon-only><ion-icon name="create"></ion-icon></button>
+                <button ion-button type="submit" clear icon-only><ion-icon name="add-circle"></ion-icon></button>
             </span>
-            <span class="edit-td">
-                <button ion-button (click)="cancelEdit()" clear icon-only><ion-icon name="close-circle"></ion-icon></button>
-            </span>
-            <span class="edit-td">
-                <button ion-button (click)="remove(item._id)" clear icon-only><ion-icon name="remove-circle"></ion-icon></button>
-            </span>
+            <span class="edit-td"></span>
+            <span class="edit-td"></span>
         </form>
-        <div *ngIf="editItemId !== item._id" class="edit-tr">
-            <span class="edit-td">{{item.externalId}}</span>
-            <span class="edit-td">{{item.name}}</span>
-            <span class="edit-td">{{item.description}}</span>
-            <span class="edit-td">{{item.lastService | date: 'dd.MM.yyyy'}}</span>
-            <span class="edit-td">{{item.condition}}</span>
-            <span class="edit-td">{{item.conditionComment}}</span>
-            <span class="edit-td">{{item.status}}</span>
-            <span class="edit-td">{{item.tags}}</span>
-            <span class="edit-td">
-            </span>
-            <span class="edit-td" *ngIf="isManager">
-                <button ion-button (click)="edit(item)" clear icon-only><ion-icon name="create"></ion-icon></button>
-            </span>
-            <span class="edit-td">
-                <button ion-button (click)="remove(item._id)" clear icon-only><ion-icon name="remove-circle"></ion-icon></button>
-            </span>
-        </div>
-    </ng-container>
-</div>
+        <ng-container *ngFor="let item of data | async | itemsfilter:filter">
+            <form *ngIf="isManager && editItemId === item._id" class="edit-tr" [formGroup]="editItemForm"
+                  (ngSubmit)="save(item, $event)">
+                <span class="edit-td">
+                    <ion-item>
+                        <ion-label floating>External ID</ion-label>
+                        <ion-input type="text" formControlName="externalId"></ion-input>
+                    </ion-item>
+                </span>
+                <span class="edit-td">
+                    <ion-item>
+                        <ion-label floating>Name</ion-label>
+                        <ion-input type="text" formControlName="name"></ion-input>
+                    </ion-item>
+                </span>
+                <span class="edit-td">
+                    <ion-item>
+                        <ion-label floating>Description</ion-label>
+                        <ion-input type="text" formControlName="description"></ion-input>
+                    </ion-item>
+                </span>
+                <span class="edit-td">
+                    <ion-item>
+                        <ion-label floating>Last Service</ion-label>
+                        <ion-datetime displayFormat="DD.MM.YYYY" formControlName="lastService"></ion-datetime>
+                    </ion-item>
+                </span>
+                <span class="edit-td">
+                    <ion-item>
+                        <ion-label floating>Condition</ion-label>
+                        <ion-input type="text" formControlName="condition"></ion-input>
+                    </ion-item>
+                </span>
+                <span class="edit-td">
+                    <ion-item>
+                        <ion-label floating>Condition Comment</ion-label>
+                        <ion-input type="text" formControlName="conditionComment"></ion-input>
+                    </ion-item>
+                </span>
+                <span class="edit-td">
+                    <ion-item>
+                        <ion-label floating>Status</ion-label>
+                        <ion-input type="text" formControlName="status"></ion-input>
+                    </ion-item>
+                </span>
+                <span class="edit-td">
+                    <ion-chip>
+                        <ion-label>Example Tag</ion-label>
+                    </ion-chip>
+                </span>
+                <span class="edit-td">
+                    <button ion-button type="submit" clear icon-only><ion-icon name="create"></ion-icon></button>
+                </span>
+                <span class="edit-td">
+                    <button ion-button (click)="cancelEdit()" clear icon-only><ion-icon
+                            name="close-circle"></ion-icon></button>
+                </span>
+                <span class="edit-td">
+                        <button ion-button (click)="remove(item._id)" clear icon-only><ion-icon name="remove-circle"></ion-icon></button>
+                    </span>
+                </form>
+                <div *ngIf="editItemId !== item._id" class="edit-tr">
+                    <span class="edit-td">{{item.externalId}}</span>
+                    <span class="edit-td">{{item.name}}</span>
+                    <span class="edit-td">{{item.description}}</span>
+                    <span class="edit-td">{{item.lastService | date: 'dd.MM.yyyy'}}</span>
+                    <span class="edit-td">{{item.condition}}</span>
+                    <span class="edit-td">{{item.conditionComment}}</span>
+                    <span class="edit-td">{{item.status}}</span>
+                    <span class="edit-td">{{item.tags}}</span>
+                    <span class="edit-td" *ngIf="isManager">
+                    </span>
+                    <span class="edit-td" *ngIf="isManager">
+                        <button ion-button (click)="edit(item)" clear icon-only><ion-icon name="create"></ion-icon></button>
+                    </span>
+                    <span class="edit-td" *ngIf="isManager">
+                        <button ion-button (click)="remove(item._id)" clear icon-only><ion-icon name="remove-circle"></ion-icon></button>
+                    </span>
+                </div>
+        </ng-container>
+    </div>
 </ion-content>

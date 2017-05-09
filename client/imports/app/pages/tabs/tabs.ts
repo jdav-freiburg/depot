@@ -1,10 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import template from "./tabs.html";
 import style from "./tabs.scss";
 import {HomePage} from "../home/home";
 import {ItemsPage} from "../items/items";
-import {LoginPage} from "../login/login";
-import {SignupPage} from "../signup/signup";
+import {ReservationsPage} from "../reservations/reservations";
 
 @Component({
     selector: "tabs-page",
@@ -12,15 +11,9 @@ import {SignupPage} from "../signup/signup";
     styles: [ style ]
 })
 export class TabsPage {
-    tabLogin = LoginPage;
-    tabSignup = SignupPage;
-
     tabHome = HomePage;
     tabItems = ItemsPage;
-
-    get loggedIn(): boolean {
-        return !!Meteor.user();
-    }
+    tabReservations = ReservationsPage;
 
     constructor() {
     }

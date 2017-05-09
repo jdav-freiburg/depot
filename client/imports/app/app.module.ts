@@ -14,6 +14,10 @@ import {METEOR_PROVIDERS} from "angular2-meteor";
 import {TabsPage} from "./pages/tabs/tabs";
 import {HomePage} from "./pages/home/home";
 import {TabsNouserPage} from "./pages/tabs-nouser/tabs-nouser";
+import {ItemsFilterPipe} from "./pages/items/items-filter.pipe";
+import {ReservationsFilterPipe} from "./pages/reservations/reservations-filter.pipe";
+import {ReservationsPage} from "./pages/reservations/reservations";
+import {ReservationsDataService} from "./services/reservations-data";
 
 /*const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -29,7 +33,10 @@ import {TabsNouserPage} from "./pages/tabs-nouser/tabs-nouser";
         HomePage,
         ItemsPage,
         LoginPage,
-        SignupPage
+        SignupPage,
+        ReservationsPage,
+        ItemsFilterPipe,
+        ReservationsFilterPipe
     ],
     // Entry Components
     entryComponents: [
@@ -39,14 +46,16 @@ import {TabsNouserPage} from "./pages/tabs-nouser/tabs-nouser";
         HomePage,
         ItemsPage,
         LoginPage,
-        SignupPage
+        SignupPage,
+        ReservationsPage,
     ],
     // Providers
     providers: [
         METEOR_PROVIDERS,
         { provide: ErrorHandler, useClass: IonicErrorHandler },
         UserService,
-        ItemsDataService
+        ItemsDataService,
+        ReservationsDataService
     ],
     // Modules
     imports: [

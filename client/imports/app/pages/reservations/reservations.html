@@ -1,0 +1,41 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>
+            Reservation
+        </ion-title>
+        <button ion-button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+    </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <ion-searchbar [(ngModel)]="filter"></ion-searchbar>
+    <div class="edit-table">
+        <div class="edit-tr">
+            <span class="edit-th">Name</span>
+            <span class="edit-th">Description</span>
+            <span class="edit-th">Last Service</span>
+            <span class="edit-th">Condition</span>
+            <span class="edit-th">Condition Comment</span>
+            <span class="edit-th">Status</span>
+            <span class="edit-th">Tags</span>
+            <span class="edit-th"></span>
+        </div>
+        <ng-container *ngFor="let reservation of data | async | reservationsfilter:filter">
+            <div class="edit-tr">
+                <span class="edit-td">{{reservation.type}}</span>
+                <span class="edit-td">{{reservation.name}}</span>
+                <span class="edit-td">{{reservation.start | date: 'dd.MM.yyyy'}}</span>
+                <span class="edit-td">{{reservation.end | date: 'dd.MM.yyyy'}}</span>
+                <span class="edit-td">{{reservation.userId}}</span>
+                <span class="edit-td">{{reservation.group}}</span>
+                <span class="edit-td">{{reservation.contact}}</span>
+                <span class="edit-td">{{reservation.items}}</span>
+                <span class="edit-td">
+                    <button ion-button (click)="edit(item)" clear icon-only><ion-icon name="create"></ion-icon></button>
+                </span>
+            </div>
+        </ng-container>
+    </div>
+</ion-content>

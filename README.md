@@ -9,9 +9,7 @@ To start, run
 meteor run
 ```
 
-Or use NPM Scripts
-
-This boilerplate comes with predefined NPM scripts, defined in `package.json`:
+Or use NPM Scripts:
 
 - `$ npm run start` - Run the Meteor application.
 - `$ npm run start:prod` - Run the Meteor application in production mode.
