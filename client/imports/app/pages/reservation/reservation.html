@@ -44,9 +44,15 @@
     <ion-list>
         <ion-list-header>Items</ion-list-header>
         <ion-searchbar [(ngModel)]="filter"></ion-searchbar>
-        <ion-item *ngFor="let item of items | async | itemsfilter:filter; let i = index">
-            <ion-checkbox item-left [(ngModel)]="selectedItems[i]"></ion-checkbox>
-            <ion-label>{{item.name}}: {{item.description}}</ion-label>
+        <ion-item *ngFor="let item of items | itemsfilter:filter">
+            <!--<ion-avatar item-left><img src="notfound.png"></ion-avatar>-->
+            <ion-checkbox item-left [(ngModel)]="item.selected"></ion-checkbox>
+            <ion-label>
+                <h2>{{item.name}}</h2>
+                <h3>{{item.tags}}</h3>
+                <p>{{item.description}}</p>
+            </ion-label>
+            <!--<ion-label>{{item.name}}: {{item.description}}</ion-label>-->
         </ion-item>
     </ion-list>
 </ion-content>

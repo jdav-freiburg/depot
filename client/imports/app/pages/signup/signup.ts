@@ -32,10 +32,10 @@ export class SignupPage {
     }
 
     doSignup(event) {
-        let email = this.signupForm.controls.email.value;
-        let password = this.signupForm.controls.password.value;
-        let phone = this.signupForm.controls.phone.value;
-        let fullName = this.signupForm.controls.fullName.value;
+        let email = this.signupForm.controls['email'].value;
+        let password = this.signupForm.controls['password'].value;
+        let phone = this.signupForm.controls['phone'].value;
+        let fullName = this.signupForm.controls['fullName'].value;
         Accounts.createUser(<Meteor.User>{
             email: email,
             password: password,

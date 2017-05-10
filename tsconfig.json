@@ -9,11 +9,7 @@
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "sourceMap": true,
-    "allowSyntheticDefaultImports": true,
-    "declaration": false,
-    "skipLibCheck": true,
-    "stripInternal": true
+    "sourceMap": true
   },
   "exclude": [
     "node_modules"

@@ -6,5 +6,5 @@ export interface GlobalMessage {
 
     type: string;
 
-    data: object;
+    data: {[key: string]: string};
 }

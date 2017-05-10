@@ -12,15 +12,17 @@ import * as moment from 'moment';
 import {Item} from "../../../../../both/models/item.model";
 import {ItemsDataService} from "../../services/items-data";
 
+interface SelectableItem extends Item {
+    selected?: boolean;
+}
+
 @Component({
     selector: "reservation-page",
     template,
     styles: [ style ]
 })
 export class ReservationPage implements OnInit {
-    reservation: Observable<Reservation>;
-
-    reservationData: Reservation;
+    reservation: Reservation;
 
     reservationForm: FormGroup;
     startOutput: string;
@@ -30,11 +32,11 @@ export class ReservationPage implements OnInit {
     editId: string;
     readonly: boolean = false;
     private loading: Loading;
+    private loadingCount: number = 0;
 
     selectedItemIds: string[] = [];
-    items: Observable<Item[]>;
-    itemsData: Item[] = [];
-    selectedItems: boolean[] = [];
+    items: SelectableItem[] = [];
+
     filter: string = "";
 
     constructor(private reservationsDataService: ReservationsDataService, private itemsDataService: ItemsDataService,
@@ -48,45 +50,77 @@ export class ReservationPage implements OnInit {
             contact: ["", Validators.required],
         });
         this.editId = this.params.get('id');
+    }
 
-        this.loading = this.loadingCtrl.create();
+    startLoading() {
+        if (this.loadingCount > 0) {
+            this.loadingCount++;
+        } else {
+            this.loading = this.loadingCtrl.create();
+            this.loading.present();
+            this.loadingCount = 1;
+        }
+    }
+
+    endLoading() {
+        this.loadingCount--;
+        if (this.loadingCount == 0) {
+            this.loading.dismiss();
+            this.loading = null;
+        }
     }
 
     updateSelectedItems() {
-        this.selectedItems = _.map(this.itemsData, (item) => this.selectedItemIds.indexOf(item._id) !== -1);
+        _.forEach(this.items, (item) => {
+            item.selected = this.selectedItemIds.indexOf(item._id) !== -1;
+        });
+    }
+
+    updateSelectedItemIds() {
+        this.selectedItemIds = _.map(_.filter(this.items, (item) => item.selected), (item) => item._id);
     }
 
     load() {
-        this.loading.present();
-        this.items = this.itemsDataService.getItems().zone();
-        this.items.subscribe((items) => {
-            this.itemsData = items;
-            this.updateSelectedItems();
-        });
-        this.reservation = this.reservationsDataService.getReservation(this.editId).zone()
+        this.startLoading();
+        let reservation = this.reservationsDataService.getReservation(this.editId).zone()
             .map(reservations => reservations[0]);
-        this.reservation.subscribe((reservation) => {
+        reservation.subscribe((reservation) => {
             if (!this.isLoaded) {
-                this.loading.dismiss();
-                this.reservationForm.controls.type.setValue(reservation.type);
-                this.reservationForm.controls.name.setValue(reservation.name);
-                this.reservationForm.controls.start.setValue(reservation.start.toISOString());
-                this.reservationForm.controls.end.setValue(reservation.end.toISOString());
-                this.reservationForm.controls.contact.setValue(reservation.contact);
+                console.log("Loaded:", reservation);
+                this.reservationForm.controls['type'].setValue(reservation.type);
+                this.reservationForm.controls['name'].setValue(reservation.name);
+                this.reservationForm.controls['start'].setValue(reservation.start.toISOString());
+                this.reservationForm.controls['end'].setValue(reservation.end.toISOString());
+                this.reservationForm.controls['contact'].setValue(reservation.contact);
                 this.startOutput = moment(reservation.start).format('DD.MM.YYYY');
                 this.endOutput = moment(reservation.end).format('DD.MM.YYYY');
-                this.reservationData = reservation;
                 this.selectedItemIds = reservation.itemIds;
+                this.reservation = reservation;
                 this.updateSelectedItems();
+                this.isLoaded = true;
+                this.endLoading();
             }
         });
     }
 
     ngOnInit() {
+        this.startLoading();
+        let initialLoaded = false;
+        let items = this.itemsDataService.getItems().zone();
+        items.subscribe((items) => {
+            if (!initialLoaded) {
+                this.endLoading();
+                initialLoaded = true;
+            }
+            this.updateSelectedItemIds();
+            this.items = _.map(items, (item) => {
+                return _.assignIn({selected: false}, item);
+            });
+            this.updateSelectedItems();
+            console.log("Items:", this.items);
+        });
         if (this.editId) {
             this.load();
-        } else {
-            this.isLoaded = true;
         }
     }
 
@@ -100,33 +134,35 @@ export class ReservationPage implements OnInit {
 
     save() {
         console.log("Save");
-        this.loading.present();
-        if (!this.reservationData) {
+        this.startLoading();
+        this.updateSelectedItemIds();
+        if (!this.reservation) {
             let reservationData: Reservation = {
-                type: this.reservationForm.controls.type.value,
-                name: this.reservationForm.controls.name.value,
-                start: new Date(this.reservationForm.controls.start.value),
-                end: new Date(this.reservationForm.controls.end.value),
-                contact: this.reservationForm.controls.contact.value,
+                type: this.reservationForm.controls['type'].value,
+                name: this.reservationForm.controls['name'].value,
+                start: new Date(this.reservationForm.controls['start'].value),
+                end: new Date(this.reservationForm.controls['end'].value),
+                contact: this.reservationForm.controls['contact'].value,
                 userId: Meteor.userId(),
                 groupId: "",
-                itemIds: []
+                itemIds: this.selectedItemIds
             };
             console.log("Add: ", reservationData);
             this.reservationsDataService.add(reservationData, () => {
-                this.loading.dismiss();
                 this.editId = reservationData._id;
                 this.load();
+                this.endLoading();
             });
         } else {
-            this.reservationData.type = this.reservationForm.controls.type.value;
-            this.reservationData.name = this.reservationForm.controls.name.value;
-            this.reservationData.start = new Date(this.reservationForm.controls.start.value);
-            this.reservationData.end = new Date(this.reservationForm.controls.end.value);
-            this.reservationData.contact = this.reservationForm.controls.contact.value;
-            console.log("Update: ", this.reservationData);
-            this.reservationsDataService.update(this.reservationData, () => {
-                this.loading.dismiss();
+            this.reservation.type = this.reservationForm.controls['type'].value;
+            this.reservation.name = this.reservationForm.controls['name'].value;
+            this.reservation.start = new Date(this.reservationForm.controls['start'].value);
+            this.reservation.end = new Date(this.reservationForm.controls['end'].value);
+            this.reservation.contact = this.reservationForm.controls['contact'].value;
+            this.reservation.itemIds = this.selectedItemIds;
+            console.log("Update: ", this.reservation);
+            this.reservationsDataService.update(this.reservation, () => {
+                this.endLoading();
             });
         }
     }

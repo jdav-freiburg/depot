@@ -35,8 +35,9 @@ export class ReservationsDataService {
     }
 
     public update(item: Reservation, callback?: Function): void {
-        let itemData = _.pick(item, ['type', 'name', 'start', 'end', 'userId', 'group',
-            'contact', 'items']);
+        let itemData = _.pick(item, ['type', 'name', 'start', 'end', 'userId', 'groupId',
+            'contact', 'itemIds']);
+        console.log("reservation updating", item._id, itemData);
         let result = ReservationCollection.update({_id: item._id}, {$set: itemData});
         result.subscribe((result) => {
             console.log("reservation update:", result);
@@ -60,6 +61,7 @@ export class ReservationsDataService {
     }
 
     public remove(id: string, callback?: Function): Observable<number> {
+        console.log("reservation removing", id);
         let result = ReservationCollection.remove({_id: id});
         result.subscribe((result) => {
             console.log("reservation remove:", result);
