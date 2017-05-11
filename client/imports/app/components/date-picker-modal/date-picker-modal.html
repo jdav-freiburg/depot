@@ -3,17 +3,22 @@
         <ion-title>
             {{_titleText}}
         </ion-title>
-        <button ion-button icon-only mwlCalendarPreviousView [view]="month" [(viewDate)]="viewDate">
-            <ion-icon name="arrow-back"></ion-icon>
-        </button>
-        <button ion-button icon-only mwlCalendarToday [(viewDate)]="viewDate">
-            <ion-icon name="calendar"></ion-icon>
-        </button>
+        <ion-buttons>
+            <button ion-button icon-only mwlCalendarPreviousView view="month" [(viewDate)]="viewDate">
+                <ion-icon name="arrow-back"></ion-icon>
+            </button>
+            <button ion-button icon-only mwlCalendarToday [(viewDate)]="viewDate">
+                <ion-icon name="calendar"></ion-icon>
+            </button>
+        </ion-buttons>
         <ion-buttons end>
+            <button ion-button icon-only (click)="cancel()">
+                <ion-icon name="close"></ion-icon>
+            </button>
             <button ion-button icon-only (click)="save()">
                 <ion-icon name="checkmark"></ion-icon>
             </button>
-            <button ion-button icon-only mwlCalendarNextView [view]="month" [(viewDate)]="viewDate">
+            <button ion-button icon-only mwlCalendarNextView view="month" [(viewDate)]="viewDate">
                 <ion-icon name="arrow-forward"></ion-icon>
             </button>
         </ion-buttons>
@@ -21,7 +26,7 @@
 </ion-header>
 
 <ion-content>
-    <div class="calendar-comp">
+    <div class="cal-component">
         <template #calHeaderTemplate>
             <div class="cal-cell-row">
                 <div class="cal-cell cal-past cal-col-header" *ngFor="let label of days_label">
@@ -34,6 +39,7 @@
                 [events]="events"
                 [headerTemplate]="calHeaderTemplate"
                 [dayModifier]="dayModifier"
+                [refresh]="refresh"
                 (dayClicked)="select($event.day)">
         </mwl-calendar-month-view>
     </div>

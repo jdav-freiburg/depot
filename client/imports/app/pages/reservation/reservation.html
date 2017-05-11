@@ -26,12 +26,13 @@
             <ion-label floating>Name</ion-label>
             <ion-input type="text" formControlName="name" [readonly]="readonly"></ion-input>
         </ion-item>
-        <my-date-picker formControlName="start" label="Start"></my-date-picker>
-        <ion-item>
+        <my-date-picker formControlName="start" label="Start" [rangeEnd]="reservationForm.controls.end.value" rangeDirection="end"></my-date-picker>
+        <my-date-picker formControlName="end" label="End" [rangeStart]="reservationForm.controls.start.value" rangeDirection="start"></my-date-picker>
+        <!--<ion-item>
             <ion-label floating>End</ion-label>
             <ion-datetime displayFormat="DD.MM.YYYY" formControlName="end" *ngIf="!readonly"></ion-datetime>
             <ion-input type="text" [(ngModel)]="endOutput" *ngIf="readonly"></ion-input>
-        </ion-item>
+        </ion-item>-->
         <ion-item>
             <ion-label floating>Contact</ion-label>
             <ion-input type="text" formControlName="contact" [readonly]="readonly"></ion-input>

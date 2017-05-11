@@ -21,6 +21,10 @@ export class DatePickerComponent implements ControlValueAccessor {
 
     @Input('label') _label: string = "";
 
+    @Input() rangeStart: Date = null;
+    @Input() rangeEnd: Date = null;
+    @Input() rangeDirection: string = "start";
+
     registerOnChange(fn: any): void {
         this.onChangeCallback = fn;
     }
@@ -36,7 +40,7 @@ export class DatePickerComponent implements ControlValueAccessor {
 
     writeValue(obj: any): void {
         console.log("value:", obj);
-        this.dateValue = <Date>obj;
+        this.date = moment(obj).toDate();
     }
 
     dateValue: Date = new Date();
@@ -47,7 +51,7 @@ export class DatePickerComponent implements ControlValueAccessor {
         return this.dateValue;
     }
     set date(date: Date) {
-        this.dateValue = date;
+        this.dateValue = moment(date).toDate();
         this.onChangeCallback(this.dateValue);
         this._text = moment(this.dateValue).format('L');
     }
@@ -77,7 +81,12 @@ export class DatePickerComponent implements ControlValueAccessor {
             return;
         }
         console.log("openPicker:", this.date);
-        let modalView = this.modalCtrl.create(DatePickerModal, {date: this.date});
+        let modalView = this.modalCtrl.create(DatePickerModal, {
+            date: this.date,
+            rangeStart: this.rangeStart,
+            rangeEnd: this.rangeEnd,
+            rangeDirection: this.rangeDirection
+        });
         modalView.onDidDismiss((data) => {
             if (data) {
                 this.date = data.date;

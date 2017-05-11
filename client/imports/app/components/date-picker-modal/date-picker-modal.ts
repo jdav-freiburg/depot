@@ -24,10 +24,10 @@ export class DatePickerModal {
 
     viewDate: moment.Moment;
     
-    rangeStartDate: moment.Moment;
-    rangeEndDate: moment.Moment;
+    rangeStartDate: moment.Moment = null;
+    rangeEndDate: moment.Moment = null;
 
-    selectedDate: moment.Moment;
+    selectedDate: moment.Moment = null;
 
     events: CalendarEvent[] = [];
 
@@ -40,45 +40,56 @@ export class DatePickerModal {
     rangeDirection: string = "start";
 
     days_label: Array<string> = [
-        'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'
+        'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'
     ];
 
     constructor(private viewCtrl: ViewController, private params: NavParams, private reservationDataService: ReservationsDataService) {
-        if (this.params.get('date')) {
-            this.selectedDate = moment(this.params.get('date')).startOf('day');
-        } else {
-            this.selectedDate = moment().startOf('day');
-        }
         if (this.params.get('rangeStart')) {
             this.rangeStartDate = moment(this.params.get('rangeStart')).startOf('day');
         }
         if (this.params.get('rangeEnd')) {
             this.rangeEndDate = moment(this.params.get('rangeEnd')).endOf('day');
         }
+        if (this.params.get('date')) {
+            this.selectedDate = moment(this.params.get('date')).startOf('day');
+        } else {
+            if (this.rangeStartDate) {
+                this.selectedDate = this.rangeStartDate;
+            } else if (this.rangeEndDate) {
+                this.selectedDate = this.rangeEndDate;
+            } else {
+                this.selectedDate = moment().startOf('day');
+            }
+        }
+        if (this.params.get('rangeDirection')) {
+            this.rangeDirection = this.params.get('rangeDirection');
+        }
         this.viewDate = this.selectedDate;
-        console.log("initial", this.viewDate);
+        console.log("initial:", this.viewDate);
+        console.log("rangeStart:", this.rangeStartDate);
+        console.log("rangeEnd:", this.rangeEndDate);
         this.itemId = this.params.get('itemId');
         if (this.itemId) {
             //this.reservations = this.reservationDataService.getReservationsForItem(this.itemId);
         }
-    }
-
-    dayModifier(day: CalendarMonthViewDay) {
-        let dayDate = moment(day.date).startOf('day');
-        console.log("day:", day);
-        if (this.rangeStartDate && dayDate.isBefore(this.rangeStartDate)) {
-            day.cssClass = 'cal-day-disabled';
-        } else if (this.rangeEndDate && dayDate.isAfter(this.rangeEndDate)) {
-            day.cssClass = 'cal-day-disabled';
-        } else if (this.selectedDate && dayDate.isSame(this.selectedDate)) {
-            day.cssClass = 'cal-day-selected';
-            this.selectedDay = day;
-        } else if (this.rangeStartDate && this.rangeDirection === 'start' && dayDate.isSameOrAfter(this.rangeStartDate) && dayDate.isBefore(this.selectedDate)) {
-            day.cssClass = 'cal-day-range';
-        } else if (this.rangeEndDate && this.rangeDirection === 'end' && dayDate.isAfter(this.selectedDate) && dayDate.isSameOrBefore(this.rangeEndDate)) {
-            day.cssClass = 'cal-day-range';
+        this.dayModifier = (day: CalendarMonthViewDay) => {
+            let dayDate = moment(day.date).startOf('day');
+            if (this.selectedDate && dayDate.isSame(this.selectedDate)) {
+                day.cssClass = 'cal-day-selected';
+                this.selectedDay = day;
+            } else if (this.rangeStartDate && dayDate.isBefore(this.rangeStartDate)) {
+                day.cssClass = 'cal-day-disabled';
+            } else if (this.rangeEndDate && dayDate.isAfter(this.rangeEndDate)) {
+                day.cssClass = 'cal-day-disabled';
+            } else if (this.rangeStartDate && this.rangeDirection === 'start' && dayDate.isSameOrAfter(this.rangeStartDate) && dayDate.isBefore(this.selectedDate)) {
+                day.cssClass = 'cal-day-range';
+            } else if (this.rangeEndDate && this.rangeDirection === 'end' && dayDate.isAfter(this.selectedDate) && dayDate.isSameOrBefore(this.rangeEndDate)) {
+                day.cssClass = 'cal-day-range';
+            }
         }
     }
+
+    dayModifier: (day: CalendarMonthViewDay) => void;
 
     select(day: CalendarMonthViewDay) {
         if (day.cssClass !== 'cal-day-disabled') {
@@ -92,6 +103,10 @@ export class DatePickerModal {
             //this.viewCtrl.dismiss({date: this.selectedDate});
             this.refresh.next();
         }
+    }
+
+    cancel() {
+        this.viewCtrl.dismiss(null);
     }
 
     save() {

@@ -89,7 +89,7 @@ export class ReservationPage implements OnInit {
                 console.log("Loaded:", reservation);
                 this.reservationForm.controls['type'].setValue(reservation.type);
                 this.reservationForm.controls['name'].setValue(reservation.name);
-                this.reservationForm.controls['start'].setValue(reservation.start);
+                this.reservationForm.controls['start'].setValue(reservation.start.toISOString());
                 this.reservationForm.controls['end'].setValue(reservation.end.toISOString());
                 this.reservationForm.controls['contact'].setValue(reservation.contact);
                 this.startOutput = moment(reservation.start).format('DD.MM.YYYY');
@@ -140,7 +140,7 @@ export class ReservationPage implements OnInit {
             let reservationData: Reservation = {
                 type: this.reservationForm.controls['type'].value,
                 name: this.reservationForm.controls['name'].value,
-                start: this.reservationForm.controls['start'].value,
+                start: new Date(this.reservationForm.controls['start'].value),
                 end: new Date(this.reservationForm.controls['end'].value),
                 contact: this.reservationForm.controls['contact'].value,
                 userId: Meteor.userId(),
