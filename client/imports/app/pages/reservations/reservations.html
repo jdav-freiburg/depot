@@ -22,9 +22,9 @@
             <span class="edit-th">Name</span>
             <span class="edit-th">Start</span>
             <span class="edit-th">End</span>
-            <span class="edit-th">UserId</span>
-            <span class="edit-th">GroupId</span>
-            <span class="edit-th">Contacts</span>
+            <span class="edit-th">User</span>
+            <span class="edit-th">Group</span>
+            <span class="edit-th">Contact</span>
             <span class="edit-th">Items</span>
             <span class="edit-th"></span>
         </div>
@@ -34,7 +34,7 @@
                 <span class="edit-td">{{reservation.name}}</span>
                 <span class="edit-td">{{reservation.start | date: 'dd.MM.yyyy'}}</span>
                 <span class="edit-td">{{reservation.end | date: 'dd.MM.yyyy'}}</span>
-                <span class="edit-td">{{reservation.userId}}</span>
+                <span class="edit-td"><user-ref [userId]="reservation.userId"></user-ref></span>
                 <span class="edit-td">{{reservation.groupId}}</span>
                 <span class="edit-td">{{reservation.contact}}</span>
                 <span class="edit-td">{{reservation.items}}</span>

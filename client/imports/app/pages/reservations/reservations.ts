@@ -3,7 +3,7 @@ import { Observable } from "rxjs";
 import template from "./reservations.html";
 import style from "./reservations.scss";
 import * as _ from "lodash";
-import {UserService} from "../../user.service";
+import {UserService} from "../../services/user";
 import {ReservationsDataService} from "../../services/reservations-data";
 import {Reservation} from "../../../../../both/models/reservation.model";
 import {NavController} from "ionic-angular";

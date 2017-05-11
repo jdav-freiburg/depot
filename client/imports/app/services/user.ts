@@ -1,5 +1,6 @@
 import {ApplicationRef, Injectable, NgZone} from "@angular/core";
-import {Group} from "../../../both/models/group.model";
+import {Group} from "../../../../both/models/group.model";
+import {User} from "../../../../both/models/user.model";
 
 @Injectable()
 export class UserService {
@@ -35,6 +36,10 @@ export class UserService {
 
     public login(user: string, password: string) {
         Meteor.loginWithPassword(user, password);
+    }
+
+    public getUser(id: string): Mongo.Cursor<User> {
+        return Meteor.users.find({_id: id});
     }
 
     public get user(): Meteor.User {

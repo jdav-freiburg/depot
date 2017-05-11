@@ -1,0 +1,2 @@
+<a *ngIf="user" href="#" (click)="openUser(); $event.preventDefault(); $event.stopPropagation()">{{user.fullName}}</a>
+<span *ngIf="!user">{{userId}}</span>

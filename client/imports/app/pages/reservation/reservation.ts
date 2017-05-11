@@ -4,7 +4,7 @@ import template from "./reservation.html";
 import style from "./reservation.scss";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import * as _ from "lodash";
-import {UserService} from "../../user.service";
+import {UserService} from "../../services/user";
 import {Reservation} from "../../../../../both/models/reservation.model";
 import {ReservationsDataService} from "../../services/reservations-data";
 import {Loading, LoadingController, NavController, NavParams} from "ionic-angular";
@@ -89,7 +89,7 @@ export class ReservationPage implements OnInit {
                 console.log("Loaded:", reservation);
                 this.reservationForm.controls['type'].setValue(reservation.type);
                 this.reservationForm.controls['name'].setValue(reservation.name);
-                this.reservationForm.controls['start'].setValue(reservation.start.toISOString());
+                this.reservationForm.controls['start'].setValue(reservation.start);
                 this.reservationForm.controls['end'].setValue(reservation.end.toISOString());
                 this.reservationForm.controls['contact'].setValue(reservation.contact);
                 this.startOutput = moment(reservation.start).format('DD.MM.YYYY');
@@ -140,7 +140,7 @@ export class ReservationPage implements OnInit {
             let reservationData: Reservation = {
                 type: this.reservationForm.controls['type'].value,
                 name: this.reservationForm.controls['name'].value,
-                start: new Date(this.reservationForm.controls['start'].value),
+                start: this.reservationForm.controls['start'].value,
                 end: new Date(this.reservationForm.controls['end'].value),
                 contact: this.reservationForm.controls['contact'].value,
                 userId: Meteor.userId(),
@@ -150,18 +150,20 @@ export class ReservationPage implements OnInit {
             console.log("Add: ", reservationData);
             this.reservationsDataService.add(reservationData, () => {
                 this.editId = reservationData._id;
+                console.log("Added", reservationData, "reloading");
                 this.load();
                 this.endLoading();
             });
         } else {
             this.reservation.type = this.reservationForm.controls['type'].value;
             this.reservation.name = this.reservationForm.controls['name'].value;
-            this.reservation.start = new Date(this.reservationForm.controls['start'].value);
+            this.reservation.start = this.reservationForm.controls['start'].value;
             this.reservation.end = new Date(this.reservationForm.controls['end'].value);
             this.reservation.contact = this.reservationForm.controls['contact'].value;
             this.reservation.itemIds = this.selectedItemIds;
             console.log("Update: ", this.reservation);
             this.reservationsDataService.update(this.reservation, () => {
+                console.log("Updated", this.reservation);
                 this.endLoading();
             });
         }

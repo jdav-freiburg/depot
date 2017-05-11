@@ -6,7 +6,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {LoginPage} from "./pages/login/login";
 import {RouterModule, Routes} from '@angular/router';
 import {SignupPage} from "./pages/signup/signup";
-import {UserService} from "./user.service";
+import {UserService} from "./services/user";
 import {ItemsPage} from "./pages/items/items";
 import {ItemsDataService} from "./services/items-data";
 import {IonicApp, IonicModule, IonicErrorHandler} from 'ionic-angular';
@@ -19,6 +19,10 @@ import {ReservationsFilterPipe} from "./pages/reservations/reservations-filter.p
 import {ReservationsPage} from "./pages/reservations/reservations";
 import {ReservationsDataService} from "./services/reservations-data";
 import {ReservationPage} from "./pages/reservation/reservation";
+import {UserComponent} from "./components/user/user";
+import { CalendarModule } from 'angular-calendar';
+import {DatePickerModal} from "./components/date-picker-modal/date-picker-modal";
+import {DatePickerComponent} from "./components/date-picker/date-picker";
 
 /*const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -37,8 +41,11 @@ import {ReservationPage} from "./pages/reservation/reservation";
         SignupPage,
         ReservationsPage,
         ReservationPage,
+        DatePickerModal,
         ItemsFilterPipe,
-        ReservationsFilterPipe
+        ReservationsFilterPipe,
+        UserComponent,
+        DatePickerComponent
     ],
     // Entry Components
     entryComponents: [
@@ -51,6 +58,8 @@ import {ReservationPage} from "./pages/reservation/reservation";
         SignupPage,
         ReservationsPage,
         ReservationPage,
+        DatePickerModal,
+        DatePickerComponent
     ],
     // Providers
     providers: [
@@ -67,7 +76,8 @@ import {ReservationPage} from "./pages/reservation/reservation";
         //RouterModule.forRoot(appRoutes),
         BrowserAnimationsModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        CalendarModule.forRoot()
     ],
     // Main Component
     bootstrap: [ IonicApp ]

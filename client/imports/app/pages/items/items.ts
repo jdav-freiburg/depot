@@ -6,7 +6,7 @@ import template from "./items.html";
 import style from "./items.scss";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import * as _ from "lodash";
-import {UserService} from "../../user.service";
+import {UserService} from "../../services/user";
 
 @Component({
     selector: "items-page",

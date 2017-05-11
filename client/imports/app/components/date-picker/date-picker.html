@@ -1,0 +1,7 @@
+<ion-item>
+    <!--<ion-label><ng-content></ng-content></ion-label>-->
+    <!--<div class="datetime-text">{{_text}}</div>-->
+    <ion-label *ngIf="_label" floating>{{_label}}</ion-label>
+    <ion-input full (click)="click($event)" (keyup.space)="open()" class="date-picker" [readonly]="true" [(ngModel)]="_text"></ion-input>
+    <!--<button ion-button full (click)="click($event)" (keyup.space)="open()" class="date-picker">{{_text}}</button>-->
+</ion-item>
