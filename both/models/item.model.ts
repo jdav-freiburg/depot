@@ -5,8 +5,8 @@ export interface Item {
 
     description: string;
 
-    condition: String,
-    conditionComment: String,
+    condition: string,
+    conditionComment: string,
 
     lastService: Date;
 

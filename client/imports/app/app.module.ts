@@ -23,6 +23,7 @@ import {UserComponent} from "./components/user/user";
 import { CalendarModule } from 'angular-calendar';
 import {DatePickerModal} from "./components/date-picker-modal/date-picker-modal";
 import {DatePickerComponent} from "./components/date-picker/date-picker";
+import {ItemHistoryModal} from "./components/item-history-modal/item-history-modal";
 
 /*const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -45,7 +46,8 @@ import {DatePickerComponent} from "./components/date-picker/date-picker";
         ItemsFilterPipe,
         ReservationsFilterPipe,
         UserComponent,
-        DatePickerComponent
+        DatePickerComponent,
+        ItemHistoryModal
     ],
     // Entry Components
     entryComponents: [
@@ -59,7 +61,8 @@ import {DatePickerComponent} from "./components/date-picker/date-picker";
         ReservationsPage,
         ReservationPage,
         DatePickerModal,
-        DatePickerComponent
+        DatePickerComponent,
+        ItemHistoryModal
     ],
     // Providers
     providers: [

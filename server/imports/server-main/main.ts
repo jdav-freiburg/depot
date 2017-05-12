@@ -1,5 +1,6 @@
 import './user.ts';
 import './item.ts';
+import './item-state.ts';
 import './reservation.ts';
 import {CreateUser, User} from "../../../both/models/user.model";
 

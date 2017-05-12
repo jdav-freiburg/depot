@@ -7,13 +7,15 @@ import * as _ from "lodash";
 import {UserService} from "../../services/user";
 import {Reservation} from "../../../../../both/models/reservation.model";
 import {ReservationsDataService} from "../../services/reservations-data";
-import {Loading, LoadingController, NavController, NavParams} from "ionic-angular";
+import {Loading, LoadingController, ModalController, NavController, NavParams} from "ionic-angular";
 import * as moment from 'moment';
 import {Item} from "../../../../../both/models/item.model";
 import {ItemsDataService} from "../../services/items-data";
+import {ItemHistoryModal} from "../../components/item-history-modal/item-history-modal";
 
 interface SelectableItem extends Item {
     selected?: boolean;
+    update(selectedItemIds: string[]): void;
 }
 
 @Component({
@@ -41,7 +43,8 @@ export class ReservationPage implements OnInit {
 
     constructor(private reservationsDataService: ReservationsDataService, private itemsDataService: ItemsDataService,
                 private fb: FormBuilder, private users: UserService, private navCtrl: NavController,
-                private params: NavParams, private loadingCtrl: LoadingController) {
+                private params: NavParams, private loadingCtrl: LoadingController,
+                private modalCtrl: ModalController) {
         this.reservationForm = fb.group({
             type: ["", Validators.required],
             name: ["", Validators.required],
@@ -70,16 +73,6 @@ export class ReservationPage implements OnInit {
         }
     }
 
-    updateSelectedItems() {
-        _.forEach(this.items, (item) => {
-            item.selected = this.selectedItemIds.indexOf(item._id) !== -1;
-        });
-    }
-
-    updateSelectedItemIds() {
-        this.selectedItemIds = _.map(_.filter(this.items, (item) => item.selected), (item) => item._id);
-    }
-
     load() {
         this.startLoading();
         let reservation = this.reservationsDataService.getReservation(this.editId).zone()
@@ -89,14 +82,17 @@ export class ReservationPage implements OnInit {
                 console.log("Loaded:", reservation);
                 this.reservationForm.controls['type'].setValue(reservation.type);
                 this.reservationForm.controls['name'].setValue(reservation.name);
-                this.reservationForm.controls['start'].setValue(reservation.start.toISOString());
-                this.reservationForm.controls['end'].setValue(reservation.end.toISOString());
+                this.reservationForm.controls['start'].setValue(moment(reservation.start).toISOString());
+                this.reservationForm.controls['end'].setValue(moment(reservation.end).toISOString());
                 this.reservationForm.controls['contact'].setValue(reservation.contact);
                 this.startOutput = moment(reservation.start).format('DD.MM.YYYY');
                 this.endOutput = moment(reservation.end).format('DD.MM.YYYY');
                 this.selectedItemIds = reservation.itemIds;
+                console.log("Set selectedItemIds:", this.selectedItemIds);
+                this.items.forEach((item) => {
+                    item.update(this.selectedItemIds);
+                });
                 this.reservation = reservation;
-                this.updateSelectedItems();
                 this.isLoaded = true;
                 this.endLoading();
             }
@@ -112,11 +108,33 @@ export class ReservationPage implements OnInit {
                 this.endLoading();
                 initialLoaded = true;
             }
-            this.updateSelectedItemIds();
             this.items = _.map(items, (item) => {
-                return _.assignIn({selected: false}, item);
+                let ext = {
+                    _id: item._id,
+                    _selected: this.selectedItemIds.indexOf(item._id) !== -1,
+                    selectedItemIdsRef: this.selectedItemIds,
+                    update(selectedItemIds: string[]): void {
+                        this.selectedItemIdsRef = selectedItemIds;
+                        this._selected = this.selectedItemIdsRef.indexOf(item._id) !== -1;
+                    },
+                    get selected(): boolean {
+                        return this._selected;
+                    },
+                    set selected(value: boolean) {
+                        this._selected = value;
+                        console.log(this._id, "->", value);
+                        if (value) {
+                            if (!_.includes(this.selectedItemIdsRef, this._id)) {
+                                this.selectedItemIdsRef.push(this._id);
+                            }
+                        } else {
+                            _.pull(this.selectedItemIdsRef, this._id);
+                        }
+                        console.log("result selectedItemIds:", this.selectedItemIdsRef);
+                    }
+                };
+                return _.assignIn(ext, item);
             });
-            this.updateSelectedItems();
             console.log("Items:", this.items);
         });
         if (this.editId) {
@@ -135,7 +153,6 @@ export class ReservationPage implements OnInit {
     save() {
         console.log("Save");
         this.startLoading();
-        this.updateSelectedItemIds();
         if (!this.reservation) {
             let reservationData: Reservation = {
                 type: this.reservationForm.controls['type'].value,
@@ -157,7 +174,7 @@ export class ReservationPage implements OnInit {
         } else {
             this.reservation.type = this.reservationForm.controls['type'].value;
             this.reservation.name = this.reservationForm.controls['name'].value;
-            this.reservation.start = this.reservationForm.controls['start'].value;
+            this.reservation.start = new Date(this.reservationForm.controls['start'].value);
             this.reservation.end = new Date(this.reservationForm.controls['end'].value);
             this.reservation.contact = this.reservationForm.controls['contact'].value;
             this.reservation.itemIds = this.selectedItemIds;
@@ -174,5 +191,16 @@ export class ReservationPage implements OnInit {
             $event.preventDefault();
             $event.stopPropagation();
         }
+    }
+
+    openItem(item: Item) {
+        let modalView = this.modalCtrl.create(ItemHistoryModal, {
+            showReservations: true,
+            itemId: item._id,
+            skipReservationId: this.editId,
+            rangeStart: this.reservationForm.controls['start'].value,
+            rangeEnd: this.reservationForm.controls['end'].value,
+        });
+        modalView.present();
     }
 }

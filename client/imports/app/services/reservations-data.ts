@@ -70,4 +70,8 @@ export class ReservationsDataService {
         });
         return result;
     }
+
+    getReservationsForItem(itemId: string) {
+        return ReservationCollection.find({itemIds: itemId});
+    }
 }

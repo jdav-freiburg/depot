@@ -6,35 +6,44 @@
     text-align: center;
     font-weight: bold;
   }
-  .cal-today {
-    .cal-day-number {
-      font-size: 1.5em !important;
+  .cal-month-view {
+    .cal-day-cell {
+      min-height: 60px;
+
+      .cal-cell-top {
+        min-height: 30px;
+        .cal-day-number {
+          font-size: 1em;
+          margin-top: 10px;
+          margin-bottom: 5px;
+          margin-right: 5px;
+        }
+      }
     }
-  }
-  .cal-day-cell {
-    min-height: 60px;
-  }
-  .cal-cell-top {
-    min-height: 30px;
-  }
-  .cal-day-number {
-    font-size: 1em;
-    margin-top: 10px;
-    margin-bottom: 5px;
-    margin-right: 5px;
+    .cal-day-cell.cal-today {
+      .cal-day-number {
+        font-size: 1.5em;
+      }
+    }
   }
   .cal-day-badge {
     display: none;
   }
 
-  .cal-day-selected,
-  .cal-day-selected:hover {
+  .cal-day-selected {
     background-color: cornflowerblue !important;
   }
 
-  .cal-day-range,
-  .cal-day-range:hover {
+  .cal-day-selected:hover {
+    background-color: lighten(cornflowerblue, 10%) !important;
+  }
+
+  .cal-day-range {
     background-color: lightblue !important;
+  }
+
+  .cal-day-range:hover {
+    background-color: lighten(lightblue, 10%) !important;
   }
 
   .cal-day-disabled,

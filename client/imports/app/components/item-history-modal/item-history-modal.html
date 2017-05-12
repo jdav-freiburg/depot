@@ -12,11 +12,8 @@
             </button>
         </ion-buttons>
         <ion-buttons end>
-            <button ion-button icon-only (click)="cancel()">
+            <button ion-button icon-only (click)="close()">
                 <ion-icon name="close"></ion-icon>
-            </button>
-            <button ion-button icon-only (click)="save()">
-                <ion-icon name="checkmark"></ion-icon>
             </button>
             <button ion-button icon-only mwlCalendarNextView view="month" [(viewDate)]="viewDate">
                 <ion-icon name="arrow-forward"></ion-icon>
@@ -39,8 +36,7 @@
                 [events]="events"
                 [headerTemplate]="calHeaderTemplate"
                 [dayModifier]="dayModifier"
-                [refresh]="refresh"
-                (dayClicked)="select($event.day)">
+                [refresh]="refresh">
         </mwl-calendar-month-view>
     </div>
 </ion-content>

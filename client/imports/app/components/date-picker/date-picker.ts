@@ -23,7 +23,9 @@ export class DatePickerComponent implements ControlValueAccessor {
 
     @Input() rangeStart: Date = null;
     @Input() rangeEnd: Date = null;
-    @Input() rangeDirection: string = "start";
+    @Input() rangeDisableOutside: boolean = true;
+    @Input() showReservations: boolean = false;
+    @Input() skipReservationId: string = null;
 
     registerOnChange(fn: any): void {
         this.onChangeCallback = fn;
@@ -56,9 +58,7 @@ export class DatePickerComponent implements ControlValueAccessor {
         this._text = moment(this.dateValue).format('L');
     }
 
-    constructor(
-        private modalCtrl: ModalController
-    ) {
+    constructor(private modalCtrl: ModalController) {
     }
 
     click(ev: UIEvent) {
@@ -71,8 +71,10 @@ export class DatePickerComponent implements ControlValueAccessor {
         this.open();
     }
 
-    @HostListener('keyup.space')
-    _keyup() {
+    @HostListener('keyup.space', ['$event'])
+    keySpace(ev: KeyboardEvent) {
+        ev.preventDefault();
+        ev.stopPropagation();
         this.open();
     }
 
@@ -80,12 +82,13 @@ export class DatePickerComponent implements ControlValueAccessor {
         if (this._disabled) {
             return;
         }
-        console.log("openPicker:", this.date);
         let modalView = this.modalCtrl.create(DatePickerModal, {
             date: this.date,
             rangeStart: this.rangeStart,
             rangeEnd: this.rangeEnd,
-            rangeDirection: this.rangeDirection
+            rangeDisableOutside: this.rangeDisableOutside,
+            showReservations: this.showReservations,
+            skipReservationId: this.skipReservationId
         });
         modalView.onDidDismiss((data) => {
             if (data) {
