@@ -107,6 +107,7 @@ export class ItemStateModal implements OnInit, OnDestroy {
                             };
                         });
                     this.events = _.concat(this.itemEvents, this.reservationEvents);
+                    console.log("events:", this.events);
                 });
             }
         }
@@ -168,6 +169,7 @@ export class ItemStateModal implements OnInit, OnDestroy {
                     };
                 });
             this.events = _.concat(this.itemEvents, this.reservationEvents);
+            console.log("events:", this.events);
         });
     }
 
