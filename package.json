@@ -31,6 +31,7 @@
     "@angular/platform-server": "^4.1.1",
     "@angular/router": "^4.1.1",
     "@ionic/storage": "^2.0.1",
+    "@types/color": "^1.0.3",
     "@types/lodash": "^4.14.64",
     "angular-calendar": "^0.14.0",
     "angular2-meteor": "0.7.1",
@@ -38,6 +39,7 @@
     "angular2-meteor-tests-polyfills": "0.0.2",
     "babel-runtime": "^6.18.0",
     "bcrypt-nodejs": "^0.0.3",
+    "color": "^1.0.3",
     "ionic-angular": "^3.2.0",
     "ionicons": "^3.0.0",
     "lodash": "^4.17.4",
@@ -45,6 +47,7 @@
     "moment": "^2.18.1",
     "reflect-metadata": "0.1.10",
     "rxjs": "5.4.0",
+    "simpl-schema": "^0.3.0",
     "typescript": "^2.3.2",
     "zone.js": "0.8.10"
   }

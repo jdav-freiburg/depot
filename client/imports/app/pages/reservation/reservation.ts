@@ -11,7 +11,7 @@ import {Loading, LoadingController, ModalController, NavController, NavParams} f
 import * as moment from 'moment';
 import {Item} from "../../../../../both/models/item.model";
 import {ItemsDataService} from "../../services/items-data";
-import {ItemHistoryModal} from "../../components/item-history-modal/item-history-modal";
+import {ItemStateModal} from "../item-state-modal/item-state-modal";
 
 interface SelectableItem extends Item {
     selected?: boolean;
@@ -194,13 +194,12 @@ export class ReservationPage implements OnInit {
     }
 
     openItem(item: Item) {
-        let modalView = this.modalCtrl.create(ItemHistoryModal, {
+        this.navCtrl.push(ItemStateModal, {
             showReservations: true,
             itemId: item._id,
             skipReservationId: this.editId,
             rangeStart: this.reservationForm.controls['start'].value,
             rangeEnd: this.reservationForm.controls['end'].value,
         });
-        modalView.present();
     }
 }

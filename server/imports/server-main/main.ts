@@ -1,6 +1,5 @@
 import './user.ts';
 import './item.ts';
-import './item-state.ts';
 import './reservation.ts';
 import {CreateUser, User} from "../../../both/models/user.model";
 
@@ -10,9 +9,9 @@ export class Main {
     }
 
     initFakeData(): void {
-        if (Accounts.findUserByUsername('admin')) {
+        /*if (Accounts.findUserByUsername('admin')) {
             Meteor.users.remove({'username': 'admin'});
-        }
+        }*/
         if (!Accounts.findUserByUsername('admin')) {
             let userData: CreateUser = {
                 username: 'admin',
@@ -20,10 +19,11 @@ export class Main {
                 email: 'admin@localhost',
                 password: '42',
                 picture: null,
-                phone: '00123456789'
+                phone: '00123456789',
+                roles: ['admin', 'manager']
             };
-            let user: User = Accounts.createUser(userData);
-            Roles.addUsersToRoles(user, ['admin', 'manager'], Roles.GLOBAL_GROUP);
+            let user = Accounts.createUser(userData);
+            Meteor.users.update({_id: user}, {$set: {roles: ['admin', 'manager']}});
         }
     }
 }

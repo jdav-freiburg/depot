@@ -1,0 +1,4 @@
+<ion-item>
+    <ion-label *ngIf="_label" floating>{{_label}}</ion-label>
+    <ion-input full (click)="click($event)" class="date-picker" [readonly]="true" [(ngModel)]="_text"></ion-input>
+</ion-item>

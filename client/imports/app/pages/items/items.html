@@ -46,15 +46,18 @@
                 </ion-item>
             </span>
             <span class="edit-td">
-                <ion-item>
-                    <ion-label floating>Last Service</ion-label>
-                    <ion-datetime displayFormat="DD.MM.YYYY" formControlName="lastService"></ion-datetime>
-                </ion-item>
+                <span class="edit-td">
+                    <item-date-picker formControlName="lastService" label="Last Service"></item-date-picker>
+                </span>
             </span>
             <span class="edit-td">
                 <ion-item>
                     <ion-label floating>Condition</ion-label>
-                    <ion-input type="text" formControlName="condition"></ion-input>
+                    <ion-select formControlName="condition">
+                        <ion-option value="100" [style.color]="itemColor(100)">Ok</ion-option>
+                        <ion-option value="50" [style.color]="itemColor(50)">Damaged</ion-option>
+                        <ion-option value="0" [style.color]="itemColor(0)">Broken</ion-option>
+                    </ion-select>
                 </ion-item>
             </span>
             <span class="edit-td">
@@ -67,15 +70,16 @@
                 <ion-item>
                     <ion-label floating>Status</ion-label>
                     <ion-select formControlName="status">
-                        <ion-option value="public">Public</ion-option>
-                        <ion-option value="hidden">Hidden</ion-option>
+                        <ion-option value="public" [style.color]="'green'">Public</ion-option>
+                        <ion-option value="hidden" [style.color]="'red'">Hidden</ion-option>
                     </ion-select>
                 </ion-item>
             </span>
             <span class="edit-td">
-                <ion-chip>
-                    <ion-label>Example Tag</ion-label>
-                </ion-chip>
+                <ion-item>
+                    <ion-label floating>Tags</ion-label>
+                    <ion-input type="text" formControlName="tags"></ion-input>
+                </ion-item>
             </span>
             <span class="edit-td">
                 <button ion-button type="submit" clear icon-only><ion-icon name="add-circle"></ion-icon></button>
@@ -105,15 +109,16 @@
                     </ion-item>
                 </span>
                 <span class="edit-td">
-                    <ion-item>
-                        <ion-label floating>Last Service</ion-label>
-                        <ion-datetime displayFormat="DD.MM.YYYY" formControlName="lastService"></ion-datetime>
-                    </ion-item>
+                    <item-date-picker [itemId]="item._id" formControlName="lastService" label="Last Service"></item-date-picker>
                 </span>
                 <span class="edit-td">
                     <ion-item>
                         <ion-label floating>Condition</ion-label>
-                        <ion-input type="text" formControlName="condition"></ion-input>
+                        <ion-select formControlName="condition">
+                            <ion-option value="100" [style.color]="itemColor(100)">Ok</ion-option>
+                            <ion-option value="50" [style.color]="itemColor(50)">Damaged</ion-option>
+                            <ion-option value="0" [style.color]="itemColor(0)">Broken</ion-option>
+                        </ion-select>
                     </ion-item>
                 </span>
                 <span class="edit-td">
@@ -126,15 +131,16 @@
                     <ion-item>
                         <ion-label floating>Status</ion-label>
                         <ion-select formControlName="status">
-                            <ion-option value="public">public</ion-option>
-                            <ion-option value="hidden">hidden</ion-option>
+                            <ion-option value="public" [style.color]="'green'">public</ion-option>
+                            <ion-option value="hidden" [style.color]="'red'">hidden</ion-option>
                         </ion-select>
                     </ion-item>
                 </span>
                 <span class="edit-td">
-                    <ion-chip>
-                        <ion-label>Example Tag</ion-label>
-                    </ion-chip>
+                    <ion-item>
+                        <ion-label floating>Tags</ion-label>
+                        <ion-input type="text" formControlName="tags"></ion-input>
+                    </ion-item>
                 </span>
                 <span class="edit-td">
                     <button ion-button type="submit" clear icon-only><ion-icon name="create"></ion-icon></button>
@@ -144,27 +150,43 @@
                             name="close-circle"></ion-icon></button>
                 </span>
                 <span class="edit-td">
-                        <button ion-button (click)="remove(item._id)" clear icon-only><ion-icon name="remove-circle"></ion-icon></button>
+                    <button ion-button (click)="remove(item._id)" clear icon-only><ion-icon name="remove-circle"></ion-icon></button>
+                </span>
+            </form>
+            <div *ngIf="editItemId !== item._id" class="edit-tr">
+                <span class="edit-td">{{item.externalId}}</span>
+                <span class="edit-td">{{item.name}}</span>
+                <span class="edit-td">{{item.description}}</span>
+                <span class="edit-td">{{item.lastService | date: 'dd.MM.yyyy'}}</span>
+                <span class="edit-td">
+                    <span [ngSwitch]="item.condition" [style.color]="itemColor(item.condition)">
+                        <span *ngSwitchCase="'100'">Ok</span>
+                        <span *ngSwitchCase="'50'">Damaged</span>
+                        <span *ngSwitchCase="'0'">Broken</span>
+                        <span *ngSwitchDefault>{{item.condition}}</span>
                     </span>
-                </form>
-                <div *ngIf="editItemId !== item._id" class="edit-tr">
-                    <span class="edit-td">{{item.externalId}}</span>
-                    <span class="edit-td">{{item.name}}</span>
-                    <span class="edit-td">{{item.description}}</span>
-                    <span class="edit-td">{{item.lastService | date: 'dd.MM.yyyy'}}</span>
-                    <span class="edit-td">{{item.condition}}</span>
-                    <span class="edit-td">{{item.conditionComment}}</span>
-                    <span class="edit-td">{{item.status}}</span>
-                    <span class="edit-td">{{item.tags}}</span>
-                    <span class="edit-td" *ngIf="isManager">
+                </span>
+                <span class="edit-td">{{item.conditionComment}}</span>
+                <span class="edit-td">
+                    <span [ngSwitch]="item.status">
+                        <span *ngSwitchCase="'public'" [style.color]="'green'">Public</span>
+                        <span *ngSwitchCase="'hidden'" [style.color]="'red'">Hidden</span>
                     </span>
-                    <span class="edit-td" *ngIf="isManager">
-                        <button ion-button (click)="edit(item)" clear icon-only><ion-icon name="create"></ion-icon></button>
-                    </span>
-                    <span class="edit-td" *ngIf="isManager">
-                        <button ion-button (click)="remove(item._id)" clear icon-only><ion-icon name="remove-circle"></ion-icon></button>
-                    </span>
-                </div>
+                </span>
+                <span class="edit-td">
+                    <ion-chip *ngFor="let tag of item.tags">
+                        <ion-label>{{tag}}</ion-label>
+                    </ion-chip>
+                </span>
+                <span class="edit-td" *ngIf="isManager">
+                </span>
+                <span class="edit-td" *ngIf="isManager">
+                    <button ion-button (click)="edit(item)" clear icon-only><ion-icon name="create"></ion-icon></button>
+                </span>
+                <span class="edit-td">
+                    <button ion-button (click)="viewItem(item._id)" clear icon-only><ion-icon name="search"></ion-icon></button>
+                </span>
+            </div>
         </ng-container>
     </div>
 </ion-content>

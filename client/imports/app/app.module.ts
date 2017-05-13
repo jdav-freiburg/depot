@@ -21,9 +21,13 @@ import {ReservationsDataService} from "./services/reservations-data";
 import {ReservationPage} from "./pages/reservation/reservation";
 import {UserComponent} from "./components/user/user";
 import { CalendarModule } from 'angular-calendar';
-import {DatePickerModal} from "./components/date-picker-modal/date-picker-modal";
-import {DatePickerComponent} from "./components/date-picker/date-picker";
-import {ItemHistoryModal} from "./components/item-history-modal/item-history-modal";
+import {DatePickerModal} from "./pages/date-picker-modal/date-picker-modal";
+import {ReservationDatePickerComponent} from "./components/reservation-date-picker/reservation-date-picker";
+import {ItemStateModal} from "./pages/item-state-modal/item-state-modal";
+import {UserModal} from "./pages/user-modal/user-modal";
+import {UsersFilterPipe} from "./pages/users/users-filter.pipe";
+import {UsersPage} from "./pages/users/users";
+import {ItemDatePickerComponent} from "./components/item-date-picker/item-date-picker";
 
 /*const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -46,8 +50,12 @@ import {ItemHistoryModal} from "./components/item-history-modal/item-history-mod
         ItemsFilterPipe,
         ReservationsFilterPipe,
         UserComponent,
-        DatePickerComponent,
-        ItemHistoryModal
+        ReservationDatePickerComponent,
+        ItemStateModal,
+        ItemDatePickerComponent,
+        UserModal,
+        UsersFilterPipe,
+        UsersPage
     ],
     // Entry Components
     entryComponents: [
@@ -61,8 +69,10 @@ import {ItemHistoryModal} from "./components/item-history-modal/item-history-mod
         ReservationsPage,
         ReservationPage,
         DatePickerModal,
-        DatePickerComponent,
-        ItemHistoryModal
+        ReservationDatePickerComponent,
+        ItemStateModal,
+        UserModal,
+        UsersPage
     ],
     // Providers
     providers: [

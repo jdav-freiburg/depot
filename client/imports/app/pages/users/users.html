@@ -1,0 +1,47 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>
+            Users
+        </ion-title>
+        <button ion-button icon-only menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-buttons end>
+            <button ion-button icon-only (click)="newItem()">
+                <ion-icon name="add"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <ion-searchbar [(ngModel)]="filter"></ion-searchbar>
+    <div class="edit-table">
+        <div class="edit-tr">
+            <span class="edit-th">Username</span>
+            <span class="edit-th">E-Mail</span>
+            <span class="edit-th">Full Name</span>
+            <span class="edit-th">Phone</span>
+            <span class="edit-th">Roles</span>
+            <span class="edit-th"></span>
+        </div>
+        <ng-container *ngFor="let user of users | async | usersfilter:filter">
+            <div class="edit-tr">
+                <span class="edit-td">{{user.username}}</span>
+                <span class="edit-td">
+                    <span *ngFor="let email of user.emails">
+                        <a href="mailto:{{email.address}}">{{email.address}}</a>
+                    </span>
+                </span>
+                <span class="edit-td">{{user.fullName}}</span>
+                <span class="edit-td">{{user.phone}}</span>
+                <span class="edit-td">
+                    <span *ngFor="let role of user.roles">{{role}}</span>
+                </span>
+                <span class="edit-td">
+                    <button ion-button (click)="editItem(user._id)" clear icon-only><ion-icon name="create"></ion-icon></button>
+                </span>
+            </div>
+        </ng-container>
+    </div>
+</ion-content>

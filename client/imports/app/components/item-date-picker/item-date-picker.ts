@@ -1,31 +1,31 @@
 import {Component, forwardRef, HostListener, Input, Renderer, ElementRef, Optional} from "@angular/core";
-import template from "./date-picker.html";
-import style from "./date-picker.scss";
+import template from "./item-date-picker.html";
+import style from "./item-date-picker.scss";
 import * as _ from "lodash";
 import {ModalController} from "ionic-angular";
 import * as moment from 'moment';
-import {DatePickerModal} from "../date-picker-modal/date-picker-modal";
+import {DatePickerModal} from "../../pages/date-picker-modal/date-picker-modal";
 import {ControlValueAccessor, Form, NG_VALUE_ACCESSOR} from "@angular/forms";
+import {ItemStateModal} from "../../pages/item-state-modal/item-state-modal";
 
 @Component({
-    selector: "my-date-picker",
+    selector: "item-date-picker",
     template,
     styles: [ style ],
     providers: [
-        { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => DatePickerComponent), multi: true },
+        { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => ItemDatePickerComponent), multi: true },
     ]
 })
-export class DatePickerComponent implements ControlValueAccessor {
+export class ItemDatePickerComponent implements ControlValueAccessor {
     private onTouchedCallback: () => void = () => {};
     private onChangeCallback: (_: any) => void = () => {};
 
     @Input('label') _label: string = "";
 
+    @Input() itemId: string = null;
+    @Input() showReservations: boolean = false;
     @Input() rangeStart: Date = null;
     @Input() rangeEnd: Date = null;
-    @Input() rangeDisableOutside: boolean = true;
-    @Input() showReservations: boolean = false;
-    @Input() skipReservationId: string = null;
 
     registerOnChange(fn: any): void {
         this.onChangeCallback = fn;
@@ -82,13 +82,13 @@ export class DatePickerComponent implements ControlValueAccessor {
         if (this._disabled) {
             return;
         }
-        let modalView = this.modalCtrl.create(DatePickerModal, {
+        let modalView = this.modalCtrl.create(ItemStateModal, {
             date: this.date,
+            showReservations: this.showReservations,
+            itemId: this.itemId,
             rangeStart: this.rangeStart,
             rangeEnd: this.rangeEnd,
-            rangeDisableOutside: this.rangeDisableOutside,
-            showReservations: this.showReservations,
-            skipReservationId: this.skipReservationId
+            selectDate: true
         });
         modalView.onDidDismiss((data) => {
             if (data) {

@@ -1,0 +1,157 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>
+            {{_titleText}}
+        </ion-title>
+        <ion-buttons end>
+            <button ion-button icon-only (click)="close()">
+                <ion-icon name="close"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <ion-item>
+        <ion-label>
+            <h2>Id</h2>
+            <p>{{userId}}</p>
+        </ion-label>
+    </ion-item>
+    <form [formGroup]="userForm" (ngSubmit)="save()" *ngIf="user && canEdit">
+        <ion-item-group>
+            <ion-item-divider>
+                User
+                <button ion-button icon-only clear item-right type="submit">
+                    <ion-icon name="checkmark"></ion-icon>
+                </button>
+            </ion-item-divider>
+            <ion-item>
+                <ion-label floating>
+                    Username
+                </ion-label>
+                <ion-input type="text" formControlName="username"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>
+                    Name
+                </ion-label>
+                <ion-input type="text" formControlName="fullName"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>
+                    Phone
+                </ion-label>
+                <ion-input type="text" formControlName="phone"></ion-input>
+            </ion-item>
+        </ion-item-group>
+    </form>
+    <ion-item-group *ngIf="user && canEdit">
+        <ion-item-divider>E-Mail</ion-item-divider>
+        <form *ngFor="let email of emails" (ngSubmit)="saveEmail(email)">
+            <ion-item>
+                <ion-label floating>
+                    E-Mail
+                </ion-label>
+                <ion-input type="email" name="email" [(ngModel)]="email.editAddress"></ion-input>
+                <ion-icon color="green" *ngIf="email.verified" name="checkmark"></ion-icon>
+                <ion-icon color="red" *ngIf="!email.verified" name="close"></ion-icon>
+                <button item-right ion-button icon-only clear type="submit">
+                    <ion-icon name="create"></ion-icon>
+                </button>
+                <button item-right ion-button icon-only clear (click)="deleteEmail(email)">
+                    <ion-icon name="close"></ion-icon>
+                </button>
+            </ion-item>
+        </form>
+        <form (ngSubmit)="addEmail(newEmailAddress)">
+            <ion-item>
+                <ion-label floating>
+                    Add E-Mail
+                </ion-label>
+                <ion-input type="email" name="email" [(ngModel)]="newEmailAddress"></ion-input>
+                <button item-right ion-button icon-only clear type="submit">
+                    <ion-icon name="create"></ion-icon>
+                </button>
+            </ion-item>
+        </form>
+    </ion-item-group>
+    <form [formGroup]="userPasswordForm" (ngSubmit)="savePassword()" *ngIf="user && canEdit">
+        <ion-item-group>
+            <ion-item-divider>
+                Password
+                <button ion-button icon-only clear item-right type="submit">
+                    <ion-icon name="checkmark"></ion-icon>
+                </button>
+            </ion-item-divider>
+            <ion-item *ngIf="!isAdmin">
+                <ion-label floating>
+                    Current Password
+                </ion-label>
+                <ion-input type="password" formControlName="oldPassword"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>
+                    New Password
+                </ion-label>
+                <ion-input type="password" formControlName="newPassword"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>
+                    Repeat New Password
+                </ion-label>
+                <ion-input type="password" formControlName="newPasswordRepeat"></ion-input>
+            </ion-item>
+        </ion-item-group>
+    </form>
+    <ion-item-group *ngIf="user">
+        <ion-item-divider>Roles</ion-item-divider>
+        <ion-item *ngFor="let role of roles">
+            <ion-label>
+                {{role.roleDef.name}}
+            </ion-label>
+            <ion-checkbox [(ngModel)]="role.isMember" [disabled]="!canEdit" item-left></ion-checkbox>
+        </ion-item>
+    </ion-item-group>
+    <ion-item-group *ngIf="user && !canEdit">
+        <ion-item>
+            <ion-label>
+                <h2>Id</h2>
+                <p>{{user._id}}</p>
+            </ion-label>
+        </ion-item>
+        <ion-item>
+            <ion-label>
+                <h2>Username</h2>
+                <p>{{user.username}}</p>
+            </ion-label>
+        </ion-item>
+        <ion-item *ngFor="let email of user.emails">
+            <ion-label>
+                <h2>E-Mail</h2>
+                <p>{{email.address}}
+                    <ion-icon color="green" *ngIf="email.verified" name="checkmark"></ion-icon>
+                    <ion-icon color="red" *ngIf="!email.verified" name="close"></ion-icon>
+                </p>
+            </ion-label>
+        </ion-item>
+        <ion-item>
+            <ion-label>
+                <h2>Name</h2>
+                <p>{{user.fullName}}</p>
+            </ion-label>
+        </ion-item>
+        <ion-item>
+            <ion-label>
+                <h2>Picture</h2>
+                <p>{{user.picture}}</p>
+            </ion-label>
+        </ion-item>
+        <ion-item>
+            <ion-label>
+                <h2>Phone</h2>
+                <p>{{user.phone}}</p>
+            </ion-label>
+        </ion-item>
+    </ion-item-group>
+</ion-content>

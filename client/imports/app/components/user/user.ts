@@ -2,9 +2,10 @@ import {Component, Input, NgZone, OnChanges, OnInit, SimpleChanges} from "@angul
 import template from "./user.html";
 import style from "./user.scss";
 import * as _ from "lodash";
-import {NavController} from "ionic-angular";
+import {ModalController, NavController} from "ionic-angular";
 import {User} from "../../../../../both/models/user.model";
 import {UserService} from "../../services/user";
+import {UserModal} from "../../pages/user-modal/user-modal";
 
 @Component({
     selector: "user-ref",
@@ -24,7 +25,7 @@ export class UserComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        Meteor.users.find({_id: this.userId}).observe((users) => {
+        Meteor.users.find(this.userId).observe((users) => {
             this.ngZone.run(() => {
                 if (users.length > 0) {
                     this.user = users[0];
@@ -37,7 +38,8 @@ export class UserComponent implements OnInit, OnChanges {
     }
 
     openUser() {
-        console.log("TODO: Implement user properties");
-        //this.navCtrl.push(UserPage)
+        this.navCtrl.push(UserModal, {
+            userId: this.userId
+        });
     }
 }
