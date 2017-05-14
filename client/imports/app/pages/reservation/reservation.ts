@@ -63,6 +63,10 @@ export class ReservationPage implements OnInit {
         return null;
     }
 
+    get text(): string {
+        return this.reservationForm.controls['name'].value;
+    }
+
     constructor(private reservationsDataService: ReservationsDataService, private itemsDataService: ItemsDataService,
                 private fb: FormBuilder, private users: UserService, private navCtrl: NavController,
                 private params: NavParams, private loadingCtrl: LoadingController,
@@ -116,6 +120,7 @@ export class ReservationPage implements OnInit {
                     }
                 });
                 console.log("Unavailable items:", _.map(_.keys(this.unavailableItems), (_id) => _.find(this.items, (item) => item._id === _id) || _id));
+                // TODO: Remove unreservable items?
             });
         }
     }

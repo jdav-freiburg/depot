@@ -3,6 +3,16 @@
         <ion-title>
             {{_titleText}}
         </ion-title>
+        <ion-buttons end>
+            <button ion-button icon-only (click)="cancel()">
+                <ion-icon name="close"></ion-icon>
+            </button>
+            <button ion-button icon-only (click)="save()">
+                <ion-icon name="checkmark"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-navbar>
+    <ion-toolbar>
         <ion-buttons>
             <button ion-button icon-only mwlCalendarPreviousView view="month" [(viewDate)]="viewDate">
                 <ion-icon name="arrow-back"></ion-icon>
@@ -12,17 +22,11 @@
             </button>
         </ion-buttons>
         <ion-buttons end>
-            <button ion-button icon-only (click)="cancel()">
-                <ion-icon name="close"></ion-icon>
-            </button>
-            <button ion-button icon-only (click)="save()">
-                <ion-icon name="checkmark"></ion-icon>
-            </button>
             <button ion-button icon-only mwlCalendarNextView view="month" [(viewDate)]="viewDate">
                 <ion-icon name="arrow-forward"></ion-icon>
             </button>
         </ion-buttons>
-    </ion-navbar>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
