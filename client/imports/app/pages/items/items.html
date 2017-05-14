@@ -10,7 +10,6 @@
 </ion-header>
 
 <ion-content>
-
     <ion-searchbar [(ngModel)]="filter"></ion-searchbar>
     <div class="edit-table">
         <div class="edit-tr">
@@ -24,7 +23,7 @@
             <span class="edit-th">Tags</span>
             <span class="edit-th" *ngIf="isManager"></span>
             <span class="edit-th" *ngIf="isManager"></span>
-            <span class="edit-th" *ngIf="isManager"></span>
+            <span class="edit-th"></span>
         </div>
         <form class="edit-tr" [formGroup]="newItemForm" (ngSubmit)="add($event)" *ngIf="isManager">
             <span class="edit-td">
@@ -82,7 +81,7 @@
                 </ion-item>
             </span>
             <span class="edit-td">
-                <button ion-button type="submit" clear icon-only><ion-icon name="add-circle"></ion-icon></button>
+                <button ion-button type="submit" clear icon-only [disabled]="!newItemForm.valid"><ion-icon name="add-circle"></ion-icon></button>
             </span>
             <span class="edit-td"></span>
             <span class="edit-td"></span>
@@ -143,7 +142,7 @@
                     </ion-item>
                 </span>
                 <span class="edit-td">
-                    <button ion-button type="submit" clear icon-only><ion-icon name="create"></ion-icon></button>
+                    <button ion-button type="submit" clear icon-only [disabled]="!editItemForm.valid"><ion-icon name="create"></ion-icon></button>
                 </span>
                 <span class="edit-td">
                     <button ion-button (click)="cancelEdit()" clear icon-only><ion-icon

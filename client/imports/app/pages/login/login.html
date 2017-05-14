@@ -16,6 +16,6 @@
             <ion-label floating>Password</ion-label>
             <ion-input type="password" formControlName="password"></ion-input>
         </ion-item>
-        <button ion-button type="submit" block>Log in</button>
+        <button ion-button type="submit" block [disabled]="!loginForm.valid">Log in</button>
     </form>
 </ion-content>

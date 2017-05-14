@@ -33,7 +33,7 @@ export class DatePickerModal {
         disableOutside: true,
     };
 
-    selectedDate: moment.Moment = null;
+    selectedDate: moment.Moment;
 
     events: CalendarEvent[] = [];
 
@@ -48,9 +48,15 @@ export class DatePickerModal {
     constructor(private viewCtrl: ViewController, private params: NavParams, private reservationDataService: ReservationsDataService) {
         if (this.params.get('rangeStart')) {
             this.range.start = moment(this.params.get('rangeStart')).startOf('day');
+            if (!this.range.start.isValid()) {
+                this.range.start = null;
+            }
         }
         if (this.params.get('rangeEnd')) {
             this.range.end = moment(this.params.get('rangeEnd')).endOf('day');
+            if (!this.range.end.isValid()) {
+                this.range.end = null;
+            }
         }
         if (_.isUndefined(this.params.get('rangeDisableOutside'))) {
             this.range.disableOutside = this.params.get('rangeDisableOutside');
@@ -66,7 +72,11 @@ export class DatePickerModal {
                 this.selectedDate = moment().startOf('day');
             }
         }
-        this.viewDate = this.selectedDate;
+        if (this.selectedDate.isValid()) {
+            this.viewDate = this.selectedDate;
+        } else {
+            this.viewDate = moment().startOf('day');
+        }
         if (this.params.get('showReservations')) {
             let skipReservationId = this.params.get('skipReservationId');
             let reservations = this.reservationDataService.getReservations();
@@ -95,7 +105,7 @@ export class DatePickerModal {
         this.dayModifier = (day: CalendarMonthViewDay) => {
             let dayDate = moment(day.date).startOf('day');
             day.cssClass = '';
-            if (this.selectedDate && dayDate.isSame(this.selectedDate)) {
+            if (this.selectedDate.isValid() && dayDate.isSame(this.selectedDate)) {
                 day.cssClass = 'cal-day-selected';
                 this.selectedDay = day;
             } else if (this.range.disableOutside && this.range.start && dayDate.isBefore(this.range.start)) {
@@ -108,11 +118,11 @@ export class DatePickerModal {
                     day.cssClass = 'cal-day-range';
                 }
             } else if (this.range.start) {
-                if (dayDate.isBefore(this.selectedDate) && dayDate.isSameOrAfter(this.range.start)) {
+                if (this.selectedDate.isValid() && dayDate.isBefore(this.selectedDate) && dayDate.isSameOrAfter(this.range.start)) {
                     day.cssClass = 'cal-day-range';
                 }
             } else if (this.range.end) {
-                if (dayDate.isAfter(this.selectedDate) && dayDate.isSameOrBefore(this.range.end)) {
+                if (this.selectedDate.isValid() && dayDate.isAfter(this.selectedDate) && dayDate.isSameOrBefore(this.range.end)) {
                     day.cssClass = 'cal-day-range';
                 }
             }
@@ -139,6 +149,6 @@ export class DatePickerModal {
     }
 
     save() {
-        this.viewCtrl.dismiss({date: this.selectedDate});
+        this.viewCtrl.dismiss({date: this.selectedDate.isValid()?this.selectedDate.toDate():null});
     }
 }

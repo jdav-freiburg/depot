@@ -8,17 +8,14 @@ import {Observable} from "rxjs/Observable";
 
 @Injectable()
 export class ReservationsDataService {
-    private reservations: ObservableCursor<Reservation>;
-
     constructor(private ngZone: NgZone) {
         Tracker.autorun(() => {
             Meteor.subscribe('reservations');
         });
-        this.reservations = ReservationCollection.find({});
     }
 
     public getReservations(): ObservableCursor<Reservation> {
-        return this.reservations;
+        return ReservationCollection.find({});
     }
 
     public add(item: Reservation, callback?: Function): void {
@@ -58,6 +55,18 @@ export class ReservationsDataService {
 
     public getReservation(id: string): ObservableCursor<Reservation> {
         return ReservationCollection.find({_id: id});
+    }
+
+    public getReservationsIn(start?: Date, end?: Date): ObservableCursor<Reservation> {
+        let selector = {};
+        if (start && end) {
+            selector = {start: {$lte: end}, end: {$gte: start}};
+        } else if (start) {
+            selector = {end: {$gte: start}};
+        } else if (end) {
+            selector = {start: {$lte: end}};
+        }
+        return ReservationCollection.find(selector);
     }
 
     public remove(id: string, callback?: Function): Observable<number> {

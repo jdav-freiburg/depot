@@ -50,8 +50,13 @@ export class UserModal implements OnInit, OnDestroy {
     get isAdmin(): boolean {
         return this.userService.isAdmin;
     }
+
+    get isSelf(): boolean {
+        return this.userId === this.userService.user._id;
+    }
+
     get canEdit(): boolean {
-        return this.isAdmin || this.userService.user._id == this.userId;
+        return this.isAdmin || this.isSelf;
     }
 
     userForm: FormGroup;

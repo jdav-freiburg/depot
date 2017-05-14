@@ -31,23 +31,23 @@
   }
 
   .cal-day-selected {
-    background-color: cornflowerblue !important;
+    background-color: cornflowerblue;
   }
 
   .cal-day-selected:hover {
-    background-color: lighten(cornflowerblue, 10%) !important;
+    background-color: lighten(cornflowerblue, 10%);
   }
 
   .cal-day-range {
-    background-color: lightblue !important;
+    background-color: lightblue;
   }
 
   .cal-day-range:hover {
-    background-color: lighten(lightblue, 10%) !important;
+    background-color: lighten(lightblue, 10%);
   }
 
   .cal-day-disabled,
   .cal-day-disabled:hover {
-    background-color: gray !important;
+    background-color: gray;
   }
 }

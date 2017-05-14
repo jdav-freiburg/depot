@@ -28,6 +28,6 @@
             <ion-label floating>Phone</ion-label>
             <ion-input type="text" formControlName="phone"></ion-input>
         </ion-item>
-        <button ion-button type="submit" block>Sign Up</button>
+        <button ion-button type="submit" block [disabled]="!signupForm.valid">Sign Up</button>
     </form>
 </ion-content>

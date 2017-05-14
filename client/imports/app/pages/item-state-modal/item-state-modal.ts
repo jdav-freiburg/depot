@@ -60,10 +60,16 @@ export class ItemStateModal implements OnInit, OnDestroy {
         this.itemId = this.params.get('itemId');
         if (this.params.get('rangeEnd')) {
             this.range.end = moment(this.params.get('rangeEnd')).endOf('day');
+            if (!this.range.end.isValid()) {
+                this.range.end = null;
+            }
             this.viewDate = this.range.end;
         }
         if (this.params.get('rangeStart')) {
             this.range.start = moment(this.params.get('rangeStart')).startOf('day');
+            if (!this.range.start.isValid()) {
+                this.range.start = null;
+            }
             this.viewDate = this.range.start;
         }
         if (this.params.get('selectDate')) {
@@ -71,14 +77,20 @@ export class ItemStateModal implements OnInit, OnDestroy {
 
             if (this.params.get('date')) {
                 this.selectedDate = moment(this.params.get('date')).startOf('day');
-            } else if (this.range.start) {
-                this.selectedDate = this.range.start;
-            } else if (this.range.end) {
-                this.selectedDate = this.range.end;
             } else {
-                this.selectedDate = moment().startOf('day');
+                if (this.range.start) {
+                    this.selectedDate = this.range.start;
+                } else if (this.range.end) {
+                    this.selectedDate = this.range.end;
+                } else {
+                    this.selectedDate = moment().startOf('day');
+                }
             }
-            this.viewDate = this.selectedDate;
+            if (this.selectedDate.isValid()) {
+                this.viewDate = this.selectedDate;
+            } else {
+                this.viewDate = moment().startOf('day');
+            }
         }
         if (!_.isUndefined(this.params.get('rangeDisableOutside'))) {
             this.range.disableOutside = this.params.get('rangeDisableOutside');
@@ -113,7 +125,7 @@ export class ItemStateModal implements OnInit, OnDestroy {
         }
         this.dayModifier = (day: CalendarMonthViewDay) => {
             let dayDate = moment(day.date).startOf('day');
-            if (this.selectDate && this.selectedDate && dayDate.isSame(this.selectedDate)) {
+            if (this.selectDate && this.selectedDate && this.selectedDate.isValid() && dayDate.isSame(this.selectedDate)) {
                 day.cssClass = 'cal-day-selected';
                 this.selectedDay = day;
             } else if (this.range.disableOutside && this.range.start && dayDate.isBefore(this.range.start)) {
@@ -142,7 +154,7 @@ export class ItemStateModal implements OnInit, OnDestroy {
     }
 
     subscribeItemState() {
-        this.subscriptionHandle = Meteor.subscribe('item.states', this.itemId);
+        this.subscriptionHandle = Meteor.subscribe('item.states', {itemId: this.itemId});
         ItemStateCollection.find({itemId: this.itemId}).zone().subscribe((states) => {
             this.itemEvents = states
                 .map((state: ItemState) => {
@@ -193,6 +205,6 @@ export class ItemStateModal implements OnInit, OnDestroy {
     }
 
     save() {
-        this.viewCtrl.dismiss({date: this.selectedDate});
+        this.viewCtrl.dismiss({date: this.selectedDate.isValid()?this.selectedDate.toDate():null});
     }
 }

@@ -53,9 +53,15 @@ export class ReservationDatePickerComponent implements ControlValueAccessor {
         return this.dateValue;
     }
     set date(date: Date) {
-        this.dateValue = moment(date).toDate();
+        let value = moment(date);
+        if (value.isValid()) {
+            this.dateValue = value.toDate();
+            this._text = value.format('L');
+        } else {
+            this.dateValue = null;
+            this._text = "";
+        }
         this.onChangeCallback(this.dateValue);
-        this._text = moment(this.dateValue).format('L');
     }
 
     constructor(private modalCtrl: ModalController) {

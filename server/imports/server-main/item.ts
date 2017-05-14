@@ -61,20 +61,23 @@ Meteor.publish('items', function() {
     return ItemCollection.find({status: 'public'});
 });
 
-Meteor.publish('item.states', function(itemId: string, start?: Date, end?: Date) {
+Meteor.publish('item.states', function(params: {itemId: string, start?: Date, end?: Date}) {
     console.log("register itemStates");
+    if (!params) {
+        throw new Meteor.Error('validation', 'Missing parameters');
+    }
     new SimpleSchema({
         itemId: { type: String },
         start: { type: Date, optional: true },
         end: { type: Date, optional: true },
-    }).validate({ itemId, start, end });
-    let query = {itemId: itemId};
-    if (start !== undefined && end !== undefined) {
-        query['timestamp'] = {$gte: start, $lte: end};
-    } else if (start !== undefined) {
-        query['timestamp'] = {$gte: start};
-    } else if (end !== undefined) {
-        query['timestamp'] = {$lte: end};
+    }).validate(params);
+    let query = {itemId: params.itemId};
+    if (params.start && params.end) {
+        query['timestamp'] = {$gte: params.start, $lte: params.end};
+    } else if (params.start) {
+        query['timestamp'] = {$gte: params.start};
+    } else if (params.end) {
+        query['timestamp'] = {$lte: params.end};
     }
     return ItemStateCollection.find(query, {sort: {timestamp: -1}});
 });

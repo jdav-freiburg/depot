@@ -30,30 +30,28 @@
                         [showReservations]="true" [skipReservationId]="editId"></reservation-date-picker>
         <reservation-date-picker formControlName="end" label="End" [rangeStart]="reservationForm.controls.start.value"
                         [showReservations]="true" [skipReservationId]="editId"></reservation-date-picker>
-        <!--<ion-item>
-            <ion-label floating>End</ion-label>
-            <ion-datetime displayFormat="DD.MM.YYYY" formControlName="end" *ngIf="!readonly"></ion-datetime>
-            <ion-input type="text" [(ngModel)]="endOutput" *ngIf="readonly"></ion-input>
-        </ion-item>-->
         <ion-item>
             <ion-label floating>Contact</ion-label>
             <ion-input type="text" formControlName="contact" [readonly]="readonly"></ion-input>
         </ion-item>
     </form>
-    <ion-list>
-        <ion-list-header>Items</ion-list-header>
-        <ion-searchbar [(ngModel)]="filter"></ion-searchbar>
-        <ion-item *ngFor="let item of items | itemsfilter:filter">
-            <!--<ion-avatar item-left><img src="{{item.picture}}"></ion-avatar>-->
-            <ion-checkbox item-left [(ngModel)]="item.selected"></ion-checkbox>
-            <ion-label>
-                <h2>{{item.name}}</h2>
-                <h3>{{item.tags}}</h3>
-                <p>
-                    {{item.description}}
-                </p>
-            </ion-label>
-            <button ion-button icon-only clear item-end (click)="openItem(item)"><ion-icon name="search"></ion-icon></button>
-        </ion-item>
-    </ion-list>
+    <ion-card>
+        <ion-card-header>Items</ion-card-header>
+        <ion-card-content>
+            <ion-searchbar [(ngModel)]="filter"></ion-searchbar>
+            <ion-item *ngFor="let item of items | itemsfilter:filter">
+                <!--<ion-avatar item-left><img src="{{item.picture}}"></ion-avatar>-->
+                <ion-checkbox item-left [(ngModel)]="item.selected" [disabled]="!item.available && !item.selected"></ion-checkbox>
+                <ion-label>
+                    <h2>{{item.name}}</h2>
+                    <h3>{{item.tags}}</h3>
+                    <p>
+                        {{item.description}}
+                    </p>
+                </ion-label>
+                <ion-badge item-right *ngIf="!item.available">Not available</ion-badge>
+                <button ion-button icon-only clear item-end (click)="openItem(item)"><ion-icon name="search"></ion-icon></button>
+            </ion-item>
+        </ion-card-content>
+    </ion-card>
 </ion-content>
