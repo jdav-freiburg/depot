@@ -28,6 +28,7 @@ import {UserModal} from "./pages/user-modal/user-modal";
 import {UsersFilterPipe} from "./pages/users/users-filter.pipe";
 import {UsersPage} from "./pages/users/users";
 import {ItemDatePickerComponent} from "./components/item-date-picker/item-date-picker";
+import {DebugService} from "./services/debug";
 
 /*const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -80,7 +81,8 @@ import {ItemDatePickerComponent} from "./components/item-date-picker/item-date-p
         { provide: ErrorHandler, useClass: IonicErrorHandler },
         UserService,
         ItemsDataService,
-        ReservationsDataService
+        ReservationsDataService,
+        DebugService
     ],
     // Modules
     imports: [

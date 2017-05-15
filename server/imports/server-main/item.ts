@@ -6,6 +6,7 @@ import {ItemState} from "../../../both/models/item-state.model";
 import {ItemStateCollection} from "../../../both/collections/item-state.collection";
 import {Observable} from "rxjs/Observable";
 import SimpleSchema from "simpl-schema";
+//import {Promise} from 'promise';
 
 
 class UpdateState {
@@ -61,6 +62,13 @@ Meteor.publish('items', function() {
     return ItemCollection.find({status: 'public'});
 });
 
+Meteor.publish('item.states.all', function() {
+    if (Roles.userHasRole(this.userId, 'admin')) {
+        return ItemStateCollection.find();
+    }
+    this.ready();
+});
+
 Meteor.publish('item.states', function(params: {itemId: string, start?: Date, end?: Date}) {
     console.log("register itemStates");
     if (!params) {
@@ -82,6 +90,8 @@ Meteor.publish('item.states', function(params: {itemId: string, start?: Date, en
     return ItemStateCollection.find(query, {sort: {timestamp: -1}});
 });
 
+const Future = Npm.require('fibers/future');
+
 Meteor.methods({
     'items.insert'({item, updateComment}: {item: Item, updateComment: string}): string {
         if (!Roles.userHasRole(this.userId, 'manager')) {
@@ -92,10 +102,13 @@ Meteor.methods({
             updateComment: String
         }).validate({item, updateComment});
 
-        let id = <string><any>ItemCollection.insert(item);
-        ItemStateCollection.insert({
+        item._id = Random.id();
+        console.log("Insert item:", item);
+        ItemCollection.insert(item);
+        console.log("Inserted id:", item._id);
+        ItemStateCollection.rawCollection().insert({
             timestamp: new Date(),
-            itemId: id,
+            itemId: item._id,
             fieldNames: ['_id', 'externalId', 'name', 'description', 'condition', 'conditionComment', 'lastService', 'tags', 'status'],
             fieldValues: [item._id, item.externalId, item.name, item.description, item.condition.toString(), item.conditionComment, item.lastService.toISOString(), item.tags.join(","), item.status],
 
@@ -103,7 +116,7 @@ Meteor.methods({
 
             comment: updateComment
         });
-        return id;
+        return item._id;
     },
     'items.update'({item, updateComment}: {item: Item, updateComment: string}): void {
         if (!Roles.userHasRole(this.userId, 'manager')) {

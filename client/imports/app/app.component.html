@@ -1,10 +1,10 @@
 <ion-menu [content]="content" [enabled]="enableMenu">
     <ion-content>
         <ion-list>
-            <ion-item *ngIf="userService.user">
-                {{userService.user.fullName}}
+            <ion-item *ngIf="userName">
+                {{userName}}
             </ion-item>
-            <button ion-item (click)="showUsers()" menuClose icon-right *ngIf="isAdmin">Users<ion-icon name="log-out"></ion-icon></button>
+            <button ion-item (click)="showUsers()" menuClose icon-right *ngIf="isAdmin">Users<ion-icon name="people"></ion-icon></button>
             <button ion-item (click)="logout()" menuClose icon-right>Logout<ion-icon name="log-out"></ion-icon></button>
         </ion-list>
     </ion-content>

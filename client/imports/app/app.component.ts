@@ -4,8 +4,9 @@ import style from "./app.component.scss";
 import {TabsPage} from "./pages/tabs/tabs";
 import {TabsNouserPage} from "./pages/tabs-nouser/tabs-nouser";
 import {UserService} from "./services/user";
-import {Nav, NavController} from "ionic-angular";
+import {Nav} from "ionic-angular";
 import {UsersPage} from "./pages/users/users";
+import {DebugService} from "./services/debug";
 
 @Component({
     selector: "app",
@@ -13,36 +14,28 @@ import {UsersPage} from "./pages/users/users";
     styles: [ style ]
 })
 export class AppComponent {
-    rootPage: any;
-    enableMenu: boolean;
+    get rootPage(): any {
+        return this.userService.user?TabsPage:TabsNouserPage;
+    }
+
+    get enableMenu(): boolean {
+        return !!this.userService.user;
+    }
 
     @ViewChild(Nav) nav;
+
+    get userName(): string {
+        if (this.userService.user) {
+            return this.userService.user.fullName;
+        }
+        return null;
+    }
 
     get isAdmin(): boolean {
         return this.userService.isAdmin;
     }
 
-    constructor(private zone: NgZone, private userService: UserService) {
-        this.rootPage = Meteor.user()?TabsPage:TabsNouserPage;
-        this.enableMenu = !!Meteor.user();
-        Accounts.onLogin((user) => {
-            zone.run(() => {
-                this.rootPage = TabsPage;
-                this.enableMenu = true;
-            });
-        });
-        Accounts.onPageLoadLogin((user) => {
-            zone.run(() => {
-                this.rootPage = TabsPage;
-                this.enableMenu = true;
-            });
-        });
-        Accounts.onLogout(() => {
-            zone.run(() => {
-                this.rootPage = TabsNouserPage;
-                this.enableMenu = false;
-            });
-        });
+    constructor(private userService: UserService, private debugService: DebugService) {
     }
 
     showUsers() {

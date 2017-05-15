@@ -35,7 +35,7 @@ export class ItemsPage implements OnInit {
             lastService: [new Date(), Validators.required],
             condition: ["100"],
             conditionComment: [""],
-            status: ["", Validators.required],
+            status: ["public", Validators.required],
             tags: [""]
         });
 
@@ -46,7 +46,7 @@ export class ItemsPage implements OnInit {
             lastService: [null, Validators.required],
             condition: ["100"],
             conditionComment: [""],
-            status: ["", Validators.required],
+            status: ["public", Validators.required],
             tags: [""]
         });
     }
