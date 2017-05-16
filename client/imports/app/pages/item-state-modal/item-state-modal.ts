@@ -13,6 +13,7 @@ import {ItemsDataService} from "../../services/items-data";
 import {ItemState} from "../../../../../both/models/item-state.model";
 import {Item, itemColor} from "../../../../../both/models/item.model";
 import {ItemStateCollection} from "../../../../../both/collections/item-state.collection";
+import {Subscription} from "rxjs/Subscription";
 
 
 @Component({
@@ -23,12 +24,8 @@ import {ItemStateCollection} from "../../../../../both/collections/item-state.co
 export class ItemStateModal implements OnInit, OnDestroy {
     itemId: string;
     item: Item;
-
-    get _titleText(): string {
-        return (this.itemId?(this.item?this.item.name:this.itemId) + " - ":"") + moment(this.viewDate).format("Y - MMM");
-    }
-
-    selectDate: boolean = false;
+    
+    canSelect: boolean = false;
     selectedDate: moment.Moment;
     selectedDay: CalendarMonthViewDay;
 
@@ -53,6 +50,13 @@ export class ItemStateModal implements OnInit, OnDestroy {
     };
 
     subscriptionHandle: Meteor.SubscriptionHandle;
+    private itemStateSubscription: Subscription;
+    private reservationsSubscription: Subscription;
+    private itemSubscription: Subscription;
+
+    get _titleText(): string {
+        return (this.itemId?(this.item?this.item.name:this.itemId) + " - ":"") + moment(this.viewDate).format("Y - MMM");
+    }
 
     constructor(private viewCtrl: ViewController, private params: NavParams, private itemDataService: ItemsDataService,
                 private reservationsDataService: ReservationsDataService) {
@@ -73,7 +77,10 @@ export class ItemStateModal implements OnInit, OnDestroy {
             this.viewDate = this.range.start;
         }
         if (this.params.get('selectDate')) {
-            this.selectDate = true;
+            this.canSelect = true;
+            if (!_.isUndefined(this.params.get('canSelect'))) {
+                this.canSelect = this.params.get('canSelect');
+            }
 
             if (this.params.get('date')) {
                 this.selectedDate = moment(this.params.get('date')).startOf('day');
@@ -97,13 +104,13 @@ export class ItemStateModal implements OnInit, OnDestroy {
         }
         let skipReservationId = this.params.get('skipReservationId');
         if (this.itemId) {
-            this.itemDataService.getItem(this.itemId).zone().subscribe((items) => {
+            this.itemSubscription = this.itemDataService.getItem(this.itemId).zone().subscribe((items) => {
                 if (items.length === 1) {
                     this.item = items[0];
                 }
             });
             if (this.params.get('showReservations')) {
-                this.reservationsDataService.getReservationsForItem(this.itemId).zone().subscribe((reservations) => {
+                this.reservationsSubscription = this.reservationsDataService.getReservationsForItem(this.itemId).zone().subscribe((reservations) => {
                     this.reservationEvents = reservations
                         .filter((reservation: Reservation) => reservation._id !== skipReservationId)
                         .map((reservation: Reservation) => {
@@ -125,7 +132,7 @@ export class ItemStateModal implements OnInit, OnDestroy {
         }
         this.dayModifier = (day: CalendarMonthViewDay) => {
             let dayDate = moment(day.date).startOf('day');
-            if (this.selectDate && this.selectedDate && this.selectedDate.isValid() && dayDate.isSame(this.selectedDate)) {
+            if (this.canSelect && this.selectedDate && this.selectedDate.isValid() && dayDate.isSame(this.selectedDate)) {
                 day.cssClass = 'cal-day-selected';
                 this.selectedDay = day;
             } else if (this.range.disableOutside && this.range.start && dayDate.isBefore(this.range.start)) {
@@ -151,11 +158,23 @@ export class ItemStateModal implements OnInit, OnDestroy {
             this.subscriptionHandle.stop();
             this.subscriptionHandle = null;
         }
+        if (this.itemStateSubscription) {
+            this.itemStateSubscription.unsubscribe();
+            this.itemStateSubscription = null
+        }
+        if (this.reservationsSubscription) {
+            this.reservationsSubscription.unsubscribe();
+            this.reservationsSubscription = null;
+        }
+        if (this.itemSubscription) {
+            this.itemSubscription.unsubscribe();
+            this.itemSubscription = null;
+        }
     }
 
     subscribeItemState() {
         this.subscriptionHandle = Meteor.subscribe('item.states', {itemId: this.itemId});
-        ItemStateCollection.find({itemId: this.itemId}).zone().subscribe((states) => {
+        this.itemStateSubscription = ItemStateCollection.find({itemId: this.itemId}).zone().subscribe((states) => {
             this.itemEvents = states
                 .map((state: ItemState) => {
                     let condition = '#000000';
@@ -188,7 +207,7 @@ export class ItemStateModal implements OnInit, OnDestroy {
     dayModifier: (day: CalendarMonthViewDay) => void;
 
     select(day: CalendarMonthViewDay) {
-        if (this.selectDate && day.cssClass !== 'cal-day-disabled') {
+        if (this.canSelect && day.cssClass !== 'cal-day-disabled') {
             this.selectedDate = moment(day.date).startOf('day');
             console.log("selected", day);
             if (this.selectedDay) {

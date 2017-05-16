@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import {Component, OnDestroy} from "@angular/core";
 import template from "./date-picker-modal.html";
 import style from "./date-picker-modal.scss";
 import * as _ from "lodash";
@@ -8,18 +8,15 @@ import {CalendarEvent, CalendarMonthViewDay } from "angular-calendar";
 import {ReservationsDataService} from "../../services/reservations-data";
 import {Reservation} from "../../../../../both/models/reservation.model";
 import {Subject} from "rxjs/Subject";
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
     selector: "date-picker-page",
     template,
     styles: [ style ]
 })
-export class DatePickerModal {
+export class DatePickerModal implements OnDestroy {
     itemId: string;
-
-    get _titleText(): string {
-        return moment(this.viewDate).format("Y - MMM");
-    }
 
     viewDate: moment.Moment;
 
@@ -45,6 +42,14 @@ export class DatePickerModal {
         'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'
     ];
 
+    canSelect: boolean = true;
+
+    private reservationsSubscription: Subscription;
+
+    get _titleText(): string {
+        return moment(this.viewDate).format("Y - MMM");
+    }
+
     constructor(private viewCtrl: ViewController, private params: NavParams, private reservationDataService: ReservationsDataService) {
         if (this.params.get('rangeStart')) {
             this.range.start = moment(this.params.get('rangeStart')).startOf('day');
@@ -58,8 +63,11 @@ export class DatePickerModal {
                 this.range.end = null;
             }
         }
-        if (_.isUndefined(this.params.get('rangeDisableOutside'))) {
+        if (!_.isUndefined(this.params.get('rangeDisableOutside'))) {
             this.range.disableOutside = this.params.get('rangeDisableOutside');
+        }
+        if (!_.isUndefined(this.params.get('canSelect'))) {
+            this.canSelect = this.params.get('canSelect');
         }
         if (this.params.get('date')) {
             this.selectedDate = moment(this.params.get('date')).startOf('day');
@@ -80,7 +88,7 @@ export class DatePickerModal {
         if (this.params.get('showReservations')) {
             let skipReservationId = this.params.get('skipReservationId');
             let reservations = this.reservationDataService.getReservations();
-            reservations.zone().subscribe((reservations) => {
+            this.reservationsSubscription = reservations.zone().subscribe((reservations) => {
                 this.events = reservations
                     .filter((reservation: Reservation) => reservation._id !== skipReservationId)
                     .map((reservation: Reservation) => {
@@ -129,10 +137,17 @@ export class DatePickerModal {
         }
     }
 
+    ngOnDestroy() {
+        if (this.reservationsSubscription) {
+            this.reservationsSubscription.unsubscribe();
+            this.reservationsSubscription = null;
+        }
+    }
+
     dayModifier: (day: CalendarMonthViewDay) => void;
 
     select(day: CalendarMonthViewDay) {
-        if (day.cssClass !== 'cal-day-disabled') {
+        if (this.canSelect && day.cssClass !== 'cal-day-disabled') {
             this.selectedDate = moment(day.date).startOf('day');
             console.log("selected", day);
             if (this.selectedDay) {

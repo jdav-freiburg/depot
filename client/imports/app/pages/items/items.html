@@ -69,8 +69,8 @@
                 <ion-item>
                     <ion-label floating>Status</ion-label>
                     <ion-select formControlName="status">
-                        <ion-option value="public" [style.color]="'green'">Public</ion-option>
-                        <ion-option value="hidden" [style.color]="'red'">Hidden</ion-option>
+                        <ion-option value="public" color="good">Public</ion-option>
+                        <ion-option value="hidden" color="danger">Hidden</ion-option>
                     </ion-select>
                 </ion-item>
             </span>
@@ -130,8 +130,8 @@
                     <ion-item>
                         <ion-label floating>Status</ion-label>
                         <ion-select formControlName="status">
-                            <ion-option value="public" [style.color]="'green'">public</ion-option>
-                            <ion-option value="hidden" [style.color]="'red'">hidden</ion-option>
+                            <ion-option value="public" color="good">public</ion-option>
+                            <ion-option value="hidden" color="danger">hidden</ion-option>
                         </ion-select>
                     </ion-item>
                 </span>
@@ -142,7 +142,7 @@
                     </ion-item>
                 </span>
                 <span class="edit-td">
-                    <button ion-button type="submit" clear icon-only [disabled]="!editItemForm.valid"><ion-icon name="create"></ion-icon></button>
+                    <button ion-button type="submit" clear icon-only [disabled]="!editItemForm.valid"><ion-icon name="checkmark"></ion-icon></button>
                 </span>
                 <span class="edit-td">
                     <button ion-button (click)="cancelEdit()" clear icon-only><ion-icon
@@ -168,8 +168,8 @@
                 <span class="edit-td">{{item.conditionComment}}</span>
                 <span class="edit-td">
                     <span [ngSwitch]="item.status">
-                        <span *ngSwitchCase="'public'" [style.color]="'green'">Public</span>
-                        <span *ngSwitchCase="'hidden'" [style.color]="'red'">Hidden</span>
+                        <span *ngSwitchCase="'public'" color="good">Public</span>
+                        <span *ngSwitchCase="'hidden'" color="danger">Hidden</span>
                     </span>
                 </span>
                 <span class="edit-td">

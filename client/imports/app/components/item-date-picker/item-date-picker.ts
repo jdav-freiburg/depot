@@ -27,6 +27,8 @@ export class ItemDatePickerComponent implements ControlValueAccessor {
     @Input() rangeStart: Date = null;
     @Input() rangeEnd: Date = null;
 
+    @Input() readonly: boolean = false;
+
     registerOnChange(fn: any): void {
         this.onChangeCallback = fn;
     }
@@ -94,7 +96,8 @@ export class ItemDatePickerComponent implements ControlValueAccessor {
             itemId: this.itemId,
             rangeStart: this.rangeStart,
             rangeEnd: this.rangeEnd,
-            selectDate: true
+            selectDate: true,
+            canSelect: !this.readonly
         });
         modalView.onDidDismiss((data) => {
             if (data) {

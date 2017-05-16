@@ -7,7 +7,7 @@
             <ion-icon name="menu"></ion-icon>
         </button>
         <ion-buttons end>
-            <button ion-button icon-only (click)="save()"><ion-icon name="create"></ion-icon></button>
+            <button ion-button icon-only *ngIf="!readonly" (click)="save()" [disabled]="!reservationForm.valid"><ion-icon name="checkmark"></ion-icon></button>
         </ion-buttons>
     </ion-navbar>
 </ion-header>
@@ -27,9 +27,11 @@
             <ion-input type="text" formControlName="name" [readonly]="readonly"></ion-input>
         </ion-item>
         <reservation-date-picker formControlName="start" label="Start" [rangeEnd]="reservationForm.controls.end.value"
-                        [showReservations]="true" [skipReservationId]="editId"></reservation-date-picker>
+                                 [rangeStart]="readonly?reservationForm.controls.start.value:null"
+                                 [showReservations]="true" [skipReservationId]="editId" [readonly]="readonly"></reservation-date-picker>
         <reservation-date-picker formControlName="end" label="End" [rangeStart]="reservationForm.controls.start.value"
-                        [showReservations]="true" [skipReservationId]="editId"></reservation-date-picker>
+                                 [rangeEnd]="readonly?reservationForm.controls.end.value:null"
+                                 [showReservations]="true" [skipReservationId]="editId" [readonly]="readonly"></reservation-date-picker>
         <ion-item>
             <ion-label floating>Contact</ion-label>
             <ion-input type="text" formControlName="contact" [readonly]="readonly"></ion-input>
@@ -41,15 +43,14 @@
             <ion-searchbar [(ngModel)]="filter"></ion-searchbar>
             <ion-item *ngFor="let item of items | itemsfilter:filter">
                 <!--<ion-avatar item-left><img src="{{item.picture}}"></ion-avatar>-->
-                <ion-checkbox item-left [(ngModel)]="item.selected" [disabled]="!item.available && !item.selected"></ion-checkbox>
+                <ion-checkbox item-left [(ngModel)]="item.selected" [disabled]="!item.available || readonly"></ion-checkbox>
                 <ion-label>
                     <h2>{{item.name}}</h2>
                     <h3>{{item.tags}}</h3>
-                    <p>
-                        {{item.description}}
-                    </p>
+                    <p>{{item.description}}</p>
                 </ion-label>
                 <ion-badge item-right *ngIf="!item.available">Not available</ion-badge>
+                <ion-badge item-right *ngIf="item.deselected" color="danger">Removed</ion-badge>
                 <button ion-button icon-only clear item-end (click)="openItem(item)"><ion-icon name="search"></ion-icon></button>
             </ion-item>
         </ion-card-content>

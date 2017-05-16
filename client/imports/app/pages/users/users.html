@@ -39,7 +39,10 @@
                     <span *ngFor="let role of user.roles">{{role}}</span>
                 </span>
                 <span class="edit-td">
-                    <button ion-button (click)="editItem(user._id)" clear icon-only><ion-icon name="create"></ion-icon></button>
+                    <button ion-button (click)="editItem(user._id)" clear icon-only>
+                        <ion-icon *ngIf="isAdmin" name="create"></ion-icon>
+                        <ion-icon *ngIf="!isAdmin" name="search"></ion-icon>
+                    </button>
                 </span>
             </div>
         </ng-container>

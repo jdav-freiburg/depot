@@ -7,6 +7,7 @@ import {UserService} from "./services/user";
 import {Nav} from "ionic-angular";
 import {UsersPage} from "./pages/users/users";
 import {DebugService} from "./services/debug";
+import {UserModal} from "./pages/user-modal/user-modal";
 
 @Component({
     selector: "app",
@@ -36,6 +37,10 @@ export class AppComponent {
     }
 
     constructor(private userService: UserService, private debugService: DebugService) {
+    }
+
+    editSelf() {
+        this.nav.push(UserModal, {userId: this.userService.user._id});
     }
 
     showUsers() {

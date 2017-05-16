@@ -6,36 +6,7 @@ import {ItemState} from "../../../both/models/item-state.model";
 import {ItemStateCollection} from "../../../both/collections/item-state.collection";
 import {Observable} from "rxjs/Observable";
 import SimpleSchema from "simpl-schema";
-//import {Promise} from 'promise';
-
-
-class UpdateState {
-    public updateState: ItemState;
-    private valueRef: Item;
-    public updateData: {[key: string]: any} = {};
-
-    constructor(itemRef: Item, userId: string, updateComment: string) {
-        this.valueRef = itemRef;
-        this.updateState = {
-            timestamp: new Date(),
-            itemId: itemRef._id,
-            fieldNames: [],
-            fieldValues: [],
-
-            userId: userId,
-
-            comment: updateComment
-        };
-    }
-
-    public setValue(name: string, value: any, valueStr: string = null) {
-        if (value !== undefined && this.valueRef[name] !== value) {
-            this.updateData[name] = value;
-            this.updateState.fieldNames.push(name);
-            this.updateState.fieldValues.push(valueStr === null ? value : valueStr);
-        }
-    }
-}
+import * as moment from 'moment';
 
 ItemCollection.allow({
     insert(userId: string, doc: Item): boolean {
@@ -134,24 +105,68 @@ Meteor.methods({
             throw new Meteor.Error('id', 'Invalid id');
         }
 
-        let updateState = new UpdateState(itemRef, this.userId, updateComment);
-        updateState.setValue('externalId', item.externalId);
-        updateState.setValue('name', item.name);
-        updateState.setValue('description', item.description);
-        updateState.setValue('condition', item.condition);
-        updateState.setValue('conditionComment', item.conditionComment);
-        updateState.setValue('lastService', item.lastService, item.lastService.toISOString());
-        if (itemRef.picture !== item.picture) {
-            updateState.updateData['picture'] = item.picture;
-        }
-        updateState.setValue('tags', item.tags, item.tags.join(","));
-        updateState.setValue('status', item.status);
+        let updateState = {
+            timestamp: new Date(),
+            itemId: itemRef._id,
+            fieldNames: [],
+            fieldValues: [],
 
-        if (updateState.updateState.fieldNames.length !== 0) {
-            console.log("update item", item._id, updateState.updateData);
-            ItemCollection.update({_id: item._id}, {$set: updateState.updateData});
-            console.log("insert itemState", updateState.updateState);
-            ItemStateCollection.insert(updateState.updateState);
+            userId: this.userId,
+
+            comment: updateComment
+        };
+
+        let updateData: Item|any = {};
+
+        if (item.externalId !== itemRef.externalId) {
+            updateData.externalId = item.externalId;
+            updateState.fieldNames.push('externalId');
+            updateState.fieldValues.push(item.externalId);
+        }
+        if (item.name !== itemRef.name) {
+            updateData.name = item.name;
+            updateState.fieldNames.push('name');
+            updateState.fieldValues.push(item.name);
+        }
+        if (item.description !== itemRef.description) {
+            updateData.description = item.description;
+            updateState.fieldNames.push('description');
+            updateState.fieldValues.push(item.description);
+        }
+        if (item.condition !== itemRef.condition) {
+            updateData.condition = item.condition;
+            updateState.fieldNames.push('condition');
+            updateState.fieldValues.push(item.condition);
+        }
+        if (item.conditionComment !== itemRef.conditionComment) {
+            updateData.condition = item.conditionComment;
+            updateState.fieldNames.push('conditionComment');
+            updateState.fieldValues.push(item.conditionComment);
+        }
+        if (!moment(item.lastService).isSame(moment(itemRef.lastService))) {
+            updateData.lastService = moment(item.lastService).toDate();
+            updateState.fieldNames.push('lastService');
+            updateState.fieldValues.push(updateData.lastService.toISOString());
+        }
+        if (item.picture !== itemRef.picture) {
+            updateData.picture = item.picture;
+        }
+        if (_.xor(item.tags, itemRef.tags).length !== 0) {
+            updateData.tags = item.tags;
+            updateState.fieldNames.push('tags');
+            updateState.fieldValues.push(_.join(item.tags, ','));
+        }
+        if (item.status !== itemRef.status) {
+            updateData.status = item.status;
+            updateState.fieldNames.push('status');
+            updateState.fieldValues.push(item.status);
+        }
+
+        if (updateState.fieldNames.length !== 0) {
+            console.log("update item", item._id, updateData);
+            ItemCollection.update({_id: item._id}, {$set: updateData});
+            console.log("insert itemState", updateState);
+            ItemStateCollection.insert(updateState);
         }
     }
 });

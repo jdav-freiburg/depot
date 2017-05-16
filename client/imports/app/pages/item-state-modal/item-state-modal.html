@@ -3,11 +3,11 @@
         <ion-title>
             {{_titleText}}
         </ion-title>
-        <ion-buttons end *ngIf="selectDate">
+        <ion-buttons end>
             <button ion-button icon-only (click)="cancel()">
                 <ion-icon name="close"></ion-icon>
             </button>
-            <button ion-button icon-only (click)="save()">
+            <button ion-button icon-only *ngIf="canSelect" (click)="save()">
                 <ion-icon name="checkmark"></ion-icon>
             </button>
         </ion-buttons>

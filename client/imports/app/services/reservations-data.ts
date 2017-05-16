@@ -15,7 +15,7 @@ export class ReservationsDataService {
     }
 
     public getReservations(): ObservableCursor<Reservation> {
-        return ReservationCollection.find({});
+        return ReservationCollection.find({}, {sort: {start: -1}});
     }
 
     public add(item: Reservation, callback?: Function): void {
@@ -74,13 +74,19 @@ export class ReservationsDataService {
         let result = ReservationCollection.remove({_id: id});
         result.subscribe((result) => {
             console.log("reservation remove:", result);
+            if (callback) {
+                callback();
+            }
         }, (error) => {
             console.log("reservation remove error:", error);
+            if (callback) {
+                callback(error);
+            }
         });
         return result;
     }
 
-    getReservationsForItem(itemId: string) {
+    getReservationsForItem(itemId: string): ObservableCursor<Reservation> {
         return ReservationCollection.find({itemIds: itemId});
     }
 }

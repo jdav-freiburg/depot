@@ -9,6 +9,10 @@
 <ion-content>
     <form [formGroup]="signupForm" (ngSubmit)="doSignup($event)">
         <ion-item>
+            <ion-label floating>Username</ion-label>
+            <ion-input type="text" formControlName="username"></ion-input>
+        </ion-item>
+        <ion-item>
             <ion-label floating>E-Mail</ion-label>
             <ion-input type="email" formControlName="email"></ion-input>
         </ion-item>

@@ -20,6 +20,10 @@ export class UsersPage implements OnInit, OnDestroy {
     users: Observable<User[]>;
     private usersHandle: Subscription;
 
+    get isAdmin(): boolean {
+        return this.userService.isAdmin;
+    }
+
     constructor(private navCtrl: NavController, private ngZone: NgZone, private userService: UserService) {
         this.usersHandle = userService.usersChange.subscribe((users) => {
             console.log("users:", users);

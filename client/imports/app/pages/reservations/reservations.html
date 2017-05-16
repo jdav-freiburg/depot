@@ -28,7 +28,7 @@
             <span class="edit-th">Items</span>
             <span class="edit-th"></span>
         </div>
-        <ng-container *ngFor="let reservation of data | async | reservationsfilter:filter">
+        <ng-container *ngFor="let reservation of reservations | reservationsfilter:filter">
             <div class="edit-tr">
                 <span class="edit-td">{{reservation.type}}</span>
                 <span class="edit-td">{{reservation.name}}</span>
@@ -39,7 +39,10 @@
                 <span class="edit-td">{{reservation.contact}}</span>
                 <span class="edit-td">{{reservation.items}}</span>
                 <span class="edit-td">
-                    <button ion-button (click)="editItem(reservation._id)" clear icon-only><ion-icon name="create"></ion-icon></button>
+                    <button ion-button (click)="editItem(reservation._id)" clear icon-only>
+                        <ion-icon *ngIf="isAdmin || isOwner(reservation.userId)" name="create"></ion-icon>
+                        <ion-icon *ngIf="!isAdmin && !isOwner(reservation.userId)" name="search"></ion-icon>
+                    </button>
                 </span>
             </div>
         </ng-container>

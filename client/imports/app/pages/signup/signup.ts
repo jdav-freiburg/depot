@@ -13,7 +13,8 @@ export class SignupPage {
 
     constructor(private fb: FormBuilder) {
         this.signupForm = fb.group({
-            email: ["", Validators.required],
+            username: ["", Validators.required],
+            email: ["", Validators.email],
             password: ["", Validators.required],
             password2: ["", Validators.required],
             phone: ["", Validators.required],
@@ -32,11 +33,13 @@ export class SignupPage {
     }
 
     doSignup(event) {
+        let username = this.signupForm.controls['username'].value;
         let email = this.signupForm.controls['email'].value;
         let password = this.signupForm.controls['password'].value;
         let phone = this.signupForm.controls['phone'].value;
         let fullName = this.signupForm.controls['fullName'].value;
         Accounts.createUser(<Meteor.User>{
+            username: username,
             email: email,
             password: password,
             phone: phone,

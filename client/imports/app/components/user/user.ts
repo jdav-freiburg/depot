@@ -1,4 +1,4 @@
-import {Component, Input, NgZone, OnChanges, OnInit, SimpleChanges} from "@angular/core";
+import {Component, Input, NgZone, OnChanges, OnDestroy, OnInit, SimpleChanges} from "@angular/core";
 import template from "./user.html";
 import style from "./user.scss";
 import * as _ from "lodash";
@@ -12,9 +12,10 @@ import {UserModal} from "../../pages/user-modal/user-modal";
     template,
     styles: [ style ]
 })
-export class UserComponent implements OnInit, OnChanges {
+export class UserComponent implements OnInit, OnChanges, OnDestroy {
     @Input() userId: string = "";
     user: User = null;
+    private observationHandle: Meteor.LiveQueryHandle;
 
     constructor(private navCtrl: NavController, private userService: UserService, private ngZone: NgZone) {
     }
@@ -24,8 +25,15 @@ export class UserComponent implements OnInit, OnChanges {
         console.log("Initial user for ", this.userId, ':', this.user);
     }
 
+    ngOnDestroy() {
+        if (this.observationHandle) {
+            this.observationHandle.stop();
+            this.observationHandle = null;
+        }
+    }
+
     ngOnChanges(changes: SimpleChanges) {
-        Meteor.users.find(this.userId).observe((users) => {
+        this.observationHandle = Meteor.users.find(this.userId).observe((users) => {
             this.ngZone.run(() => {
                 if (users.length > 0) {
                     this.user = users[0];

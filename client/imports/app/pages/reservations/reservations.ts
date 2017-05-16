@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, OnDestroy, OnInit} from "@angular/core";
 import { Observable } from "rxjs";
 import template from "./reservations.html";
 import style from "./reservations.scss";
@@ -8,26 +8,46 @@ import {ReservationsDataService} from "../../services/reservations-data";
 import {Reservation} from "../../../../../both/models/reservation.model";
 import {NavController} from "ionic-angular";
 import {ReservationPage} from "../reservation/reservation";
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
     selector: "reservations-page",
     template,
     styles: [ style ]
 })
-export class ReservationsPage implements OnInit {
-    data: Observable<Reservation[]>;
+export class ReservationsPage implements OnInit, OnDestroy {
+    reservations: Reservation[];
 
     filter: string = "";
+    private reservationSubscription: Subscription;
+
+    get isAdmin(): boolean {
+        return this.users.isAdmin;
+    }
+
+    isOwner(userId): boolean {
+        return this.users.user && this.users.user._id === userId;
+    }
+
+    get isManager(): boolean {
+        return this.users.isManager;
+    }
 
     constructor(private reservationsDataService: ReservationsDataService, private users: UserService,
                 private navCtrl: NavController) {
     }
 
     ngOnInit() {
-        this.data = this.reservationsDataService.getReservations().zone();
-        this.data.subscribe((data) => {
-            console.log("Reservations:", data);
+        this.reservationSubscription = this.reservationsDataService.getReservations().zone().subscribe((reservations) => {
+            this.reservations = reservations;
         });
+    }
+
+    ngOnDestroy() {
+        if (this.reservationSubscription) {
+            this.reservationSubscription.unsubscribe();
+            this.reservationSubscription = null;
+        }
     }
 
     newItem() {
@@ -35,6 +55,6 @@ export class ReservationsPage implements OnInit {
     }
 
     editItem(id: string) {
-        this.navCtrl.push(ReservationPage, {id: id});
+        this.navCtrl.push(ReservationPage, {reservationId: id});
     }
 }

@@ -60,6 +60,7 @@ export class UserModal implements OnInit, OnDestroy {
     }
 
     userForm: FormGroup;
+    usernameForm: FormGroup;
     userPasswordForm: FormGroup;
 
     newEmailAddress: string = "";
@@ -84,10 +85,11 @@ export class UserModal implements OnInit, OnDestroy {
                 private fb: FormBuilder, private ngZone: NgZone, private userService: UserService) {
         this.userId = this.params.get('userId');
         this.userForm = fb.group({
-            username: [""],
-            email: ["", Validators.required],
             fullName: ["", Validators.required],
             phone: ["", Validators.required],
+        });
+        this.usernameForm = fb.group({
+            username: [""],
         });
         this.userPasswordForm = fb.group({
             oldPassword: [""],
@@ -107,7 +109,7 @@ export class UserModal implements OnInit, OnDestroy {
             };
         });
         if (!this.hadInitialData) {
-            this.userForm.controls['username'].setValue(this.user.username);
+            this.usernameForm.controls['username'].setValue(this.user.username);
             this.userForm.controls['fullName'].setValue(this.user.fullName);
             this.userForm.controls['phone'].setValue(this.user.phone);
             this.roles = this.rolesDef.map((roleDef) => {
@@ -151,12 +153,15 @@ export class UserModal implements OnInit, OnDestroy {
         };
     }
 
-    save() {
+    savePersonal() {
         Meteor.users.update({_id: this.user._id}, {$set: {
-            username: this.userForm.controls['username'].value,
             fullName: this.userForm.controls['fullName'].value,
             phone: this.userForm.controls['phone'].value,
         }});
+    }
+
+    saveUsername() {
+        Meteor.call('users.setUsername', {userId: this.user._id, username: this.userForm.controls['username'].value});
     }
 
     saveEmail(email: EditEmail) {

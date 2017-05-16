@@ -96,6 +96,21 @@ Meteor.methods({
         Accounts.addEmail(userId, email, false);
         console.log("addedEmail:", this.userId, userId, email);
     },
+    'users.setUsername'({userId, name}: {userId: string, name: string}): void {
+        new SimpleSchema({
+            userId: String,
+            name: String
+        }).validate({
+            userId,
+            name,
+        });
+
+        if (!Roles.userHasRole(this.userId, 'admin')) {
+            throw new Meteor.Error('unauthorized', "Only allowed by admin");
+        }
+
+        Accounts.setUsername(userId, name);
+    },
     'users.removeEmail'({userId, email}: { userId: string, email: string}): void {
         new SimpleSchema({
             userId: String,
