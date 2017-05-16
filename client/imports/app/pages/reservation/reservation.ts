@@ -46,7 +46,7 @@ export class ReservationPage implements OnInit, OnDestroy {
 
     editId: string;
     get readonly(): boolean {
-        return !this.reservation || !this.users.user || (this.reservation.userId !== this.users.user._id && !this.users.isAdmin);
+        return this.editId && (!this.reservation || !this.users.user || (this.reservation.userId !== this.users.user._id && !this.users.isAdmin));
     }
     private loading: Loading;
     private loadingCount: number = 0;
