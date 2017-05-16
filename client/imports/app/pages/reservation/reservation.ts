@@ -51,6 +51,8 @@ export class ReservationPage implements OnInit, OnDestroy {
     private loading: Loading;
     private loadingCount: number = 0;
 
+    private isCreating: boolean = false;
+
     originalSelectedItemIds: string[] = [];
     selectedItemIds: string[] = [];
     items: SelectableItem[] = [];
@@ -117,6 +119,7 @@ export class ReservationPage implements OnInit, OnDestroy {
     updateUnavailableItems() {
         let removedItems = [];
         this.items.forEach((item) => {
+            item.deselected = false;
             if (!item.available && item.selected) {
                 item.selected = false;
                 item.deselected = true;
@@ -143,6 +146,9 @@ export class ReservationPage implements OnInit, OnDestroy {
         if (start && end) {
             console.log("Fetching items in:", start, end);
             this.siblingReservationsHandle = this.reservationsDataService.getReservationsIn(start, end).zone().subscribe((reservations) => {
+                if (this.isCreating) {
+                    return;
+                }
                 this.unavailableItems = {};
                 _.forEach(reservations, (reservation) => {
                     if (reservation._id !== this.editId) {
@@ -185,14 +191,8 @@ export class ReservationPage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.startLoading();
-        let initialLoaded = false;
         let items = this.itemsDataService.getItems().zone();
         this.itemsSubscription = items.subscribe((items) => {
-            if (!initialLoaded) {
-                this.endLoading();
-                initialLoaded = true;
-            }
             let self = this;
             this.items = _.map(items, (item) => {
                 let ext = {
@@ -274,9 +274,11 @@ export class ReservationPage implements OnInit, OnDestroy {
                 itemIds: this.selectedItemIds
             };
             console.log("Add: ", reservationData);
+            this.isCreating = true;
             this.reservationsDataService.add(reservationData, (err) => {
                 this.editId = reservationData._id;
                 console.log("Added", reservationData, "reloading");
+                this.isCreating = false;
                 this.load();
                 this.endLoading();
                 if (callback) {
