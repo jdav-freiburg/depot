@@ -9,6 +9,7 @@ import {Reservation} from "../../../../../both/models/reservation.model";
 import {AlertController, NavController} from "ionic-angular";
 import {ReservationPage} from "../reservation/reservation";
 import {Subscription} from "rxjs/Subscription";
+import * as moment from 'moment';
 
 @Component({
     selector: "reservations-page",
@@ -58,10 +59,17 @@ export class ReservationsPage implements OnInit, OnDestroy {
         this.navCtrl.push(ReservationPage, {reservationId: id});
     }
 
-    removeReservation(reservation: Reservation) {
+    canDelete(reservation: Reservation) {
+        return this.isAdmin || (this.isOwner(reservation.userId) && moment(reservation.start).isAfter(moment()))
+    }
+
+    deleteReservation(reservation: Reservation) {
+        if (!this.canDelete(reservation)) {
+            return;
+        }
         this.alertCtrl.create({
-            title: 'Remove ' + reservation.name + '?',
-            message: 'Do you really want to remove reservation ' + reservation.name + '?',
+            title: 'Delete ' + reservation.name + '?',
+            message: 'Do you really want to delete reservation ' + reservation.name + '?',
             buttons: [
                 {
                     text: 'No',

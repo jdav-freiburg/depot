@@ -46,7 +46,7 @@
                     </button>
                 </span>
                 <span class="edit-td">
-                    <button ion-button (click)="removeReservation(reservation)" clear icon-only *ngIf="isAdmin || isOwner(reservation.userId)">
+                    <button ion-button (click)="deleteReservation(reservation)" clear icon-only *ngIf="canDelete(reservation)">
                         <ion-icon name="trash"></ion-icon>
                     </button>
                 </span>

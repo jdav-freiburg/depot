@@ -352,12 +352,15 @@ export class ReservationPage implements OnInit, OnDestroy {
     }
 
     openItem(item: Item) {
+        this.forceClose = true;
         this.navCtrl.push(ItemStateModal, {
             showReservations: true,
             itemId: item._id,
             skipReservationId: this.editId,
             rangeStart: this.startDate,
             rangeEnd: this.endDate,
+        }).then(() => {
+            this.forceClose = false;
         });
     }
 }
