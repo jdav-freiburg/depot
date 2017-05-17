@@ -1,5 +1,4 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
-import { Observable } from "rxjs";
 import template from "./reservation.html";
 import style from "./reservation.scss";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
@@ -15,7 +14,6 @@ import * as moment from 'moment';
 import {Item} from "../../../../../both/models/item.model";
 import {ItemsDataService} from "../../services/items-data";
 import {ItemStateModal} from "../item-state-modal/item-state-modal";
-import {ReservationCollection} from "../../../../../both/collections/reservation.collection";
 import {Subscription} from "rxjs/Subscription";
 
 interface SelectableItem extends Item {
@@ -71,6 +69,14 @@ export class ReservationPage implements OnInit, OnDestroy {
 
     get endDate(): Date {
         let val = moment(this.reservationForm.controls['end'].value);
+        if (val.isValid()) {
+            return val.toDate();
+        }
+        return null;
+    }
+
+    get endDateEnd(): Date {
+        let val = moment(this.reservationForm.controls['end'].value).endOf('day');
         if (val.isValid()) {
             return val.toDate();
         }
@@ -142,11 +148,13 @@ export class ReservationPage implements OnInit, OnDestroy {
             this.siblingReservationsHandle = null;
         }
         let start = this.startDate;
-        let end = this.endDate;
+        let end = this.endDateEnd;
         if (start && end) {
             console.log("Fetching items in:", start, end);
+            this.unavailableItems = {};
             this.siblingReservationsHandle = this.reservationsDataService.getReservationsIn(start, end).zone().subscribe((reservations) => {
                 if (this.isCreating) {
+                    console.log("Is creating, not updating");
                     return;
                 }
                 this.unavailableItems = {};
