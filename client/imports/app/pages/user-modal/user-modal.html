@@ -152,7 +152,7 @@
                 <ion-label>
                     {{role.roleDef.name}}
                 </ion-label>
-                <ion-checkbox [(ngModel)]="role.isMember" [disabled]="!canEdit" item-left></ion-checkbox>
+                <ion-checkbox [(ngModel)]="role.isMember" [disabled]="!user || !canEdit || !isAdmin" item-left></ion-checkbox>
             </ion-item>
         </ion-card-content>
     </ion-card>
