@@ -7,7 +7,7 @@
             <ion-icon name="menu"></ion-icon>
         </button>
         <ion-buttons end>
-            <button ion-button icon-only (click)="newItem()">
+            <button ion-button icon-only (click)="newReservation()">
                 <ion-icon name="calendar"></ion-icon>
             </button>
         </ion-buttons>
@@ -27,6 +27,7 @@
             <span class="edit-th">Contact</span>
             <span class="edit-th">Items</span>
             <span class="edit-th"></span>
+            <span class="edit-th"></span>
         </div>
         <ng-container *ngFor="let reservation of reservations | reservationsfilter:filter">
             <div class="edit-tr">
@@ -39,9 +40,14 @@
                 <span class="edit-td">{{reservation.contact}}</span>
                 <span class="edit-td">{{reservation.items}}</span>
                 <span class="edit-td">
-                    <button ion-button (click)="editItem(reservation._id)" clear icon-only>
+                    <button ion-button (click)="editReservation(reservation._id)" clear icon-only>
                         <ion-icon *ngIf="isAdmin || isOwner(reservation.userId)" name="create"></ion-icon>
                         <ion-icon *ngIf="!isAdmin && !isOwner(reservation.userId)" name="search"></ion-icon>
+                    </button>
+                </span>
+                <span class="edit-td">
+                    <button ion-button (click)="removeReservation(reservation)" clear icon-only *ngIf="isAdmin || isOwner(reservation.userId)">
+                        <ion-icon name="trash"></ion-icon>
                     </button>
                 </span>
             </div>

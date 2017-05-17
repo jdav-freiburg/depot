@@ -6,7 +6,7 @@ import * as _ from "lodash";
 import {UserService} from "../../services/user";
 import {ReservationsDataService} from "../../services/reservations-data";
 import {Reservation} from "../../../../../both/models/reservation.model";
-import {NavController} from "ionic-angular";
+import {AlertController, NavController} from "ionic-angular";
 import {ReservationPage} from "../reservation/reservation";
 import {Subscription} from "rxjs/Subscription";
 
@@ -34,7 +34,7 @@ export class ReservationsPage implements OnInit, OnDestroy {
     }
 
     constructor(private reservationsDataService: ReservationsDataService, private users: UserService,
-                private navCtrl: NavController) {
+                private navCtrl: NavController, private alertCtrl: AlertController) {
     }
 
     ngOnInit() {
@@ -50,11 +50,30 @@ export class ReservationsPage implements OnInit, OnDestroy {
         }
     }
 
-    newItem() {
+    newReservation() {
         this.navCtrl.push(ReservationPage);
     }
 
-    editItem(id: string) {
+    editReservation(id: string) {
         this.navCtrl.push(ReservationPage, {reservationId: id});
+    }
+
+    removeReservation(reservation: Reservation) {
+        this.alertCtrl.create({
+            title: 'Remove ' + reservation.name + '?',
+            message: 'Do you really want to remove reservation ' + reservation.name + '?',
+            buttons: [
+                {
+                    text: 'No',
+                    role: 'cancel'
+                },
+                {
+                    text: 'Yes',
+                    handler: () => {
+                        this.reservationsDataService.remove(reservation._id);
+                    }
+                }
+            ]
+        }).present();
     }
 }
