@@ -2,9 +2,15 @@
     <ion-content>
         <ion-list>
             <button ion-item (click)="editSelf()" menuClose icon-right *ngIf="userName">{{userName}}<ion-icon name="create"></ion-icon></button>
-            <button ion-item (click)="showUsers()" menuClose icon-right *ngIf="isAdmin">Users<ion-icon name="people"></ion-icon></button>
-            <button ion-item (click)="logout()" menuClose icon-right>Logout<ion-icon name="log-out"></ion-icon></button>
+            <button ion-item (click)="showUsers()" menuClose icon-right *ngIf="isAdmin">{{'SIDEMENU.USERS' | translate}}<ion-icon name="people"></ion-icon></button>
+            <button ion-item (click)="logout()" menuClose icon-right>{{'SIDEMENU.LOGOUT' | translate}}<ion-icon name="log-out"></ion-icon></button>
         </ion-list>
+        <ion-footer>
+            <ion-select [(ngModel)]="language">
+                <ion-option value="en">English</ion-option>
+                <ion-option value="de">Deutsch</ion-option>
+            </ion-select>
+        </ion-footer>
     </ion-content>
 </ion-menu>
 

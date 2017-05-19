@@ -1,6 +1,6 @@
 <ion-header>
     <ion-navbar>
-        <ion-title>
+        <ion-title translate="ITEMS_PAGE.TITLE">
             Items
         </ion-title>
         <button ion-button menuToggle>
@@ -10,17 +10,17 @@
 </ion-header>
 
 <ion-content>
-    <ion-searchbar [(ngModel)]="filter"></ion-searchbar>
+    <ion-searchbar [(ngModel)]="filter" [placeholder]="'ITEMS_PAGE.FILTER' | translate"></ion-searchbar>
     <div class="edit-table">
         <div class="edit-tr">
-            <span class="edit-th">externalId</span>
-            <span class="edit-th">Name</span>
-            <span class="edit-th">Description</span>
-            <span class="edit-th">Last Service</span>
-            <span class="edit-th">Condition</span>
-            <span class="edit-th">Condition Comment</span>
-            <span class="edit-th">Status</span>
-            <span class="edit-th">Tags</span>
+            <span class="edit-th">{{'ITEMS_PAGE.EXTERNAL_ID' | translate}}</span>
+            <span class="edit-th">{{'ITEMS_PAGE.NAME' | translate}}</span>
+            <span class="edit-th">{{'ITEMS_PAGE.DESCRIPTION' | translate}}</span>
+            <span class="edit-th">{{'ITEMS_PAGE.LAST_SERVICE' | translate}}</span>
+            <span class="edit-th">{{'ITEMS_PAGE.CONDITION' | translate}}</span>
+            <span class="edit-th">{{'ITEMS_PAGE.CONDITION_COMMENT' | translate}}</span>
+            <span class="edit-th">{{'ITEMS_PAGE.STATUS' | translate}}</span>
+            <span class="edit-th">{{'ITEMS_PAGE.TAGS' | translate}}</span>
             <span class="edit-th" *ngIf="isManager"></span>
             <span class="edit-th" *ngIf="isManager"></span>
             <span class="edit-th"></span>
@@ -28,55 +28,55 @@
         <form class="edit-tr" [formGroup]="newItemForm" (ngSubmit)="add($event)" *ngIf="isManager">
             <span class="edit-td">
                 <ion-item>
-                    <ion-label floating>External ID</ion-label>
+                    <ion-label floating>{{'ITEMS_PAGE.EXTERNAL_ID' | translate}}</ion-label>
                     <ion-input type="text" formControlName="externalId"></ion-input>
                 </ion-item>
             </span>
             <span class="edit-td">
                 <ion-item>
-                    <ion-label floating>Name</ion-label>
+                    <ion-label floating>{{'ITEMS_PAGE.NAME' | translate}}</ion-label>
                     <ion-input type="text" formControlName="name"></ion-input>
                 </ion-item>
             </span>
             <span class="edit-td">
                 <ion-item>
-                    <ion-label floating>Description</ion-label>
+                    <ion-label floating>{{'ITEMS_PAGE.DESCRIPTION' | translate}}</ion-label>
                     <ion-input type="text" formControlName="description"></ion-input>
                 </ion-item>
             </span>
             <span class="edit-td">
                 <span class="edit-td">
-                    <item-date-picker formControlName="lastService" label="Last Service"></item-date-picker>
+                    <item-date-picker formControlName="lastService" [label]="'ITEMS_PAGE.LAST_SERVICE' | translate"></item-date-picker>
                 </span>
             </span>
             <span class="edit-td">
                 <ion-item>
-                    <ion-label floating>Condition</ion-label>
+                    <ion-label floating>{{'ITEMS_PAGE.CONDITION' | translate}}</ion-label>
                     <ion-select formControlName="condition">
-                        <ion-option value="100" [style.color]="itemColor(100)">Ok</ion-option>
-                        <ion-option value="50" [style.color]="itemColor(50)">Damaged</ion-option>
-                        <ion-option value="0" [style.color]="itemColor(0)">Broken</ion-option>
+                        <ion-option value="100" [style.color]="itemColor(100)">{{'ITEM.CONDITION.100' | translate}}</ion-option>
+                        <ion-option value="50" [style.color]="itemColor(50)">{{'ITEM.CONDITION.50' | translate}}</ion-option>
+                        <ion-option value="0" [style.color]="itemColor(0)">{{'ITEM.CONDITION.0' | translate}}</ion-option>
                     </ion-select>
                 </ion-item>
             </span>
             <span class="edit-td">
                 <ion-item>
-                    <ion-label floating>Condition Comment</ion-label>
+                    <ion-label floating>{{'ITEMS_PAGE.CONDITION_COMMENT' | translate}}</ion-label>
                     <ion-input type="text" formControlName="conditionComment"></ion-input>
                 </ion-item>
             </span>
             <span class="edit-td">
                 <ion-item>
-                    <ion-label floating>Status</ion-label>
+                    <ion-label floating>{{'ITEMS_PAGE.STATUS' | translate}}</ion-label>
                     <ion-select formControlName="status">
-                        <ion-option value="public" color="good">Public</ion-option>
-                        <ion-option value="hidden" color="danger">Hidden</ion-option>
+                        <ion-option value="public" color="good">{{'ITEM.STATUS.PUBLIC' | translate}}</ion-option>
+                        <ion-option value="hidden" color="danger">{{'ITEM.STATUS.HIDDEN' | translate}}</ion-option>
                     </ion-select>
                 </ion-item>
             </span>
             <span class="edit-td">
                 <ion-item>
-                    <ion-label floating>Tags</ion-label>
+                    <ion-label floating>{{'ITEMS_PAGE.TAGS' | translate}}</ion-label>
                     <ion-input type="text" formControlName="tags"></ion-input>
                 </ion-item>
             </span>
@@ -91,53 +91,55 @@
                   (ngSubmit)="save(item, $event)">
                 <span class="edit-td">
                     <ion-item>
-                        <ion-label floating>External ID</ion-label>
+                        <ion-label floating>{{'ITEMS_PAGE.EXTERNAL_ID' | translate}}</ion-label>
                         <ion-input type="text" formControlName="externalId"></ion-input>
                     </ion-item>
                 </span>
                 <span class="edit-td">
                     <ion-item>
-                        <ion-label floating>Name</ion-label>
+                        <ion-label floating>{{'ITEMS_PAGE.NAME' | translate}}</ion-label>
                         <ion-input type="text" formControlName="name"></ion-input>
                     </ion-item>
                 </span>
                 <span class="edit-td">
                     <ion-item>
-                        <ion-label floating>Description</ion-label>
+                        <ion-label floating>{{'ITEMS_PAGE.DESCRIPTION' | translate}}</ion-label>
                         <ion-input type="text" formControlName="description"></ion-input>
                     </ion-item>
                 </span>
                 <span class="edit-td">
-                    <item-date-picker [itemId]="item._id" formControlName="lastService" label="Last Service"></item-date-picker>
+                    <item-date-picker [itemId]="item._id" formControlName="lastService" [label]="'ITEMS_PAGE.LAST_SERVICE' | translate"></item-date-picker>
                 </span>
                 <span class="edit-td">
                     <ion-item>
-                        <ion-label floating>Condition</ion-label>
+                        <ion-label floating>{{'ITEMS_PAGE.CONDITION' | translate}}</ion-label>
                         <ion-select formControlName="condition">
-                            <ion-option value="100" [style.color]="itemColor(100)">Ok</ion-option>
-                            <ion-option value="50" [style.color]="itemColor(50)">Damaged</ion-option>
-                            <ion-option value="0" [style.color]="itemColor(0)">Broken</ion-option>
+                            <ion-option *ngFor="let option of translateHelper.itemConditionOptions" [value]="option.value" [style.color]="option.color">{{option.text}}</ion-option>
+                            <!--<ion-option value="100" [style.color]="itemColor(100)">{{'ITEM.CONDITION.100' | translate}}</ion-option>
+                            <ion-option value="50" [style.color]="itemColor(50)">{{'ITEM.CONDITION.50' | translate}}</ion-option>
+                            <ion-option value="0" [style.color]="itemColor(0)">{{'ITEM.CONDITION.0' | translate}}</ion-option>-->
                         </ion-select>
                     </ion-item>
                 </span>
                 <span class="edit-td">
                     <ion-item>
-                        <ion-label floating>Condition Comment</ion-label>
+                        <ion-label floating>{{'ITEMS_PAGE.CONDITION_COMMENT' | translate}}</ion-label>
                         <ion-input type="text" formControlName="conditionComment"></ion-input>
                     </ion-item>
                 </span>
                 <span class="edit-td">
                     <ion-item>
-                        <ion-label floating>Status</ion-label>
+                        <ion-label floating>{{'ITEMS_PAGE.STATUS' | translate}}</ion-label>
                         <ion-select formControlName="status">
-                            <ion-option value="public" color="good">public</ion-option>
-                            <ion-option value="hidden" color="danger">hidden</ion-option>
+                            <ion-option *ngFor="let option of translateHelper.itemStatusOptions" [value]="option.value" [style.color]="option.color">{{option.text}}</ion-option>
+                            <!--<ion-option value="public" color="good">{{'ITEM.STATUS.PUBLIC' | translate}}</ion-option>
+                            <ion-option value="hidden" color="danger">{{'ITEM.STATUS.HIDDEN' | translate}}</ion-option>-->
                         </ion-select>
                     </ion-item>
                 </span>
                 <span class="edit-td">
                     <ion-item>
-                        <ion-label floating>Tags</ion-label>
+                        <ion-label floating>{{'ITEMS_PAGE.TAGS' | translate}}</ion-label>
                         <ion-input type="text" formControlName="tags"></ion-input>
                     </ion-item>
                 </span>
@@ -159,17 +161,23 @@
                 <span class="edit-td">{{item.lastService | date: 'dd.MM.yyyy'}}</span>
                 <span class="edit-td">
                     <span [ngSwitch]="item.condition" [style.color]="itemColor(item.condition)">
-                        <span *ngSwitchCase="'100'">Ok</span>
-                        <span *ngSwitchCase="'50'">Damaged</span>
-                        <span *ngSwitchCase="'0'">Broken</span>
+                        <ng-template *ngFor="let option of translateHelper.itemConditionOptions">
+                            <span *ngSwitchCase="option.value" [style.color]="option.color">{{option.text}}</span>
+                        </ng-template>
+                        <!--<span *ngSwitchCase="'100'">{{'ITEM.CONDITION.100' | translate}}</span>
+                        <span *ngSwitchCase="'50'">{{'ITEM.CONDITION.50' | translate}}</span>
+                        <span *ngSwitchCase="'0'">{{'ITEM.CONDITION.0' | translate}}</span>-->
                         <span *ngSwitchDefault>{{item.condition}}</span>
                     </span>
                 </span>
                 <span class="edit-td">{{item.conditionComment}}</span>
                 <span class="edit-td">
                     <span [ngSwitch]="item.status">
-                        <span *ngSwitchCase="'public'" color="good">Public</span>
-                        <span *ngSwitchCase="'hidden'" color="danger">Hidden</span>
+                        <ng-template *ngFor="let option of translateHelper.itemStatusOptions">
+                            <span *ngSwitchCase="option.value" [style.color]="option.color">{{option.text}}</span>
+                        </ng-template>
+                        <!--<span *ngSwitchCase="'public'" color="good">{{'ITEM.STATUS.PUBLIC' | translate}}</span>
+                        <span *ngSwitchCase="'hidden'" color="danger">{{'ITEM.STATUS.HIDDEN' | translate}}</span>-->
                     </span>
                 </span>
                 <span class="edit-td">

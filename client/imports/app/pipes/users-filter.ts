@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import * as _ from 'lodash';
-import {User} from "../../../../../both/models/user.model";
+import {User} from "../../../../both/models/user.model";
 
 @Pipe({
     name: 'usersfilter',

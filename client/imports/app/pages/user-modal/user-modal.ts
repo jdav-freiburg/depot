@@ -68,17 +68,17 @@ export class UserModal implements OnInit, OnDestroy {
     roles: RoleAccess[] = [];
     rolesDef: RoleDef[] = [
         {
-            name: "Administrator",
+            name: "ADMIN",
             internalName: 'admin',
         },
         {
-            name: "Item Manager",
+            name: "MANAGER",
             internalName: 'manager',
         },
     ];
 
-    get _titleText(): string {
-        return (this.user?this.user.fullName:this.userId);
+    get titleParams() {
+        return {name: (this.user?this.user.fullName:this.userId)};
     }
 
     constructor(private viewCtrl: ViewController, private params: NavParams,

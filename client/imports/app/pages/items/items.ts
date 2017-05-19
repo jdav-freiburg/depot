@@ -10,6 +10,7 @@ import {UserService} from "../../services/user";
 import * as moment from 'moment';
 import {ItemStateModal} from "../item-state-modal/item-state-modal";
 import {NavController} from "ionic-angular";
+import {TranslateHelperService} from "../../services/translate-helper";
 
 @Component({
     selector: "items-page",
@@ -27,7 +28,7 @@ export class ItemsPage implements OnInit {
     editItemForm: FormGroup;
 
     constructor(private itemsDataService: ItemsDataService, private fb: FormBuilder, private userService: UserService,
-                private navCtrl: NavController) {
+                private navCtrl: NavController, private translateHelper: TranslateHelperService) {
         this.newItemForm = fb.group({
             name: ["", Validators.required],
             description: ["", Validators.required],

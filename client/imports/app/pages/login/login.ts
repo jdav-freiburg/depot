@@ -3,6 +3,7 @@ import template from "./login.html";
 import style from "./login.scss";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ToastController} from "ionic-angular";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: "login-page",
@@ -12,7 +13,7 @@ import {ToastController} from "ionic-angular";
 export class LoginPage {
     public loginForm: FormGroup;
 
-    constructor(private fb: FormBuilder, private toastCtrl: ToastController) {
+    constructor(private fb: FormBuilder, private toastCtrl: ToastController, private translate: TranslateService) {
         this.loginForm = fb.group({
             email: ["", Validators.required],
             password: ["", Validators.required]
@@ -25,12 +26,18 @@ export class LoginPage {
         console.log("Email: ", email);
         Meteor.loginWithPassword(email, password, (err) => {
             if (err) {
-                let toast = this.toastCtrl.create({
-                    message: err.message,
-                    duration: 2500,
-                });
-                toast.present();
                 console.log("Error:", err);
+                if (err.error == 403) {
+                    let messageTextSubscription = this.translate.get(['ERROR.' + err.reason, "ERROR.GENERAL"], err).subscribe((messages: {[key: string]: string}) => {
+                        console.log("Error Message:", messages);
+                        let wasLoaded = (messages['ERROR.' + err.reason] !== 'ERROR.' + err.reason);
+                        this.toastCtrl.create({
+                            message: wasLoaded?messages['ERROR.' + err.reason]:messages['ERROR.GENERAL'],
+                            duration: 2500,
+                        }).present();
+                        messageTextSubscription.unsubscribe();
+                    });
+                }
             }
         });
     }

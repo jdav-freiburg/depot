@@ -1,7 +1,7 @@
 <ion-header>
     <ion-navbar>
         <ion-title>
-            Users
+            {{'USERS_PAGE.TITLE' | translate}}
         </ion-title>
         <button ion-button icon-only menuToggle>
             <ion-icon name="menu"></ion-icon>
@@ -15,14 +15,14 @@
 </ion-header>
 
 <ion-content>
-    <ion-searchbar [(ngModel)]="filter"></ion-searchbar>
+    <ion-searchbar [(ngModel)]="filter" [placeholder]="'USERS_PAGE.FILTER' | translate"></ion-searchbar>
     <div class="edit-table">
         <div class="edit-tr">
-            <span class="edit-th">Username</span>
-            <span class="edit-th">E-Mail</span>
-            <span class="edit-th">Full Name</span>
-            <span class="edit-th">Phone</span>
-            <span class="edit-th">Roles</span>
+            <span class="edit-th">{{'USERS_PAGE.USERNAME' | translate}}</span>
+            <span class="edit-th">{{'USERS_PAGE.EMAIL' | translate}}</span>
+            <span class="edit-th">{{'USERS_PAGE.FULL_NAME' | translate}}</span>
+            <span class="edit-th">{{'USERS_PAGE.PHONE' | translate}}</span>
+            <span class="edit-th">{{'USERS_PAGE.ROLES' | translate}}</span>
             <span class="edit-th"></span>
         </div>
         <ng-container *ngFor="let user of users | async | usersfilter:filter">
@@ -36,7 +36,7 @@
                 <span class="edit-td">{{user.fullName}}</span>
                 <span class="edit-td">{{user.phone}}</span>
                 <span class="edit-td">
-                    <span *ngFor="let role of user.roles">{{role}}</span>
+                    <span *ngFor="let role of user.roles"> {{'ROLES.' + role | translate}} </span>
                 </span>
                 <span class="edit-td">
                     <button ion-button (click)="editItem(user._id)" clear icon-only>

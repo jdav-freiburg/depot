@@ -1,7 +1,7 @@
 <ion-header>
     <ion-navbar>
         <ion-title>
-            {{_titleText}}
+            {{'USER_MODAL.TITLE' | translate:titleParams}}
         </ion-title>
         <ion-buttons end>
             <button ion-button icon-only (click)="close()">
@@ -14,13 +14,13 @@
 <ion-content>
     <ion-item>
         <ion-label>
-            <h2>Id</h2>
+            <h2>{{'USER_MODAL.ID' | translate}}</h2>
             <p>{{userId}}</p>
         </ion-label>
     </ion-item>
     <ion-item *ngIf="user && !isAdmin">
         <ion-label>
-            Username
+            {{'USER_MODAL.USERNAME' | translate}}
         </ion-label>
         <p>{{user.username}}</p>
     </ion-item>
@@ -28,7 +28,7 @@
         <ion-card>
             <ion-toolbar>
                 <ion-title>
-                    Personal
+                    {{'USER_MODAL.PERSONAL' | translate}}
                 </ion-title>
                 <ion-buttons right>
                     <button ion-button icon-only clear type="submit" [disabled]="!userForm.valid">
@@ -39,13 +39,13 @@
             <ion-card-content *ngIf="user && canEdit">
                 <ion-item>
                     <ion-label floating>
-                        Name
+                        {{'USER_MODAL.FULL_NAME' | translate}}
                     </ion-label>
                     <ion-input type="text" formControlName="fullName"></ion-input>
                 </ion-item>
                 <ion-item>
                     <ion-label floating>
-                        Phone
+                        {{'USER_MODAL.PHONE' | translate}}
                     </ion-label>
                     <ion-input type="text" formControlName="phone"></ion-input>
                 </ion-item>
@@ -56,7 +56,7 @@
         <ion-card>
             <ion-toolbar>
                 <ion-title>
-                    Username
+                    {{'USER_MODAL.USERNAME' | translate}}
                 </ion-title>
                 <ion-buttons right>
                     <button ion-button icon-only clear type="submit" [disabled]="!usernameForm.valid">
@@ -67,7 +67,7 @@
             <ion-card-content>
                 <ion-item>
                     <ion-label floating>
-                        Username
+                        {{'USER_MODAL.USERNAME' | translate}}
                     </ion-label>
                     <ion-input type="text" formControlName="username"></ion-input>
                 </ion-item>
@@ -77,14 +77,14 @@
     <ion-card *ngIf="user && canEdit">
         <ion-toolbar>
             <ion-title>
-                E-Mail
+                {{'USER_MODAL.EMAIL' | translate}}
             </ion-title>
         </ion-toolbar>
         <ion-card-content>
             <form *ngFor="let email of emails" (ngSubmit)="savePersonal(email)">
                 <ion-item>
                     <ion-label floating>
-                        E-Mail
+                        {{'USER_MODAL.EMAIL' | translate}}
                     </ion-label>
                     <ion-input type="email" name="email" [(ngModel)]="email.editAddress"></ion-input>
                     <ion-icon color="green" *ngIf="email.verified" name="checkmark"></ion-icon>
@@ -100,7 +100,7 @@
             <form (ngSubmit)="addEmail(newEmailAddress)">
                 <ion-item>
                     <ion-label floating>
-                        Add E-Mail
+                        {{'USER_MODAL.EMAIL_ADD' | translate}}
                     </ion-label>
                     <ion-input type="email" name="email" [(ngModel)]="newEmailAddress"></ion-input>
                     <button item-right ion-button icon-only clear type="submit">
@@ -113,7 +113,9 @@
     <form [formGroup]="userPasswordForm" (ngSubmit)="savePassword()" *ngIf="user && canEdit">
         <ion-card>
             <ion-toolbar>
-                <ion-title>Password</ion-title>
+                <ion-title>
+                    {{'USER_MODAL.PASSWORD' | translate}}
+                </ion-title>
                 <ion-buttons right>
                     <button ion-button icon-only clear type="submit" [disabled]="!userPasswordForm.valid">
                         <ion-icon name="checkmark"></ion-icon>
@@ -123,19 +125,19 @@
             <ion-card-content>
                 <ion-item *ngIf="!isAdmin || isSelf">
                     <ion-label floating>
-                        Current Password
+                        {{'USER_MODAL.PASSWORD_OLD' | translate}}
                     </ion-label>
                     <ion-input type="password" formControlName="oldPassword"></ion-input>
                 </ion-item>
                 <ion-item>
                     <ion-label floating>
-                        New Password
+                        {{'USER_MODAL.PASSWORD_NEW' | translate}}
                     </ion-label>
                     <ion-input type="password" formControlName="newPassword"></ion-input>
                 </ion-item>
                 <ion-item>
                     <ion-label floating>
-                        Repeat New Password
+                        {{'USER_MODAL.PASSWORD_NEW_REPEAT' | translate}}
                     </ion-label>
                     <ion-input type="password" formControlName="newPasswordRepeat"></ion-input>
                 </ion-item>
@@ -145,12 +147,12 @@
 
     <ion-card>
         <ion-toolbar>
-            <ion-title>Roles</ion-title>
+            <ion-title>{{'USER_MODAL.ROLES' | translate}}</ion-title>
         </ion-toolbar>
         <ion-card-content>
             <ion-item *ngFor="let role of roles">
                 <ion-label>
-                    {{role.roleDef.name}}
+                    {{'ROLES.' + role.roleDef.internalName | translate}}
                 </ion-label>
                 <ion-checkbox [(ngModel)]="role.isMember" [disabled]="!user || !canEdit || !isAdmin" item-left></ion-checkbox>
             </ion-item>
@@ -160,13 +162,13 @@
         <ion-card-content>
             <ion-item>
                 <ion-label>
-                    <h2>Username</h2>
+                    <h2>{{'USER_MODAL.USERNAME' | translate}}</h2>
                     <p>{{user.username}}</p>
                 </ion-label>
             </ion-item>
             <ion-item *ngFor="let email of user.emails">
                 <ion-label>
-                    <h2>E-Mail</h2>
+                    <h2>{{'USER_MODAL.EMAIL' | translate}}</h2>
                     <p>{{email.address}}
                         <ion-icon color="green" *ngIf="email.verified" name="checkmark"></ion-icon>
                         <ion-icon color="red" *ngIf="!email.verified" name="close"></ion-icon>
@@ -175,19 +177,19 @@
             </ion-item>
             <ion-item>
                 <ion-label>
-                    <h2>Name</h2>
+                    <h2>{{'USER_MODAL.FULL_NAME' | translate}}</h2>
                     <p>{{user.fullName}}</p>
                 </ion-label>
             </ion-item>
             <ion-item>
                 <ion-label>
-                    <h2>Picture</h2>
+                    <h2>{{'USER_MODAL.PICTURE' | translate}}</h2>
                     <p>{{user.picture}}</p>
                 </ion-label>
             </ion-item>
             <ion-item>
                 <ion-label>
-                    <h2>Phone</h2>
+                    <h2>{{'USER_MODAL.PHONE' | translate}}</h2>
                     <p>{{user.phone}}</p>
                 </ion-label>
             </ion-item>

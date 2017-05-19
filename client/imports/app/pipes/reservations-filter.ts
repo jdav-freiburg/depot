@@ -1,8 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {Item} from "../../../../../both/models/item.model";
+import {Item} from "../../../../both/models/item.model";
 
 import * as _ from 'lodash';
-import {Reservation} from "../../../../../both/models/reservation.model";
+import {Reservation} from "../../../../both/models/reservation.model";
 
 @Pipe({
     name: 'reservationsfilter',

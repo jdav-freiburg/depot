@@ -1,7 +1,7 @@
 <ion-header>
     <ion-navbar>
         <ion-title>
-            Reservation<span *ngIf="text"> - {{text}}</span>
+            {{'RESERVATION_PAGE.TITLE' | translate:translateTitleParams}}
         </ion-title>
         <button ion-button icon-only menuToggle>
             <ion-icon name="menu"></ion-icon>
@@ -15,32 +15,31 @@
 <ion-content>
     <form [formGroup]="reservationForm" (ngSubmit)="save()">
         <ion-item>
-            <ion-label floating>Type</ion-label>
+            <ion-label floating>{{'RESERVATION_PAGE.TYPE' | translate}}</ion-label>
             <ion-select formControlName="type" *ngIf="!readonly">
-                <ion-option value="private">Private</ion-option>
-                <ion-option value="group">Group</ion-option>
+                <ion-option *ngFor="let option of translateHelper.reservationTypeOptions" [value]="option.value">{{option.text}}</ion-option>
             </ion-select>
             <ion-input *ngIf="readonly" type="text" formControlName="type" [readonly]="readonly"></ion-input>
         </ion-item>
         <ion-item>
-            <ion-label floating>Name</ion-label>
+            <ion-label floating>{{'RESERVATION_PAGE.NAME' | translate}}</ion-label>
             <ion-input type="text" formControlName="name" [readonly]="readonly"></ion-input>
         </ion-item>
-        <reservation-date-picker formControlName="start" label="Start" [rangeEnd]="reservationForm.controls.end.value"
+        <reservation-date-picker formControlName="start" [label]="'RESERVATION_PAGE.START' | translate" [rangeEnd]="reservationForm.controls.end.value"
                                  [rangeStart]="readonly?reservationForm.controls.start.value:null"
                                  [showReservations]="true" [skipReservationId]="editId" [readonly]="readonly"></reservation-date-picker>
-        <reservation-date-picker formControlName="end" label="End" [rangeStart]="reservationForm.controls.start.value"
+        <reservation-date-picker formControlName="end" [label]="'RESERVATION_PAGE.END' | translate" [rangeStart]="reservationForm.controls.start.value"
                                  [rangeEnd]="readonly?reservationForm.controls.end.value:null"
                                  [showReservations]="true" [skipReservationId]="editId" [readonly]="readonly"></reservation-date-picker>
         <ion-item>
-            <ion-label floating>Contact</ion-label>
+            <ion-label floating>{{'RESERVATION_PAGE.CONTACT' | translate}}</ion-label>
             <ion-input type="text" formControlName="contact" [readonly]="readonly"></ion-input>
         </ion-item>
     </form>
     <ion-card>
-        <ion-card-header>Items</ion-card-header>
+        <ion-card-header>{{'RESERVATION_PAGE.ITEMS' | translate}}</ion-card-header>
         <ion-card-content>
-            <ion-searchbar [(ngModel)]="filter"></ion-searchbar>
+            <ion-searchbar [(ngModel)]="filter" [placeholder]="'RESERVATION_PAGE.FILTER' | translate"></ion-searchbar>
             <ion-item *ngFor="let item of items | itemsfilter:filter">
                 <!--<ion-avatar item-left><img src="{{item.picture}}"></ion-avatar>-->
                 <ion-checkbox item-left [(ngModel)]="item.selected" [disabled]="!item.available || readonly"></ion-checkbox>
@@ -49,8 +48,8 @@
                     <h3>{{item.tags}}</h3>
                     <p>{{item.description}}</p>
                 </ion-label>
-                <ion-badge item-right *ngIf="!item.available">Not available</ion-badge>
-                <ion-badge item-right *ngIf="item.deselected" color="danger">Removed</ion-badge>
+                <ion-badge item-right *ngIf="!item.available">{{'RESERVATION_PAGE.NOT_AVAILABLE' | translate}}</ion-badge>
+                <ion-badge item-right *ngIf="item.deselected" color="danger">{{'RESERVATION_PAGE.REMOVED' | translate}}</ion-badge>
                 <button ion-button icon-only clear item-end (click)="openItem(item)"><ion-icon name="search"></ion-icon></button>
             </ion-item>
         </ion-card-content>

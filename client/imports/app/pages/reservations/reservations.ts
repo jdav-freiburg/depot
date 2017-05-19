@@ -10,6 +10,7 @@ import {AlertController, NavController} from "ionic-angular";
 import {ReservationPage} from "../reservation/reservation";
 import {Subscription} from "rxjs/Subscription";
 import * as moment from 'moment';
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: "reservations-page",
@@ -35,7 +36,7 @@ export class ReservationsPage implements OnInit, OnDestroy {
     }
 
     constructor(private reservationsDataService: ReservationsDataService, private users: UserService,
-                private navCtrl: NavController, private alertCtrl: AlertController) {
+                private navCtrl: NavController, private alertCtrl: AlertController, private translate: TranslateService) {
     }
 
     ngOnInit() {
@@ -67,21 +68,25 @@ export class ReservationsPage implements OnInit, OnDestroy {
         if (!this.canDelete(reservation)) {
             return;
         }
-        this.alertCtrl.create({
-            title: 'Delete ' + reservation.name + '?',
-            message: 'Do you really want to delete reservation ' + reservation.name + '?',
-            buttons: [
-                {
-                    text: 'No',
-                    role: 'cancel'
-                },
-                {
-                    text: 'Yes',
-                    handler: () => {
-                        this.reservationsDataService.remove(reservation._id);
+        let messageTextTranslation = this.translate.get(['RESERVATIONS_PAGE.DELETE.TITLE', 'RESERVATIONS_PAGE.DELETE.MESSAGE',
+            'RESERVATIONS_PAGE.DELETE.YES', 'RESERVATIONS_PAGE.DELETE.NO'], {name: reservation.name}).subscribe((messages) => {
+            this.alertCtrl.create({
+                title: messages['RESERVATIONS_PAGE.DELETE.TITLE'],
+                message: messages['RESERVATIONS_PAGE.DELETE.MESSAGE'],
+                buttons: [
+                    {
+                        text: messages['RESERVATIONS_PAGE.DELETE.NO'],
+                        role: 'cancel'
+                    },
+                    {
+                        text: messages['RESERVATIONS_PAGE.DELETE.YES'],
+                        handler: () => {
+                            this.reservationsDataService.remove(reservation._id);
+                        }
                     }
-                }
-            ]
-        }).present();
+                ]
+            }).present();
+            messageTextTranslation.unsubscribe();
+        });
     }
 }

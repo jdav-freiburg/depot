@@ -1,5 +1,6 @@
-<ion-tabs>
-    <ion-tab [root]="tabHome" tabTitle="Home" tabIcon="home"></ion-tab>
-    <ion-tab [root]="tabItems" tabTitle="Items" tabIcon="list"></ion-tab>
-    <ion-tab [root]="tabReservations" tabTitle="Reservations" tabIcon="calendar"></ion-tab>
+<ion-tabs #tabsView>
+    <ion-tab *ngFor="let tab of tabs" [root]="tab.root" [tabTitle]="tab.text" [tabIcon]="tab.icon" [show]="tab.visible"></ion-tab>
+    <!--<ion-tab [root]="tabHome" tabTitle="{{'TABS.HOME' | translate}}" tabIcon="home"></ion-tab>
+    <ion-tab [root]="tabItems" tabTitle="{{'TABS.ITEMS' | translate}}" tabIcon="list"></ion-tab>
+    <ion-tab [root]="tabReservations" tabTitle="{{'TABS.RESERVATIONS' | translate}}" tabIcon="calendar"></ion-tab>-->
 </ion-tabs>
