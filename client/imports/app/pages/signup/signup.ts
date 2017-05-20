@@ -45,5 +45,6 @@ export class SignupPage {
             phone: phone,
             fullName: fullName
         });
+        // TODO: Error messages
     }
 }

@@ -1,21 +1,66 @@
 import {Injectable, NgZone} from "@angular/core";
 import {ObservableCursor} from "meteor-rxjs";
-import { Item } from "../../../../both/models/item.model";
+import {Item} from "../../../../both/models/item.model";
 import { ItemCollection } from "../../../../both/collections/item.collection";
 
 import * as _ from 'lodash';
-import {ItemState} from "../../../../both/models/item-state.model";
-import {ItemStateCollection} from "../../../../both/collections/item-state.collection";
+import {TranslateService} from "./translate";
+import {colors} from "../colors";
 
 @Injectable()
 export class ItemsDataService {
     private items: ObservableCursor<Item>;
 
-    constructor(private ngZone: NgZone) {
+    constructor(private ngZone: NgZone, private translate: TranslateService) {
         Tracker.autorun(() => {
             Meteor.subscribe('items');
         });
         this.items = ItemCollection.find({});
+    }
+
+    get itemConditionOptions(): any[] {
+        return this.translate.getAll([
+            {
+                translate: 'ITEM.CONDITION.100',
+                value: "100",
+                color: 'good',
+                colorCss: colors.good,
+                text: ""
+            },
+            {
+                translate: 'ITEM.CONDITION.50',
+                value: "50",
+                color: 'warning',
+                colorCss: colors.warning,
+                text: ""
+            },
+            {
+                translate: 'ITEM.CONDITION.0',
+                value: "0",
+                color: 'danger',
+                colorCss: colors.danger,
+                text: ""
+            }
+        ]);
+    }
+
+    get itemStatusOptions(): any[] {
+        return this.translate.getAll([
+            {
+                translate: 'ITEM.STATUS.PUBLIC',
+                value: "public",
+                color: 'good',
+                colorCss: colors.good,
+                text: ""
+            },
+            {
+                translate: 'ITEM.STATUS.HIDDEN',
+                value: "hidden",
+                color: 'danger',
+                colorCss: colors.danger,
+                text: ""
+            }
+        ]);
     }
 
     public getItems(): ObservableCursor<Item> {

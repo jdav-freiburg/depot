@@ -3,7 +3,7 @@ import template from "./login.html";
 import style from "./login.scss";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ToastController} from "ionic-angular";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslateService} from "../../services/translate";
 
 @Component({
     selector: "login-page",
@@ -28,15 +28,10 @@ export class LoginPage {
             if (err) {
                 console.log("Error:", err);
                 if (err.error == 403) {
-                    let messageTextSubscription = this.translate.get(['ERROR.' + err.reason, "ERROR.GENERAL"], err).subscribe((messages: {[key: string]: string}) => {
-                        console.log("Error Message:", messages);
-                        let wasLoaded = (messages['ERROR.' + err.reason] !== 'ERROR.' + err.reason);
-                        this.toastCtrl.create({
-                            message: wasLoaded?messages['ERROR.' + err.reason]:messages['ERROR.GENERAL'],
-                            duration: 2500,
-                        }).present();
-                        messageTextSubscription.unsubscribe();
-                    });
+                    this.toastCtrl.create({
+                        message: this.translate.has('ERROR.' + err.reason)?this.translate.get('ERROR.' + err.reason):this.translate.get('ERROR.GENERAL'),
+                        duration: 2500,
+                    }).present();
                 }
             }
         });

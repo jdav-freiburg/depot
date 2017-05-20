@@ -29,21 +29,16 @@ import {UsersFilterPipe} from "./pipes/users-filter";
 import {UsersPage} from "./pages/users/users";
 import {ItemDatePickerComponent} from "./components/item-date-picker/item-date-picker";
 import {DebugService} from "./services/debug";
-import {TranslateModule, TranslateLoader, MissingTranslationHandler} from '@ngx-translate/core';
 import {Http, HttpModule} from "@angular/http";
-import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {JoinPipe} from "./pipes/join";
-import {TranslateHelperService} from "./services/translate-helper";
-import {LogMissingTranslationHandler, StaticTranslateLoader} from "./languages/languages";
+import {TranslateService} from "./services/translate";
+import {TranslatePipe} from "./pipes/translate";
+import {MomentPipe} from "./pipes/moment";
 
 /*const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },
 ];*/
-
-export function createTranslateLoader(http: Http) {
-    return new TranslateHttpLoader(http, '/i18n/', '.json');
-}
 
 @NgModule({
     // Components, Pipes, Directive
@@ -67,7 +62,9 @@ export function createTranslateLoader(http: Http) {
         UserModal,
         UsersFilterPipe,
         UsersPage,
-        JoinPipe
+        JoinPipe,
+        TranslatePipe,
+        MomentPipe
     ],
     // Entry Components
     entryComponents: [
@@ -94,27 +91,12 @@ export function createTranslateLoader(http: Http) {
         ItemsDataService,
         ReservationsDataService,
         DebugService,
-        TranslateHelperService
+        TranslateService,
     ],
     // Modules
     imports: [
         HttpModule,
         IonicModule.forRoot(AppComponent),
-        TranslateModule.forRoot({
-            loader: {
-                provide: TranslateLoader,
-                useClass: StaticTranslateLoader
-            },
-            missingTranslationHandler: {
-                provide: MissingTranslationHandler,
-                useClass: LogMissingTranslationHandler
-            }
-            /*loader: {
-                provide: TranslateLoader,
-                useFactory: createTranslateLoader,
-                deps: [Http]
-            }*/
-        }),
         BrowserModule,
         //RouterModule.forRoot(appRoutes),
         BrowserAnimationsModule,

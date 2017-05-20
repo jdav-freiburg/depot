@@ -53,9 +53,10 @@
                 <ion-item>
                     <ion-label floating>{{'ITEMS_PAGE.CONDITION' | translate}}</ion-label>
                     <ion-select formControlName="condition">
-                        <ion-option value="100" [style.color]="itemColor(100)">{{'ITEM.CONDITION.100' | translate}}</ion-option>
+                        <ion-option *ngFor="let option of itemsDataService.itemConditionOptions" [value]="option.value">{{option.text}}</ion-option>
+                        <!--<ion-option value="100" [style.color]="itemColor(100)">{{'ITEM.CONDITION.100' | translate}}</ion-option>
                         <ion-option value="50" [style.color]="itemColor(50)">{{'ITEM.CONDITION.50' | translate}}</ion-option>
-                        <ion-option value="0" [style.color]="itemColor(0)">{{'ITEM.CONDITION.0' | translate}}</ion-option>
+                        <ion-option value="0" [style.color]="itemColor(0)">{{'ITEM.CONDITION.0' | translate}}</ion-option>-->
                     </ion-select>
                 </ion-item>
             </span>
@@ -69,8 +70,9 @@
                 <ion-item>
                     <ion-label floating>{{'ITEMS_PAGE.STATUS' | translate}}</ion-label>
                     <ion-select formControlName="status">
-                        <ion-option value="public" color="good">{{'ITEM.STATUS.PUBLIC' | translate}}</ion-option>
-                        <ion-option value="hidden" color="danger">{{'ITEM.STATUS.HIDDEN' | translate}}</ion-option>
+                        <ion-option *ngFor="let option of itemsDataService.itemStatusOptions" [value]="option.value">{{option.text}}</ion-option>
+                        <!--<ion-option value="public" color="good">{{'ITEM.STATUS.PUBLIC' | translate}}</ion-option>
+                        <ion-option value="hidden" color="danger">{{'ITEM.STATUS.HIDDEN' | translate}}</ion-option>-->
                     </ion-select>
                 </ion-item>
             </span>
@@ -86,7 +88,7 @@
             <span class="edit-td"></span>
             <span class="edit-td"></span>
         </form>
-        <ng-container *ngFor="let item of data | async | itemsfilter:filter">
+        <ng-container *ngFor="let item of data | itemsfilter:filter">
             <form *ngIf="isManager && editItemId === item._id" class="edit-tr" [formGroup]="editItemForm"
                   (ngSubmit)="save(item, $event)">
                 <span class="edit-td">
@@ -114,7 +116,7 @@
                     <ion-item>
                         <ion-label floating>{{'ITEMS_PAGE.CONDITION' | translate}}</ion-label>
                         <ion-select formControlName="condition">
-                            <ion-option *ngFor="let option of translateHelper.itemConditionOptions" [value]="option.value" [style.color]="option.color">{{option.text}}</ion-option>
+                            <ion-option *ngFor="let option of itemsDataService.itemConditionOptions" [value]="option.value">{{option.text}}</ion-option>
                             <!--<ion-option value="100" [style.color]="itemColor(100)">{{'ITEM.CONDITION.100' | translate}}</ion-option>
                             <ion-option value="50" [style.color]="itemColor(50)">{{'ITEM.CONDITION.50' | translate}}</ion-option>
                             <ion-option value="0" [style.color]="itemColor(0)">{{'ITEM.CONDITION.0' | translate}}</ion-option>-->
@@ -131,7 +133,7 @@
                     <ion-item>
                         <ion-label floating>{{'ITEMS_PAGE.STATUS' | translate}}</ion-label>
                         <ion-select formControlName="status">
-                            <ion-option *ngFor="let option of translateHelper.itemStatusOptions" [value]="option.value" [style.color]="option.color">{{option.text}}</ion-option>
+                            <ion-option *ngFor="let option of itemsDataService.itemStatusOptions" [value]="option.value">{{option.text}}</ion-option>
                             <!--<ion-option value="public" color="good">{{'ITEM.STATUS.PUBLIC' | translate}}</ion-option>
                             <ion-option value="hidden" color="danger">{{'ITEM.STATUS.HIDDEN' | translate}}</ion-option>-->
                         </ion-select>
@@ -158,26 +160,22 @@
                 <span class="edit-td">{{item.externalId}}</span>
                 <span class="edit-td">{{item.name}}</span>
                 <span class="edit-td">{{item.description}}</span>
-                <span class="edit-td">{{item.lastService | date: 'dd.MM.yyyy'}}</span>
+                <span class="edit-td">{{item.lastService | moment: 'L'}}</span>
                 <span class="edit-td">
-                    <span [ngSwitch]="item.condition" [style.color]="itemColor(item.condition)">
-                        <ng-template *ngFor="let option of translateHelper.itemConditionOptions">
-                            <span *ngSwitchCase="option.value" [style.color]="option.color">{{option.text}}</span>
-                        </ng-template>
-                        <!--<span *ngSwitchCase="'100'">{{'ITEM.CONDITION.100' | translate}}</span>
-                        <span *ngSwitchCase="'50'">{{'ITEM.CONDITION.50' | translate}}</span>
-                        <span *ngSwitchCase="'0'">{{'ITEM.CONDITION.0' | translate}}</span>-->
+                    <span [ngSwitch]="item.condition">
+                        <ng-container *ngFor="let option of itemsDataService.itemConditionOptions">
+                            <span *ngSwitchCase="option.value" [style.color]="option.cssColor">{{option.text}}</span>
+                        </ng-container>
                         <span *ngSwitchDefault>{{item.condition}}</span>
                     </span>
                 </span>
                 <span class="edit-td">{{item.conditionComment}}</span>
                 <span class="edit-td">
                     <span [ngSwitch]="item.status">
-                        <ng-template *ngFor="let option of translateHelper.itemStatusOptions">
-                            <span *ngSwitchCase="option.value" [style.color]="option.color">{{option.text}}</span>
-                        </ng-template>
-                        <!--<span *ngSwitchCase="'public'" color="good">{{'ITEM.STATUS.PUBLIC' | translate}}</span>
-                        <span *ngSwitchCase="'hidden'" color="danger">{{'ITEM.STATUS.HIDDEN' | translate}}</span>-->
+                        <ng-container *ngFor="let option of itemsDataService.itemStatusOptions">
+                            <span *ngSwitchCase="option.value" [style.color]="option.cssColor">{{option.text}}</span>
+                        </ng-container>
+                        <span *ngSwitchDefault>{{item.status}}</span>
                     </span>
                 </span>
                 <span class="edit-td">

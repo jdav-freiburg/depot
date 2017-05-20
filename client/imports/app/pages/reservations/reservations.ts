@@ -10,7 +10,7 @@ import {AlertController, NavController} from "ionic-angular";
 import {ReservationPage} from "../reservation/reservation";
 import {Subscription} from "rxjs/Subscription";
 import * as moment from 'moment';
-import {TranslateService} from "@ngx-translate/core";
+import {TranslateService} from "../../services/translate";
 
 @Component({
     selector: "reservations-page",
@@ -68,25 +68,21 @@ export class ReservationsPage implements OnInit, OnDestroy {
         if (!this.canDelete(reservation)) {
             return;
         }
-        let messageTextTranslation = this.translate.get(['RESERVATIONS_PAGE.DELETE.TITLE', 'RESERVATIONS_PAGE.DELETE.MESSAGE',
-            'RESERVATIONS_PAGE.DELETE.YES', 'RESERVATIONS_PAGE.DELETE.NO'], {name: reservation.name}).subscribe((messages) => {
-            this.alertCtrl.create({
-                title: messages['RESERVATIONS_PAGE.DELETE.TITLE'],
-                message: messages['RESERVATIONS_PAGE.DELETE.MESSAGE'],
-                buttons: [
-                    {
-                        text: messages['RESERVATIONS_PAGE.DELETE.NO'],
-                        role: 'cancel'
-                    },
-                    {
-                        text: messages['RESERVATIONS_PAGE.DELETE.YES'],
-                        handler: () => {
-                            this.reservationsDataService.remove(reservation._id);
-                        }
+        this.alertCtrl.create({
+            title: this.translate.get('RESERVATIONS_PAGE.DELETE.TITLE'),
+            message: this.translate.get('RESERVATIONS_PAGE.DELETE.MESSAGE'),
+            buttons: [
+                {
+                    text: this.translate.get('RESERVATIONS_PAGE.DELETE.NO'),
+                    role: 'cancel'
+                },
+                {
+                    text: this.translate.get('RESERVATIONS_PAGE.DELETE.YES'),
+                    handler: () => {
+                        this.reservationsDataService.remove(reservation._id);
                     }
-                ]
-            }).present();
-            messageTextTranslation.unsubscribe();
-        });
+                }
+            ]
+        }).present();
     }
 }

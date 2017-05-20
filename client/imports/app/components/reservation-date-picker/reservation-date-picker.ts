@@ -48,8 +48,15 @@ export class ReservationDatePickerComponent implements ControlValueAccessor {
     }
 
     dateValue: Date = new Date();
-    _text: string = "";
     _disabled: boolean = false;
+
+    get _text(): string {
+        let value = moment(this.dateValue);
+        if (value.isValid()) {
+            return value.format('L');
+        }
+        return "";
+    }
 
     get date() {
         return this.dateValue;
@@ -58,10 +65,8 @@ export class ReservationDatePickerComponent implements ControlValueAccessor {
         let value = moment(date);
         if (value.isValid()) {
             this.dateValue = value.toDate();
-            this._text = value.format('L');
         } else {
             this.dateValue = null;
-            this._text = "";
         }
         this.onChangeCallback(this.dateValue);
     }

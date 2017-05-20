@@ -1,3 +1,6 @@
+import * as _ from 'lodash';
+import * as moment from 'moment';
+
 export const en = {
   "HOME_PAGE": {
     "TITLE": "Home",
@@ -21,7 +24,7 @@ export const en = {
     "FILTER": "Filter"
   },
   "RESERVATION_PAGE": {
-    "TITLE": "Reservation - {{name}}",
+    "TITLE": (data) => `Reservation - ${data.name}`,
     "TYPE": "Type",
     "NAME": "Name",
     "START": "Start",
@@ -30,7 +33,7 @@ export const en = {
     "ITEMS": "Items",
     "NOT_AVAILABLE": "Not Available",
     "REMOVED": "Removed",
-    "ITEMS_REMOVED": "{{items | join:', '}} removed from reservation (already reserved).",
+    "ITEMS_REMOVED": (data) => `${_.join(data.items, ', ')} removed from reservation (already reserved).`,
     "LEAVE": {
       "TITLE": "Unsaved changes",
       "MESSAGE": "Do you want to save before leaving?",
@@ -50,8 +53,8 @@ export const en = {
     "GROUP": "Group",
     "CONTACT": "Contact",
     "DELETE": {
-      "TITLE": "Delete {{name}}?",
-      "MESSAGE": "Do you really want to delete reservation {{name}}?",
+      "TITLE": (data) => `Delete ${data.name}?`,
+      "MESSAGE": (data) => `Do you really want to delete reservation ${data.name}?`,
       "YES": "Yes",
       "NO": "No"
     },
@@ -77,7 +80,7 @@ export const en = {
     "FILTER": "Filter"
   },
   "USER_MODAL": {
-    "TITLE": "{{name}}",
+    "TITLE": (data) => `${data.name}`,
     "ID": "Id",
     "USERNAME": "Username",
     "PERSONAL": "Personal",
@@ -120,13 +123,25 @@ export const en = {
       "0": "Broken"
     }
   },
+  "ITEM_STATE": {
+    "TEXT": (data) => (data.comment?data.comment + "<br>\n":"") + _.join(data.texts, ", <br>\n"),
+    "LAST_SERVICE": (data) => `Service at ${moment(data.lastService).toLocaleString()}`,
+    "CONDITION_CONDITION_COMMENT": (data) => `Condition: ${data.conditionOption.text} (${data.conditionComment})`,
+    "CONDITION": (data) => `Condition: ${data.conditionOption.text}`,
+    "CONDITION_COMMENT": (data) => `Condition Comment: ${data.conditionComment}`,
+    "NAME": (data) => `New Name: ${data.name}`,
+    "DESCRIPTION": (data) => `New Description: ${data.description}`,
+    "EXTERNAL_ID": (data) => `New External Id: ${data.externalId}`,
+    "TAGS": (data) => `New Tags: ${_.join(data.tags, ', ')}`,
+    "STATUS": (data) => `New Status: ${data.statusOption.text}`
+  },
   "ROLES": {
     "admin": "Administrator",
     "manager": "Item Manager"
   },
   "ERROR": {
-    "GENERAL": "{{message}}",
+    "GENERAL": (data) => `${data.message}`,
     "Incorrect password": "Incorrect Password",
     "User not found": "User not found"
   }
-}
+};

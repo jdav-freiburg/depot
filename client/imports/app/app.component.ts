@@ -8,7 +8,7 @@ import {Nav} from "ionic-angular";
 import {UsersPage} from "./pages/users/users";
 import {DebugService} from "./services/debug";
 import {UserModal} from "./pages/user-modal/user-modal";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslateService} from "./services/translate";
 
 @Component({
     selector: "app",
@@ -37,20 +37,17 @@ export class AppComponent {
         return this.userService.isAdmin;
     }
 
-    _language: string = "en";
-
     set language(value: string) {
-        this._language = value;
-        this.translate.use(value);
+        this.translate.languageKey = value;
     }
 
     get language(): string {
-        return this._language;
+        return this.translate.languageKey;
     }
 
     constructor(private userService: UserService, private debugService: DebugService,
         private translate: TranslateService) {
-        translate.setDefaultLang('en');
+        //translate.setDefaultLang('en');
         //this.translate.use(Platform.device.language);
     }
 

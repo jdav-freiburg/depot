@@ -38,9 +38,9 @@ export class DatePickerModal implements OnDestroy {
 
     refresh: Subject<any> = new Subject();
 
-    days_label: Array<string> = [
-        'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'
-    ];
+    get days_label(): string[] {
+        return moment.weekdaysShort();
+    }
 
     canSelect: boolean = true;
 

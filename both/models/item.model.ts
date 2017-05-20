@@ -1,6 +1,5 @@
 import SimpleSchema from 'simpl-schema';
 
-import * as Color from 'color';
 import * as _ from 'lodash';
 
 export const ItemSchema = new SimpleSchema({
@@ -21,13 +20,6 @@ export const ItemSchema = new SimpleSchema({
 
     status: { type: String, optional: true }
 });
-
-export function itemColor(factor: number|string): string {
-    if (!_.isNumber(factor)) {
-        factor = Number.parseFloat(factor);
-    }
-    return Color('#cc0000').rotate(1.2 * Math.min(Math.max(factor, 0.0), 100.0)).hex();
-}
 
 export interface Item {
     _id?: string;

@@ -17,7 +17,9 @@
         <ion-item>
             <ion-label floating>{{'RESERVATION_PAGE.TYPE' | translate}}</ion-label>
             <ion-select formControlName="type" *ngIf="!readonly">
-                <ion-option *ngFor="let option of translateHelper.reservationTypeOptions" [value]="option.value">{{option.text}}</ion-option>
+                <ion-option *ngFor="let option of reservationsDataService.reservationTypeOptions" [value]="option.value">{{option.text}}</ion-option>
+                <!--<ion-option value="private">{{'RESERVATION.TYPE.PRIVATE' | translate}}</ion-option>
+                <ion-option value="group">{{'RESERVATION.TYPE.GROUP' | translate}}</ion-option>-->
             </ion-select>
             <ion-input *ngIf="readonly" type="text" formControlName="type" [readonly]="readonly"></ion-input>
         </ion-item>

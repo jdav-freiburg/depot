@@ -5,13 +5,34 @@ import * as _ from 'lodash';
 import {ReservationCollection} from "../../../../both/collections/reservation.collection";
 import {Reservation} from "../../../../both/models/reservation.model";
 import {Observable} from "rxjs/Observable";
+import {TranslateService} from "./translate";
+import {colors} from "../colors";
 
 @Injectable()
 export class ReservationsDataService {
-    constructor(private ngZone: NgZone) {
+    constructor(private ngZone: NgZone, private translate: TranslateService) {
         Tracker.autorun(() => {
             Meteor.subscribe('reservations');
         });
+    }
+
+    public get reservationTypeOptions(): any[] {
+        return this.translate.getAll([
+            {
+                translate: 'RESERVATION.TYPE.GROUP',
+                value: "group",
+                color: 'good',
+                colorCss: colors.good,
+                text: ""
+            },
+            {
+                translate: 'RESERVATION.TYPE.PRIVATE',
+                value: "private",
+                color: 'warning',
+                colorCss: colors.warning,
+                text: ""
+            }
+        ]);
     }
 
     public getReservations(): ObservableCursor<Reservation> {

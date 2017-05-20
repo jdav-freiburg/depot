@@ -1,7 +1,7 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, OnDestroy, OnInit} from "@angular/core";
 import { Observable } from "rxjs";
 import {ItemsDataService} from "../../services/items-data";
-import {Item, itemColor} from "../../../../../both/models/item.model";
+import {Item} from "../../../../../both/models/item.model";
 import template from "./items.html";
 import style from "./items.scss";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
@@ -10,15 +10,16 @@ import {UserService} from "../../services/user";
 import * as moment from 'moment';
 import {ItemStateModal} from "../item-state-modal/item-state-modal";
 import {NavController} from "ionic-angular";
-import {TranslateHelperService} from "../../services/translate-helper";
+import {TranslateService} from "../../services/translate";
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
     selector: "items-page",
     template,
     styles: [ style ]
 })
-export class ItemsPage implements OnInit {
-    data: Observable<Item[]>;
+export class ItemsPage implements OnInit, OnDestroy {
+    data: Item[];
 
     filter: string = "";
 
@@ -26,9 +27,10 @@ export class ItemsPage implements OnInit {
 
     newItemForm: FormGroup;
     editItemForm: FormGroup;
+    private itemsSubscription: Subscription;
 
     constructor(private itemsDataService: ItemsDataService, private fb: FormBuilder, private userService: UserService,
-                private navCtrl: NavController, private translateHelper: TranslateHelperService) {
+                private navCtrl: NavController, private translate: TranslateService) {
         this.newItemForm = fb.group({
             name: ["", Validators.required],
             description: ["", Validators.required],
@@ -53,11 +55,17 @@ export class ItemsPage implements OnInit {
     }
 
     ngOnInit() {
-        this.data = this.itemsDataService.getItems().zone();
+        this.itemsSubscription = this.itemsDataService.getItems().zone().subscribe((items) => {
+            this.data = items;
+            console.log("Items:", items);
+        });
     }
 
-    itemColor(value: number) {
-        return itemColor(value);
+    ngOnDestroy() {
+        if (this.itemsSubscription) {
+            this.itemsSubscription.unsubscribe();
+            this.itemsSubscription = null;
+        }
     }
 
     remove(id: string) {

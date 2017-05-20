@@ -1,3 +1,7 @@
+import * as _ from 'lodash';
+import * as moment from 'moment';
+import 'moment/locale/de';
+
 export const de = {
   "HOME_PAGE": {
     "TITLE": "Home",
@@ -21,7 +25,7 @@ export const de = {
     "FILTER": "Filtern"
   },
   "RESERVATION_PAGE": {
-    "TITLE": "Reservierung - {{name}}",
+    "TITLE": (data) => `Reservierung - ${data.name}`,
     "TYPE": "Typ",
     "NAME": "Name",
     "START": "Start",
@@ -30,7 +34,7 @@ export const de = {
     "ITEMS": "Material",
     "NOT_AVAILABLE": "Nicht verfügbar",
     "REMOVED": "Entfernt",
-    "ITEMS_REMOVED": "{{items | join:', '}} aus der Reservierung entfernt (bereits reserviert).",
+    "ITEMS_REMOVED": (data) => `${_.join(data.items, ', ')} aus der Reservierung entfernt (bereits reserviert).`,
     "LEAVE": {
       "TITLE": "Ungespeicherte Änderungen",
       "MESSAGE": "Sollen ungespeicherte Änderungen gespeichert werden?",
@@ -50,8 +54,8 @@ export const de = {
     "GROUP": "Gruppe",
     "CONTACT": "Kontakt",
     "DELETE": {
-      "TITLE": "Lösche {{name}}?",
-      "MESSAGE": "Reservierung {{name}} wirklich löschen?",
+      "TITLE": (data) => `Lösche ${data.name}?`,
+      "MESSAGE": (data) => `Reservierung ${data.name} wirklich löschen?`,
       "YES": "Ja",
       "NO": "Nein"
     },
@@ -77,7 +81,7 @@ export const de = {
     "FILTER": "Filtern"
   },
   "USER_MODAL": {
-    "TITLE": "{{name}}",
+    "TITLE": (data) => `${data.name}`,
     "ID": "Id",
     "USERNAME": "Benutzername",
     "PERSONAL": "Persönlich",
@@ -120,6 +124,18 @@ export const de = {
       "0": "Kaputt"
     }
   },
+  "ITEM_STATE": {
+    "TEXT": (data) => (data.comment?data.comment + "<br>\n":"") + _.join(data.texts, ", <br>\n"),
+    "LAST_SERVICE": (data) => `Wartung am ${moment(data.lastService).format('L')}`,
+    "CONDITION_CONDITION_COMMENT": (data) => `Zustand: ${data.conditionOption.text} (${data.conditionComment})`,
+    "CONDITION": (data) => `Zustand: ${data.conditionOption.text}`,
+    "CONDITION_COMMENT": (data) => `Zustandskommentar: ${data.conditionComment}`,
+    "NAME": (data) => `Neuer Name: ${data.name}`,
+    "DESCRIPTION": (data) => `Neue Beschreibung: ${data.description}`,
+    "EXTERNAL_ID": (data) => `Neue Externe Id: ${data.externalId}`,
+    "TAGS": (data) => `Neue Tags: ${_.join(data.tags, ', ')}`,
+    "STATUS": (data) => `Neuer Status: ${data.statusOption.text}`
+  },
   "ROLES": {
     "admin": "Administrator",
     "manager": "Materialwart"
@@ -129,4 +145,4 @@ export const de = {
     "Incorrect password": "Ungültiges Passwort",
     "User not found": "Benutzer nicht gefunden"
   }
-}
+};

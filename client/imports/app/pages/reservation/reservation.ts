@@ -15,8 +15,7 @@ import {Item} from "../../../../../both/models/item.model";
 import {ItemsDataService} from "../../services/items-data";
 import {ItemStateModal} from "../item-state-modal/item-state-modal";
 import {Subscription} from "rxjs/Subscription";
-import {TranslateService} from "@ngx-translate/core";
-import {TranslateHelperService} from "../../services/translate-helper";
+import {TranslateService} from "../../services/translate";
 
 
 interface SelectableItem extends Item {
@@ -41,8 +40,6 @@ export class ReservationPage implements OnInit, OnDestroy {
     unavailableItems: {[_id: string]: boolean} = {};
 
     reservationForm: FormGroup;
-    startOutput: string;
-    endOutput: string;
     isLoaded: boolean = false;
 
     editId: string;
@@ -94,12 +91,29 @@ export class ReservationPage implements OnInit, OnDestroy {
         return this.reservationForm.controls['name'].value;
     }
 
+    get reservationTypeOptions(): any[] {
+        return this.translate.getAll([
+            {
+                translate: 'RESERVATION.TYPE.GROUP',
+                value: "group",
+                color: 'good',
+                text: ""
+            },
+            {
+                translate: 'RESERVATION.TYPE.PRIVATE',
+                value: "private",
+                color: 'warning',
+                text: ""
+            }
+        ]);
+    }
+
     constructor(private reservationsDataService: ReservationsDataService, private itemsDataService: ItemsDataService,
                 private fb: FormBuilder, private users: UserService, private navCtrl: NavController,
                 private params: NavParams, private loadingCtrl: LoadingController,
                 private modalCtrl: ModalController, private toastCtrl: ToastController,
                 private alertCtrl: AlertController, private platform: Platform,
-                private translate: TranslateService, private translateHelper: TranslateHelperService) {
+                private translate: TranslateService) {
         this.reservationForm = fb.group({
             type: ["", Validators.required],
             name: ["", Validators.required],
@@ -142,14 +156,10 @@ export class ReservationPage implements OnInit, OnDestroy {
         });
         if (removedItems.length > 0) {
             console.log("Found items to remove:", this.reservation, removedItems);
-            let removedSubscription = this.translate.get("RESERVATION_PAGE.ITEMS_REMOVED", {'items': _.map(removedItems, item => item.name)})
-                .subscribe(message => {
-                    this.toastCtrl.create({
-                        message: message,
-                        duration: 2500
-                    }).present();
-                    removedSubscription.unsubscribe();
-                });
+            this.toastCtrl.create({
+                message: this.translate.get("RESERVATION_PAGE.ITEMS_REMOVED", {'items': _.map(removedItems, item => item.name)}),
+                duration: 2500
+            }).present();
         }
     }
 
@@ -194,8 +204,6 @@ export class ReservationPage implements OnInit, OnDestroy {
                 this.reservationForm.controls['end'].setValue(reservation.end?moment(reservation.end).toDate():null);
                 this.reservationForm.controls['contact'].setValue(reservation.contact);
                 this.reservationForm.markAsPristine();
-                this.startOutput = moment(reservation.start).format('DD.MM.YYYY');
-                this.endOutput = moment(reservation.end).format('DD.MM.YYYY');
                 this.selectedItemIds = _.clone(reservation.itemIds);
                 this.originalSelectedItemIds = _.clone(reservation.itemIds);
                 console.log("Set selectedItemIds:", this.selectedItemIds);
@@ -337,39 +345,34 @@ export class ReservationPage implements OnInit, OnDestroy {
         if (!this.forceClose && !this.readonly &&
             (this.reservationForm.dirty || _.xor(this.selectedItemIds, this.originalSelectedItemIds).length !== 0)) {
             console.log("Dirty Form");
-            let messageTextSubscription = this.translate.get(['RESERVATION_PAGE.LEAVE.TITLE', 'RESERVATION_PAGE.LEAVE.MESSAGE',
-                'RESERVATION_PAGE.LEAVE.CANCEL', 'RESERVATION_PAGE.LEAVE.LEAVE', 'RESERVATION_PAGE.LEAVE.SAVE']).subscribe((messages) => {
-                this.alertCtrl.create({
-                    title: messages['RESERVATION_PAGE.LEAVE.TITLE'],
-                    message: messages['RESERVATION_PAGE.LEAVE.MESSAGE'],
-                    cssClass: 'three-button-alert',
-                    buttons: [
-                        {
-                            text: messages['RESERVATION_PAGE.LEAVE.CANCEL'],
-                            role: 'cancel',
-                        },
-                        {
-                            text: messages['RESERVATION_PAGE.LEAVE.LEAVE'],
-                            role: null,
-                            handler: () => {
+            this.alertCtrl.create({
+                message: this.translate.get('RESERVATION_PAGE.LEAVE.MESSAGE'),
+                cssClass: 'three-button-alert',
+                buttons: [
+                    {
+                        text: this.translate.get('RESERVATION_PAGE.LEAVE.CANCEL'),
+                        role: 'cancel',
+                    },
+                    {
+                        text: this.translate.get('RESERVATION_PAGE.LEAVE.LEAVE'),
+                        role: null,
+                        handler: () => {
+                            this.forceClose = true;
+                            this.navCtrl.pop();
+                        }
+                    },
+                    {
+                        text: this.translate.get('RESERVATION_PAGE.LEAVE.SAVE'),
+                        role: null,
+                        handler: () => {
+                            this.save(() => {
                                 this.forceClose = true;
                                 this.navCtrl.pop();
-                            }
-                        },
-                        {
-                            text: messages['RESERVATION_PAGE.LEAVE.SAVE'],
-                            role: null,
-                            handler: () => {
-                                this.save(() => {
-                                    this.forceClose = true;
-                                    this.navCtrl.pop();
-                                });
-                            }
+                            });
                         }
-                    ]
-                }).present();
-                messageTextSubscription.unsubscribe();
-            });
+                    }
+                ]
+            }).present();
             return false;
         }
         return true;

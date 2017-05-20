@@ -11,9 +11,11 @@ import {Reservation} from "../../../../../both/models/reservation.model";
 import {Subject} from "rxjs/Subject";
 import {ItemsDataService} from "../../services/items-data";
 import {ItemState} from "../../../../../both/models/item-state.model";
-import {Item, itemColor} from "../../../../../both/models/item.model";
+import {Item} from "../../../../../both/models/item.model";
 import {ItemStateCollection} from "../../../../../both/collections/item-state.collection";
 import {Subscription} from "rxjs/Subscription";
+import {colors} from "../../colors";
+import {TranslateService} from "../../services/translate";
 
 
 @Component({
@@ -37,7 +39,9 @@ export class ItemStateModal implements OnInit, OnDestroy {
 
     refresh: Subject<any> = new Subject();
 
-    days_label: Array<string> = moment.weekdaysShort();
+    get days_label(): string[] {
+        return moment.weekdaysShort();
+    }
 
     range: {
         start: moment.Moment,
@@ -59,7 +63,7 @@ export class ItemStateModal implements OnInit, OnDestroy {
     }
 
     constructor(private viewCtrl: ViewController, private params: NavParams, private itemDataService: ItemsDataService,
-                private reservationsDataService: ReservationsDataService) {
+                private reservationsDataService: ReservationsDataService, private translate: TranslateService) {
         this.viewDate = moment().startOf('day');
         this.itemId = this.params.get('itemId');
         if (this.params.get('rangeEnd')) {
@@ -174,27 +178,58 @@ export class ItemStateModal implements OnInit, OnDestroy {
 
     subscribeItemState() {
         this.subscriptionHandle = Meteor.subscribe('item.states', {itemId: this.itemId});
-        this.itemStateSubscription = ItemStateCollection.find({itemId: this.itemId}).zone().subscribe((states) => {
+        this.itemStateSubscription = ItemStateCollection.find({itemId: this.itemId}, {sort: {timestamp: -1}}).zone().subscribe((states) => {
             this.itemEvents = states
                 .map((state: ItemState) => {
-                    let condition = '#000000';
+                    let primaryColor = '#000000';
 
-                    let lastServiceIdx = state.fieldNames.indexOf('lastService');
-                    if (lastServiceIdx !== -1) {
-                        condition = '#00ff00';
+                    let textParts = [];
+
+                    if (_.has(state.fields, 'lastService')) {
+                        primaryColor = colors.good;
+                        textParts.push(this.translate.get('ITEM_STATE.LAST_SERVICE', {lastService: state.fields.lastService}));
                     }
 
-                    let conditionIdx = state.fieldNames.indexOf('condition');
-                    if (conditionIdx !== -1) {
-                        condition = itemColor(Number.parseFloat(state.fieldValues[conditionIdx]));
+                    if (_.has(state.fields, 'condition')) {
+                        let option = _.find(this.itemDataService.itemConditionOptions, option => option.value == state.fields.condition);
+                        primaryColor = option.color;
+                        if (_.has(state.fields, 'conditionComment')) {
+                            textParts.push(this.translate.get('ITEM_STATE.CONDITION_CONDITION_COMMENT', {conditionOption: option, conditionComment: state.fields.conditionComment}));
+                        } else {
+                            textParts.push(this.translate.get('ITEM_STATE.CONDITION', {condition: state.fields.condition}));
+                        }
+                    } else {
+                        textParts.push(this.translate.get('ITEM_STATE.CONDITION_COMMENT', {conditionComment: state.fields.conditionComment}));
                     }
-                    let conditionSec = Color(condition).lighten(0.15).hex();
+
+                    if (_.has(state.fields, 'name')) {
+                        textParts.push(this.translate.get('ITEM_STATE.NAME', {name: state.fields.name}));
+                    }
+
+                    if (_.has(state.fields, 'description')) {
+                        textParts.push(this.translate.get('ITEM_STATE.DESCRIPTION', {description: state.fields.description}));
+                    }
+
+                    if (_.has(state.fields, 'externalId')) {
+                        textParts.push(this.translate.get('ITEM_STATE.EXTERNAL_ID', {externalId: state.fields.externalId}));
+                    }
+
+                    if (_.has(state.fields, 'tags')) {
+                        textParts.push(this.translate.get('ITEM_STATE.TAGS', {tags: state.fields.tags}));
+                    }
+
+                    if (_.has(state.fields, 'status')) {
+                        let option = _.find(this.itemDataService.itemStatusOptions, option => option.value == state.fields.status);
+                        textParts.push(this.translate.get('ITEM_STATE.STATUS', {statusOption: option}));
+                    }
+
+                    let secondaryColor = Color(primaryColor).lighten(0.15).hex();
                     return {
                         start: state.timestamp,
-                        title: (state.comment?state.comment + "<br>":"") + _.zip(state.fieldNames, state.fieldValues).map((data) => data[0] + " = " + data[1]).join(", "),
+                        title: this.translate.get('ITEM_STATE.TEXT', {texts: textParts, comment: state.comment, timestamp: state.timestamp}),
                         color: {
-                            primary: condition,
-                            secondary: conditionSec
+                            primary: primaryColor,
+                            secondary: secondaryColor
                         },
                         allDay: false,
                     };
