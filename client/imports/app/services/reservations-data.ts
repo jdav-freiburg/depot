@@ -39,6 +39,20 @@ export class ReservationsDataService {
         return ReservationCollection.find({}, {sort: {start: -1}});
     }
 
+    public getReservationsForUser(userId: string, onlyFuture?: boolean): ObservableCursor<Reservation> {
+        if (onlyFuture) {
+            return ReservationCollection.find({userId: userId, end: {$gte: new Date()}}, {sort: {start: -1}});
+        }
+        return ReservationCollection.find({userId: userId}, {sort: {start: -1}});
+    }
+
+    public getReservationsForGroup(groupId: string, onlyFuture?: boolean): ObservableCursor<Reservation> {
+        if (onlyFuture) {
+            return ReservationCollection.find({groupId: groupId, end: {$gte: new Date()}}, {sort: {start: -1}});
+        }
+        return ReservationCollection.find({groupId: groupId}, {sort: {start: -1}});
+    }
+
     public add(item: Reservation, callback?: Function): void {
         ReservationCollection.insert(item).subscribe((objectId) => {
             this.ngZone.run(() => {
@@ -48,7 +62,9 @@ export class ReservationsDataService {
                 }
             });
         }, (error) => {
-            callback(error);
+            this.ngZone.run(() => {
+                callback(error);
+            });
         });
     }
 
@@ -58,19 +74,23 @@ export class ReservationsDataService {
         console.log("reservation updating", item._id, itemData);
         let result = ReservationCollection.update({_id: item._id}, {$set: itemData});
         result.subscribe((result) => {
-            console.log("reservation update:", result);
-            if (callback) {
-                if (result === 1) {
-                    callback();
-                } else {
-                    callback('Not stored');
+            this.ngZone.run(() => {
+                console.log("reservation update:", result);
+                if (callback) {
+                    if (result === 1) {
+                        callback();
+                    } else {
+                        callback('Not stored');
+                    }
                 }
-            }
+            });
         }, (error) => {
-            console.log("reservation update error:", error);
-            if (callback) {
-                callback(error);
-            }
+            this.ngZone.run(() => {
+                console.log("reservation update error:", error);
+                if (callback) {
+                    callback(error);
+                }
+            });
         });
     }
 
@@ -94,15 +114,19 @@ export class ReservationsDataService {
         console.log("reservation removing", id);
         let result = ReservationCollection.remove({_id: id});
         result.subscribe((result) => {
-            console.log("reservation remove:", result);
-            if (callback) {
-                callback();
-            }
+            this.ngZone.run(() => {
+                console.log("reservation remove:", result);
+                if (callback) {
+                    callback();
+                }
+            });
         }, (error) => {
-            console.log("reservation remove error:", error);
-            if (callback) {
-                callback(error);
-            }
+            this.ngZone.run(() => {
+                console.log("reservation remove error:", error);
+                if (callback) {
+                    callback(error);
+                }
+            });
         });
         return result;
     }

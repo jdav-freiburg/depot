@@ -72,13 +72,15 @@ export class ItemsDataService {
             item: item,
             updateComment: updateComment
         }, (err, res) => {
-            console.log("items add", err, res);
-            if (!err) {
-                item._id = res;
-            }
-            if (callback) {
-                callback(err);
-            }
+            this.ngZone.run(() => {
+                console.log("items add", err, res);
+                if (!err) {
+                    item._id = res;
+                }
+                if (callback) {
+                    callback(err, res);
+                }
+            });
         });
     }
 
@@ -87,10 +89,12 @@ export class ItemsDataService {
             item: item,
             updateComment: updateComment
         }, (err, res) => {
-            console.log("items update", err, res);
-            if (callback) {
-                callback(err);
-            }
+            this.ngZone.run(() => {
+                console.log("items update", err, res);
+                if (callback) {
+                    callback(err, res);
+                }
+            });
         });
     }
 

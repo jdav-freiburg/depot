@@ -73,9 +73,9 @@ export class UserService {
         ]);
     };
 
-    constructor(private zone: NgZone, private ref: ApplicationRef, private translate: TranslateService) {
+    constructor(private ngZone: NgZone, private ref: ApplicationRef, private translate: TranslateService) {
         Accounts.onLogin(() => {
-            zone.run(() => {
+            ngZone.run(() => {
                 this._user = <User>Meteor.user();
                 if (this._user.status !== 'normal') {
                     Accounts.logout();
@@ -85,14 +85,14 @@ export class UserService {
             });
         });
         Accounts.onLogout(() => {
-            zone.run(() => {
+            ngZone.run(() => {
                 this._user = null;
                 console.log("User:", this._user);
                 this.userChange.next(this._user);
             });
         });
         Accounts.onPageLoadLogin(() => {
-            zone.run(() => {
+            ngZone.run(() => {
                 this._user = <User>Meteor.user();
                 if (this._user.status !== 'normal') {
                     Accounts.logout();
@@ -106,14 +106,14 @@ export class UserService {
         });
         Meteor.users.find({}, {sort: {_id: 1}}).observe({
             added: (data: User) => {
-                this.zone.run(() => {
+                this.ngZone.run(() => {
                     this._users.push(data);
                     console.log("user added", this._users);
                     this.usersChange.next(this._users);
                 });
             },
             changed: (data: User) => {
-                this.zone.run(() => {
+                this.ngZone.run(() => {
                     if (this._user && this._user._id === data._id) {
                         this._user = data;
                         if (this._user.status !== 'normal') {
@@ -132,7 +132,7 @@ export class UserService {
                 });
             },
             removed: (data: User) => {
-                this.zone.run(() => {
+                this.ngZone.run(() => {
                     _.remove(this._users, (user) => user._id === data._id);
                     console.log("user removed", this._users);
                     this.usersChange.next(this._users);
@@ -149,9 +149,15 @@ export class UserService {
         Meteor.loginWithPassword(user, password);
     }
 
-    public setLanguage(language: string) {
+    public setLanguage(language: string, callback?: Function) {
         if (this.user.language !== language) {
-            Meteor.call('users.setLanguage', {language});
+            Meteor.call('users.setLanguage', {language}, (err, res) => {
+                this.ngZone.run(() => {
+                    if (callback) {
+                        callback(err, res);
+                    }
+                });
+            });
         }
     }
 
@@ -165,5 +171,113 @@ export class UserService {
 
     public get isManager(): boolean {
         return this._user && _.includes(this._user.roles, 'manager');
+    }
+
+
+
+
+    public savePersonal(userId: string, fullName: string, phone: string, callback?: Function) {
+        Meteor.users.update({_id: userId}, {$set: {
+            fullName: fullName,
+            phone: phone,
+        }}, {}, (err, res) => {
+            this.ngZone.run(() => {
+                if (callback) {
+                    callback(err, res);
+                }
+            });
+        });
+    }
+
+    public saveUsername(userId: string, username: string, callback?: Function) {
+        Meteor.call('users.setUsername', {
+            userId: userId,
+            name: username
+        }, (err, res) => {
+            this.ngZone.run(() => {
+                if (callback) {
+                    callback(err, res);
+                }
+            });
+        });
+    }
+
+    public saveEmail(userId: string, oldAddress: string, newAddress: string, callback?: Function) {
+        Meteor.call('users.updateEmail', {
+            userId: userId,
+            oldEmail: oldAddress,
+            newEmail: newAddress
+        }, (err, res) => {
+            this.ngZone.run(() => {
+                if (callback) {
+                    callback(err, res);
+                }
+            });
+        });
+    }
+
+    public addEmail(userId: string, address: string, callback?: Function) {
+        Meteor.call('users.addEmail', {
+            userId: userId,
+            email: address
+        }, (err, res) => {
+            this.ngZone.run(() => {
+                if (callback) {
+                    callback(err, res);
+                }
+            });
+        });
+    }
+
+    deleteEmail(userId: string, address: string, callback?: Function) {
+        Meteor.call('users.removeEmail', {
+            userId: userId,
+            email: address
+        }, (err, res) => {
+            this.ngZone.run(() => {
+                if (callback) {
+                    callback(err, res);
+                }
+            });
+        });
+    }
+
+    savePassword(userId: string, newPassword: string, oldPassword?: string, callback?: Function) {
+        Meteor.call('users.updatePassword', {
+            userId: userId,
+            newPassword: newPassword,
+            oldPassword: oldPassword
+        }, (err, res) => {
+            this.ngZone.run(() => {
+                if (callback) {
+                    callback(err, res);
+                }
+            });
+        });
+    }
+
+    saveUserStatus(userId: string, status: string, callback?: Function) {
+        Meteor.call('users.setStatus', {
+            userId: userId,
+            status: status
+        }, (err, res) => {
+            this.ngZone.run(() => {
+                if (callback) {
+                    callback(err, res);
+                }
+            });
+        });
+    }
+
+    public unlockUser(user: User, callback?: Function) {
+        Meteor.call('users.unlock', {
+            userId: user._id
+        }, (err, res) => {
+            this.ngZone.run(() => {
+                if (callback) {
+                    callback(err, res);
+                }
+            });
+        });
     }
 }

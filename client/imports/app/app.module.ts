@@ -29,13 +29,15 @@ import {UsersFilterPipe} from "./pipes/users-filter";
 import {UsersPage} from "./pages/users/users";
 import {ItemDatePickerComponent} from "./components/item-date-picker/item-date-picker";
 import {DebugService} from "./services/debug";
-import {Http, HttpModule} from "@angular/http";
 import {JoinPipe} from "./pipes/join";
 import {TranslateService} from "./services/translate";
 import {TranslatePipe} from "./pipes/translate";
 import {MomentPipe} from "./pipes/moment";
 import {TranslateHelperService} from "./services/translate-helper";
 import {AdvancedEmailValidatorDirective} from "./services/advanced-email-validator";
+import {GlobalMessagesDataService} from "./services/global-messages-data";
+import {MarkdownModule} from "angular2-markdown";
+import {ReservationCardComponent} from "./components/reservation-card/reservation-card";
 
 /*const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -67,7 +69,8 @@ import {AdvancedEmailValidatorDirective} from "./services/advanced-email-validat
         JoinPipe,
         TranslatePipe,
         MomentPipe,
-        AdvancedEmailValidatorDirective
+        AdvancedEmailValidatorDirective,
+        ReservationCardComponent
     ],
     // Entry Components
     entryComponents: [
@@ -95,11 +98,11 @@ import {AdvancedEmailValidatorDirective} from "./services/advanced-email-validat
         ReservationsDataService,
         DebugService,
         TranslateService,
-        TranslateHelperService
+        TranslateHelperService,
+        GlobalMessagesDataService
     ],
     // Modules
     imports: [
-        HttpModule,
         IonicModule.forRoot(AppComponent),
         BrowserModule,
         //RouterModule.forRoot(appRoutes),
@@ -107,6 +110,7 @@ import {AdvancedEmailValidatorDirective} from "./services/advanced-email-validat
         FormsModule,
         ReactiveFormsModule,
         CalendarModule.forRoot(),
+        MarkdownModule.forRoot()
     ],
     // Main Component
     bootstrap: [ IonicApp ]

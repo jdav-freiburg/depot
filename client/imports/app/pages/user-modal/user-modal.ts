@@ -168,55 +168,30 @@ export class UserModal implements OnInit, OnDestroy {
     savePersonal() {
         this.userForm.disable();
         console.log("Saving personal:", this.userForm.controls['fullName'].value, this.userForm.controls['phone'].value);
-        Meteor.users.update({_id: this.user._id}, {$set: {
-            fullName: this.userForm.controls['fullName'].value,
-            phone: this.userForm.controls['phone'].value,
-        }}, {}, (err, result) => {
-            this.userForm.enable();
-            console.log("Saved personal");
-            if (err) {
-                console.log("Error:", err);
-                this.toast.create({
-                    message: this.translateHelper.getError(err),
-                    duration: 2500
-                }).present();
-            } else {
-                this.userForm.markAsPristine();
-                this.userForm.markAsUntouched();
-                this.userForm.updateValueAndValidity();
-            }
-        });
+        this.userService.savePersonal(this.user._id, this.userForm.controls['fullName'].value, this.userForm.controls['phone'].value,
+            (err, res) => {
+                this.userForm.enable();
+                console.log("Saved personal");
+                if (err) {
+                    console.log("Error:", err);
+                    this.toast.create({
+                        message: this.translateHelper.getError(err),
+                        duration: 2500
+                    }).present();
+                } else {
+                    this.userForm.markAsPristine();
+                    this.userForm.markAsUntouched();
+                    this.userForm.updateValueAndValidity();
+                }
+            });
     }
 
     saveUsername() {
         this.usernameForm.disable();
         console.log("saveUsername", this.usernameForm.controls['username'].value);
-        Meteor.call('users.setUsername', {
-            userId: this.user._id,
-            name: this.usernameForm.controls['username'].value
-        }, (err, result) => {
-            this.usernameForm.enable();
-            if (err) {
-                console.log("Error:", err);
-                this.toast.create({
-                    message: this.translateHelper.getError(err),
-                    duration: 2500
-                }).present();
-            }
-        });
-    }
-
-    saveEmail(email: EditEmail) {
-        if (!AdvancedEmailValidatorDirective.check(email.editAddress)) {
-            return;
-        }
-        console.log("saveEmail", email.address, "==>", email.editAddress);
-        if (email.editAddress !== email.address) {
-            Meteor.call('users.updateEmail', {
-                userId: this.userId,
-                oldEmail: email.address,
-                newEmail: email.editAddress
-            }, (err, result) => {
+        this.userService.saveUsername(this.user._id, this.usernameForm.controls['username'].value,
+            (err, result) => {
+                this.usernameForm.enable();
                 if (err) {
                     console.log("Error:", err);
                     this.toast.create({
@@ -225,6 +200,24 @@ export class UserModal implements OnInit, OnDestroy {
                     }).present();
                 }
             });
+    }
+
+    saveEmail(email: EditEmail) {
+        if (!AdvancedEmailValidatorDirective.check(email.editAddress)) {
+            return;
+        }
+        console.log("saveEmail", email.address, "==>", email.editAddress);
+        if (email.editAddress !== email.address) {
+            this.userService.saveEmail(this.user._id, email.address, email.editAddress,
+                (err, result) => {
+                    if (err) {
+                        console.log("Error:", err);
+                        this.toast.create({
+                            message: this.translateHelper.getError(err),
+                            duration: 2500
+                        }).present();
+                    }
+                });
         }
     }
 
@@ -233,19 +226,18 @@ export class UserModal implements OnInit, OnDestroy {
             return;
         }
         console.log("addEmail", this.newEmailAddress);
-        Meteor.call('users.addEmail', {
-            userId: this.userId,
-            email: this.newEmailAddress
-        }, (err, result) => {
-            if (err) {
-                console.log("Error:", err);
-                this.toast.create({
-                    message: this.translateHelper.getError(err),
-                    duration: 2500
-                }).present();
-            }
-        });
-        this.newEmailAddress = "";
+        this.userService.addEmail(this.user._id, this.newEmailAddress,
+            (err, result) => {
+                if (err) {
+                    console.log("Error:", err);
+                    this.toast.create({
+                        message: this.translateHelper.getError(err),
+                        duration: 2500
+                    }).present();
+                } else {
+                    this.newEmailAddress = "";
+                }
+            });
     }
 
     deleteEmail(email: EditEmail) {
@@ -253,17 +245,16 @@ export class UserModal implements OnInit, OnDestroy {
             return;
         }
         console.log("deleteEmail", email);
-        Meteor.call('users.removeEmail', {
-            userId: this.userId, email: email.address
-        }, (err, result) => {
-            if (err) {
-                console.log("Error:", err);
-                this.toast.create({
-                    message: this.translateHelper.getError(err),
-                    duration: 2500
-                }).present();
-            }
-        });
+        this.userService.deleteEmail(this.user._id, email.address,
+            (err, result) => {
+                if (err) {
+                    console.log("Error:", err);
+                    this.toast.create({
+                        message: this.translateHelper.getError(err),
+                        duration: 2500
+                    }).present();
+                }
+            });
     }
 
     randomPassword() {
@@ -283,50 +274,47 @@ export class UserModal implements OnInit, OnDestroy {
     savePassword() {
         console.log("savePassword");
         this.userPasswordForm.disable();
-        Meteor.call('users.updatePassword', {
-            userId: this.userId,
-            newPassword: this.userPasswordForm.controls['newPassword'].value,
-            oldPassword: this.userPasswordForm.controls['oldPassword'].value
-        }, (err, result) => {
-            this.userPasswordForm.enable();
-            if (err) {
-                console.log("Error:", err);
-                this.toast.create({
-                    message: this.translateHelper.getError(err),
-                    duration: 2500
-                }).present();
-            } else {
-                this.userPasswordForm.markAsPristine();
-                this.userPasswordForm.markAsUntouched();
-                this.userPasswordForm.updateValueAndValidity();
-            }
-        });
-        this.userPasswordForm.controls['newPassword'].setValue("");
-        this.userPasswordForm.controls['newPasswordRepeat'].setValue("");
-        this.userPasswordForm.controls['oldPassword'].setValue("");
+        this.userService.savePassword(this.user._id, this.userPasswordForm.controls['newPassword'].value,
+            this.userPasswordForm.controls['oldPassword'].value,
+            (err, result) => {
+                this.userPasswordForm.enable();
+                if (err) {
+                    console.log("Error:", err);
+                    this.toast.create({
+                        message: this.translateHelper.getError(err),
+                        duration: 2500
+                    }).present();
+                } else {
+                    this.userPasswordForm.controls['newPassword'].setValue("");
+                    this.userPasswordForm.controls['newPasswordRepeat'].setValue("");
+                    this.userPasswordForm.controls['oldPassword'].setValue("");
+                    this.userPasswordForm.controls['passwordRandom'].setValue("");
+                    this.userPasswordForm.markAsPristine();
+                    this.userPasswordForm.markAsUntouched();
+                    this.userPasswordForm.updateValueAndValidity();
+                }
+            });
     }
 
     get userStatus(): string {
         return this._userStatus;
     }
 
-    set userStatus(value: string) {
-        this._userStatus = value;
-        console.log("saveStatus", value);
+    set userStatus(status: string) {
+        this._userStatus = status;
+        console.log("saveStatus", status);
         this.userStatusIsWorking = true;
-        Meteor.call('users.setStatus', {
-            userId: this.userId,
-            status: value
-        }, (err, result) => {
-            this.userStatusIsWorking = false;
-            if (err) {
-                console.log("Error:", err);
-                this.toast.create({
-                    message: this.translateHelper.getError(err),
-                    duration: 2500
-                }).present();
-            }
-        });
+        this.userService.saveUserStatus(this.user._id, status,
+            (err, result) => {
+                this.userStatusIsWorking = false;
+                if (err) {
+                    console.log("Error:", err);
+                    this.toast.create({
+                        message: this.translateHelper.getError(err),
+                        duration: 2500
+                    }).present();
+                }
+            });
     }
 
     close() {

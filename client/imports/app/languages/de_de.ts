@@ -7,7 +7,25 @@ export const de_de = {
   "TITLE_SHORT": "de-de",
   "HOME_PAGE": {
     "TITLE": "Home",
-    "WELCOME": "Willkommen!"
+    "NEW_USER": {
+      "HEADER": "Neuer Benutzer registriert",
+      "HELP": "Ein neuer Benutzer hat sich angemeldet. Wenn du den Benutzer authentisieren kannst, schalte ihn frei damit er sich anmelden kann. Hinweis: Du wirst als Authentisierer gespeichert.",
+      "USERNAME": "Benutzername",
+      "EMAIL": "E-Mail",
+      "PHONE": "Telefon",
+      "UNLOCK": "Freischalten"
+    },
+    "MESSAGE": {
+      "NEW_USER": {
+        "AUTHENTICATOR": "Authentisierer",
+        "USER": "Neuer Benutzer",
+        "TITLE": "Neuer Benutzer"
+      },
+      "MESSAGE": {
+        "NEW_TITLE": "Neue Globale Nachricht",
+        "TITLE": "Globale Nachricht"
+      }
+    }
   },
   "LOGIN_PAGE": {
     "TITLE": "Login",
@@ -101,6 +119,11 @@ export const de_de = {
     "PASSWORD_RANDOM": "Zufälliges Passwort",
     "ROLES": "Rollen",
     "STATUS": "Status"
+  },
+  "RESERVATION_CARD": {
+    "HEADER": "Reservierung",
+    "ITEMS": "Material",
+    "DESCRIPTION": (reservation) => `${reservation.type.text}. Vom ${moment(reservation.start).format('L')} bis ${moment(reservation.end).format('L')}.`
   },
   "LANGUAGE_SELECT": {
     "TITLE": "Sprache",

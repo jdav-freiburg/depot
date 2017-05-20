@@ -5,6 +5,8 @@ import {User, UserSchema} from "../../../both/models/user.model";
 import {Roles} from "./utils";
 import SimpleSchema from "simpl-schema";
 import {UserCollection} from "../../../both/collections/user.collection";
+import {GlobalMessageCollection} from "../../../both/collections/global-message.collection";
+import {GlobalMessage} from "../../../both/models/global-message.model";
 
 Meteor.users.allow({
     insert(userId: string, doc: Meteor.User): boolean {
@@ -230,6 +232,15 @@ Meteor.methods({
             throw new Meteor.Error('unauthorized', "Not allowed to modify other user");
         }
         UserCollection.update({_id: userId}, {$set: {status: 'normal'}});
+        let globalMessage: GlobalMessage = {
+            timestamp: new Date(),
+            type: "new-user",
+            data: {
+                authenticatorUserId: this.userId,
+                userId: userId
+            }
+        };
+        GlobalMessageCollection.insert(globalMessage);
     },
     'users.setStatus'({status, userId}: { status: string, userId: string}): void {
         new SimpleSchema({

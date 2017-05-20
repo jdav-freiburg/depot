@@ -30,7 +30,8 @@
             <div class="edit-tr">
                 <span class="edit-td">{{user.username}}</span>
                 <span class="edit-td">
-                    <span *ngFor="let email of user.emails">
+                    <span *ngFor="let email of user.emails; first as isFirst">
+                        <span *ngIf="!isFirst">, </span>
                         <a href="mailto:{{email.address}}">{{email.address}}</a>
                     </span>
                 </span>
@@ -39,7 +40,7 @@
                 <span class="edit-td">
                     <span [ngSwitch]="user.status">
                         <ng-container *ngFor="let option of userService.userStatusOptions">
-                            <span *ngSwitchCase="option.value" [style.color]="option.cssColor">{{option.text}}</span>
+                            <span *ngSwitchCase="option.value" [style.color]="option.colorCss">{{option.text}}</span>
                         </ng-container>
                         <span *ngSwitchDefault>{{user.status}}</span>
                     </span>
@@ -48,7 +49,7 @@
                     <span *ngFor="let role of user.roles">
                         <span [ngSwitch]="role">
                             <ng-container *ngFor="let option of userService.userRolesOptions">
-                                <span *ngSwitchCase="option.value" [style.color]="option.cssColor">{{option.text}}</span>
+                                <span *ngSwitchCase="option.value" [style.color]="option.colorCss">{{option.text}}</span>
                             </ng-container>
                             <span *ngSwitchDefault>{{role}}</span>
                         </span>

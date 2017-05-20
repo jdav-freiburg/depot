@@ -6,7 +6,25 @@ export const en_us = {
   "TITLE_SHORT": "en-us",
   "HOME_PAGE": {
     "TITLE": "Home",
-    "WELCOME": "Welcome back!"
+    "NEW_USER": {
+      "HEADER": "New User Registered",
+      "HELP": "A new user has registered. If you can authenticate the user, press unlock, so the user is allowed to use the system. Hint: You will be stored as the authenticator.",
+      "USERNAME": "Username",
+      "EMAIL": "E-Mail",
+      "PHONE": "Phone",
+      "UNLOCK": "Unlock"
+    },
+    "MESSAGE": {
+      "NEW_USER": {
+        "AUTHENTICATOR": "Authenticator",
+        "USER": "New User",
+        "TITLE": "New User"
+      },
+      "MESSAGE": {
+        "NEW_TITLE": "New Global Message",
+        "TITLE": "Global Message"
+      }
+    }
   },
   "LOGIN_PAGE": {
     "TITLE": "Login",
@@ -100,6 +118,11 @@ export const en_us = {
     "PASSWORD_RANDOM": "Random Password",
     "ROLES": "Roles",
     "STATUS": "Status"
+  },
+  "RESERVATION_CARD": {
+    "HEADER": "Reservation",
+    "ITEMS": "Items",
+    "DESCRIPTION": (reservation) => `${reservation.type.text}. From ${moment(reservation.start).format('L')} until ${moment(reservation.end).format('L')}.`
   },
   "LANGUAGE_SELECT": {
     "TITLE": "Language",

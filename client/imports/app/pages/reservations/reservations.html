@@ -33,7 +33,7 @@
                 <span class="edit-td">
                     <span [ngSwitch]="reservation.type">
                         <ng-container *ngFor="let option of reservationsDataService.reservationTypeOptions">
-                            <span *ngSwitchCase="option.value" [style.color]="option.cssColor">{{option.text}}</span>
+                            <span *ngSwitchCase="option.value" [style.color]="option.colorCss">{{option.text}}</span>
                         </ng-container>
                         <span *ngSwitchDefault>{{reservation.type}}</span>
                     </span>

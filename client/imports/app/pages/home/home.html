@@ -4,7 +4,116 @@
         <button ion-button menuToggle>
             <ion-icon name="menu"></ion-icon>
         </button>
+        <ion-buttons right>
+            <button ion-button icon-only clear (click)="newMessage()" *ngIf="isAdmin"><ion-icon name="create"></ion-icon></button>
+        </ion-buttons>
     </ion-navbar>
 </ion-header>
 
-<ion-content>{{'HOME_PAGE.WELCOME' | translate}}</ion-content>
+<ion-content>
+    <form [formGroup]="newMessageForm" (submit)="createMessage()">
+        <ion-card *ngIf="showNewMessage">
+            <ion-toolbar>
+                <ion-title>
+                    {{'HOME_PAGE.MESSAGE.MESSAGE.NEW_TITLE' | translate}}
+                </ion-title>
+                <ion-buttons right>
+                    <button ion-button icon-only clear *ngIf="!newMessagePreview" (click)="newMessagePreview=true">
+                        <ion-icon name="eye"></ion-icon>
+                    </button>
+                    <button ion-button icon-only clear *ngIf="newMessagePreview" (click)="newMessagePreview=false">
+                        <ion-icon name="eye-off"></ion-icon>
+                    </button>
+                    <button ion-button icon-only clear type="submit">
+                        <ion-icon name="checkmark"></ion-icon>
+                    </button>
+                    <button ion-button icon-only clear (click)="cancelNewMessage()">
+                        <ion-icon name="close"></ion-icon>
+                    </button>
+                </ion-buttons>
+            </ion-toolbar>
+            <ion-card-content>
+                <ion-textarea formControlName="message" *ngIf="!newMessagePreview"></ion-textarea>
+                <markdown *ngIf="newMessagePreview" [data]="newMessageForm.controls['message'].value"></markdown>
+            </ion-card-content>
+        </ion-card>
+    </form>
+
+    <ion-card *ngFor="let user of lockedUsers">
+        <ion-toolbar>
+            <ion-title>
+                {{'HOME_PAGE.NEW_USER.HEADER' | translate}}
+            </ion-title>
+            <ion-buttons right>
+                <button ion-button icon-right clear (click)="unlockUser(user)">
+                    {{'HOME_PAGE.NEW_USER.UNLOCK' | translate}}
+                    <ion-icon name="key"></ion-icon>
+                </button>
+            </ion-buttons>
+        </ion-toolbar>
+        <ion-card-content>
+            <ion-card-title>{{user.fullName}}</ion-card-title>
+            {{'HOME_PAGE.NEW_USER.HELP' | translate}}
+            <ion-item>
+                <ion-label>
+                    <h2>{{'HOME_PAGE.NEW_USER.USERNAME' | translate}}</h2>
+                    <p>{{user.username}}</p>
+                </ion-label>
+            </ion-item>
+            <ion-item>
+                <ion-label>
+                    <h2>{{'HOME_PAGE.NEW_USER.EMAIL' | translate}}</h2>
+                    <p>
+                    <span *ngFor="let email of user.emails; first as isFirst">
+                        <span *ngIf="!isFirst">, </span>
+                        <a href="mailto:{{email.address}}">{{email.address}}</a>
+                    </span>
+                    </p>
+                </ion-label>
+            </ion-item>
+            <ion-item>
+                <ion-label>
+                    <h2>{{'HOME_PAGE.NEW_USER.PHONE' | translate}}</h2>
+                    <p>{{user.phone}}</p>
+                </ion-label>
+            </ion-item>
+        </ion-card-content>
+    </ion-card>
+
+    <reservation-card *ngFor="let reservation of reservations" [reservation]="reservation"></reservation-card>
+
+    <ion-card *ngFor="let message of messages">
+        <ion-toolbar>
+            <ion-title [ngSwitch]="message.type">
+                <span *ngSwitchCase="'new-user'">{{'HOME_PAGE.MESSAGE.NEW_USER.TITLE' | translate}}</span>
+                <span *ngSwitchCase="'message'">{{'HOME_PAGE.MESSAGE.MESSAGE.TITLE' | translate}}</span>
+            </ion-title>
+            <ion-buttons right>
+                <!--<button ion-button icon-only clear (click)="markRead(message)">
+                    <ion-icon name="eye-off"></ion-icon>
+                </button>-->
+            </ion-buttons>
+        </ion-toolbar>
+        <ion-card-content>
+            <ng-container [ngSwitch]="message.type">
+                <ng-container *ngSwitchCase="'new-user'">
+                    <ion-item>
+                        <ion-label>
+                            <h2>{{'HOME_PAGE.MESSAGE.NEW_USER.USER' | translate}}</h2>
+                            <p><user-ref [userId]="message.data.userId"></user-ref></p>
+                        </ion-label>
+                    </ion-item>
+                    <ion-item>
+                        <ion-label>
+                            <h2>{{'HOME_PAGE.MESSAGE.NEW_USER.AUTHENTICATOR' | translate}}</h2>
+                            <p><user-ref [userId]="message.data.authenticatorUserId"></user-ref></p>
+                        </ion-label>
+                    </ion-item>
+                </ng-container>
+                <ng-container *ngSwitchCase="'message'">
+                    <markdown [data]="message.data.message"></markdown>
+                </ng-container>
+            </ng-container>
+        </ion-card-content>
+    </ion-card>
+</ion-content>

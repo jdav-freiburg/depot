@@ -54,9 +54,6 @@
                     <ion-label floating>{{'ITEMS_PAGE.CONDITION' | translate}}</ion-label>
                     <ion-select formControlName="condition">
                         <ion-option *ngFor="let option of itemsDataService.itemConditionOptions" [value]="option.value">{{option.text}}</ion-option>
-                        <!--<ion-option value="100" [style.color]="itemColor(100)">{{'ITEM.CONDITION.100' | translate}}</ion-option>
-                        <ion-option value="50" [style.color]="itemColor(50)">{{'ITEM.CONDITION.50' | translate}}</ion-option>
-                        <ion-option value="0" [style.color]="itemColor(0)">{{'ITEM.CONDITION.0' | translate}}</ion-option>-->
                     </ion-select>
                 </ion-item>
             </span>
@@ -71,8 +68,6 @@
                     <ion-label floating>{{'ITEMS_PAGE.STATUS' | translate}}</ion-label>
                     <ion-select formControlName="status">
                         <ion-option *ngFor="let option of itemsDataService.itemStatusOptions" [value]="option.value">{{option.text}}</ion-option>
-                        <!--<ion-option value="public" color="good">{{'ITEM.STATUS.PUBLIC' | translate}}</ion-option>
-                        <ion-option value="hidden" color="danger">{{'ITEM.STATUS.HIDDEN' | translate}}</ion-option>-->
                     </ion-select>
                 </ion-item>
             </span>
@@ -117,9 +112,6 @@
                         <ion-label floating>{{'ITEMS_PAGE.CONDITION' | translate}}</ion-label>
                         <ion-select formControlName="condition">
                             <ion-option *ngFor="let option of itemsDataService.itemConditionOptions" [value]="option.value">{{option.text}}</ion-option>
-                            <!--<ion-option value="100" [style.color]="itemColor(100)">{{'ITEM.CONDITION.100' | translate}}</ion-option>
-                            <ion-option value="50" [style.color]="itemColor(50)">{{'ITEM.CONDITION.50' | translate}}</ion-option>
-                            <ion-option value="0" [style.color]="itemColor(0)">{{'ITEM.CONDITION.0' | translate}}</ion-option>-->
                         </ion-select>
                     </ion-item>
                 </span>
@@ -134,8 +126,6 @@
                         <ion-label floating>{{'ITEMS_PAGE.STATUS' | translate}}</ion-label>
                         <ion-select formControlName="status">
                             <ion-option *ngFor="let option of itemsDataService.itemStatusOptions" [value]="option.value">{{option.text}}</ion-option>
-                            <!--<ion-option value="public" color="good">{{'ITEM.STATUS.PUBLIC' | translate}}</ion-option>
-                            <ion-option value="hidden" color="danger">{{'ITEM.STATUS.HIDDEN' | translate}}</ion-option>-->
                         </ion-select>
                     </ion-item>
                 </span>
@@ -164,7 +154,7 @@
                 <span class="edit-td">
                     <span [ngSwitch]="item.condition">
                         <ng-container *ngFor="let option of itemsDataService.itemConditionOptions">
-                            <span *ngSwitchCase="option.value" [style.color]="option.cssColor">{{option.text}}</span>
+                            <span *ngSwitchCase="option.value" [style.color]="option.colorCss">{{option.text}}</span>
                         </ng-container>
                         <span *ngSwitchDefault>{{item.condition}}</span>
                     </span>
@@ -173,7 +163,7 @@
                 <span class="edit-td">
                     <span [ngSwitch]="item.status">
                         <ng-container *ngFor="let option of itemsDataService.itemStatusOptions">
-                            <span *ngSwitchCase="option.value" [style.color]="option.cssColor">{{option.text}}</span>
+                            <span *ngSwitchCase="option.value" [style.color]="option.colorCss">{{option.text}}</span>
                         </ng-container>
                         <span *ngSwitchDefault>{{item.status}}</span>
                     </span>

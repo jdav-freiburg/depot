@@ -1,6 +1,7 @@
 import './user.ts';
 import './item.ts';
 import './reservation.ts';
+import './globalMessages.ts';
 import {CreateUser, User} from "../../../both/models/user.model";
 
 export class Main {

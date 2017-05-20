@@ -1,0 +1,35 @@
+<ion-card>
+    <ion-toolbar>
+        <ion-title>
+            {{'RESERVATION_CARD.HEADER' | translate}}
+        </ion-title>
+        <ion-buttons right>
+            <button ion-button (click)="editReservation(reservation._id)" clear icon-only>
+                <ion-icon name="create"></ion-icon>
+            </button>
+            <button ion-button (click)="deleteReservation(reservation)" clear icon-only>
+                <ion-icon name="trash"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-toolbar>
+    <ion-card-content>
+        <ion-card-title>
+            {{reservation.name}}
+        </ion-card-title>
+        <p>{{'RESERVATION_CARD.DESCRIPTION' | translate:descriptionData}}</p>
+        <ion-item-group>
+            <ion-item-divider>
+                {{'RESERVATION_CARD.ITEMS' | translate}}
+            </ion-item-divider>
+            <ion-item *ngFor="let item of items">
+                <!--<ion-avatar item-left><img src="{{item.picture}}"></ion-avatar>-->
+                <ion-label>
+                    <h2>{{item.name}}</h2>
+                    <h3>{{item.tags}}</h3>
+                    <p>{{item.description}}</p>
+                </ion-label>
+                <button ion-button icon-only clear item-end (click)="openItem()"><ion-icon name="search"></ion-icon></button>
+            </ion-item>
+        </ion-item-group>
+    </ion-card-content>
+</ion-card>
