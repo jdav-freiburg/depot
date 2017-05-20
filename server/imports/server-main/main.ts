@@ -26,7 +26,7 @@ export class Main {
                 roles: ['admin', 'manager']
             };
             let user = Accounts.createUser(userData);
-            Meteor.users.update({_id: user}, {$set: {roles: ['admin', 'manager']}});
+            Meteor.users.update({_id: user}, {$set: {roles: ['admin', 'manager'], status: 'normal'}});
         }
     }
 }
