@@ -2,7 +2,9 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import 'moment/locale/de';
 
-export const de = {
+export const de_de = {
+  "TITLE_LONG": "Deutsch",
+  "TITLE_SHORT": "de-de",
   "HOME_PAGE": {
     "TITLE": "Home",
     "WELCOME": "Willkommen!"
@@ -37,7 +39,7 @@ export const de = {
     "ITEMS_REMOVED": (data) => `${_.join(data.items, ', ')} aus der Reservierung entfernt (bereits reserviert).`,
     "LEAVE": {
       "TITLE": "Ungespeicherte Änderungen",
-      "MESSAGE": "Sollen ungespeicherte Änderungen gespeichert werden?",
+      "SUB_TITLE": "Sollen ungespeicherte Änderungen gespeichert werden?",
       "CANCEL": "Zurück",
       "LEAVE": "Verlassen",
       "SAVE": "Speichern"
@@ -55,7 +57,7 @@ export const de = {
     "CONTACT": "Kontakt",
     "DELETE": {
       "TITLE": (data) => `Lösche ${data.name}?`,
-      "MESSAGE": (data) => `Reservierung ${data.name} wirklich löschen?`,
+      "SUB_TITLE": (data) => `Reservierung ${data.name} wirklich löschen?`,
       "YES": "Ja",
       "NO": "Nein"
     },
@@ -96,9 +98,15 @@ export const de = {
     "PASSWORD_NEW_REPEAT": "Neues Passwort Wiederholen",
     "ROLES": "Rollen"
   },
+  "LANGUAGE_SELECT": {
+    "TITLE": "Sprache",
+    "OK": "Ok",
+    "CANCEL": "Abbruch"
+  },
   "SIDEMENU": {
     "USERS": "Benutzer",
-    "LOGOUT": "Abmelden"
+    "LOGOUT": "Abmelden",
+    "LANGUAGE": "Sprache"
   },
   "TABS": {
     "HOME": "Home",

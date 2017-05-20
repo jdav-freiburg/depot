@@ -6,10 +6,7 @@
             <button ion-item (click)="logout()" menuClose icon-right>{{'SIDEMENU.LOGOUT' | translate}}<ion-icon name="log-out"></ion-icon></button>
         </ion-list>
         <ion-footer>
-            <ion-select [(ngModel)]="language">
-                <ion-option value="en">English</ion-option>
-                <ion-option value="de">Deutsch</ion-option>
-            </ion-select>
+            <button ion-button icon-only clear (click)="translate.showLanguageSelect()"><ion-icon name="globe"></ion-icon></button>
         </ion-footer>
     </ion-content>
 </ion-menu>

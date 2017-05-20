@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import {User, UserSchema} from "../../../both/models/user.model";
 import {Roles} from "./utils";
 import SimpleSchema from "simpl-schema";
+import {UserCollection} from "../../../both/collections/user.collection";
 
 Meteor.users.allow({
     insert(userId: string, doc: Meteor.User): boolean {
@@ -11,12 +12,12 @@ Meteor.users.allow({
     },
     update(userId, doc: Meteor.User, fieldNames, modifier): boolean {
         if (Roles.userHasRole(userId, 'admin')) {
-            return _.difference(fieldNames, ['fullName', 'phone', 'picture', 'roles']).length === 0;
+            return _.difference(fieldNames, ['fullName', 'phone', 'picture', 'language', 'status', 'roles']).length === 0;
         }
         if (userId !== doc._id) {
             return false;
         }
-        return _.difference(fieldNames, ['fullName', 'phone', 'picture']).length === 0;
+        return _.difference(fieldNames, ['fullName', 'phone', 'picture', 'language']).length === 0;
     },
     remove(userId: string, doc: Meteor.User): boolean {
         return Roles.userHasRole(userId, 'admin');
@@ -33,7 +34,9 @@ Meteor.publish(null, function() {
                 'fullName': 1,
                 'phone': 1,
                 'picture': 1,
-                'roles': 1
+                'language': 1,
+                'status': 1,
+                'roles': 1,
             }
         });
     }
@@ -50,6 +53,8 @@ Meteor.publish('users', function() {
                 'fullName': 1,
                 'phone': 1,
                 'picture': 1,
+                'language': 1,
+                'status': 1,
                 'roles': 1
             }
         });
@@ -72,6 +77,8 @@ Accounts.onCreateUser((options: User, user: User) => {
     user.phone = options.phone;
     user.fullName = options.fullName;
     user.picture = options.picture;
+    user.language = options.language;
+    user.status = "unvalidated";
     user.roles = [];
     console.log("Create User: ", user);
     return user;
@@ -168,5 +175,18 @@ Meteor.methods({
             throw new Meteor.Error('unauthorized', "Not allowed to modify other user");
         }
     },
+    'users.setLanguage'({language, userId}: { language: string, userId?: string}): void {
+        new SimpleSchema({
+            language: String,
+            userId: {type: String, optional: true},
+        }).validate({
+            language,
+            userId,
+        });
 
+        if ((userId && userId !== this.userId) && !Roles.userHasRole(this.userId, 'admin')) {
+            throw new Meteor.Error('unauthorized', "Not allowed to modify other user");
+        }
+        UserCollection.update({_id: userId || this.userId}, {$set: {language: language}});
+    },
 });

@@ -2,6 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import template from "./signup.html";
 import style from "./signup.scss";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {TranslateService} from "../../services/translate";
+import {AlertController} from "ionic-angular";
 
 @Component({
     selector: "signup-page",
@@ -11,7 +13,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 export class SignupPage {
     public signupForm: FormGroup;
 
-    constructor(private fb: FormBuilder) {
+    constructor(private fb: FormBuilder, private translate: TranslateService, private alert: AlertController) {
         this.signupForm = fb.group({
             username: ["", Validators.required],
             email: ["", Validators.email],
@@ -43,6 +45,7 @@ export class SignupPage {
             email: email,
             password: password,
             phone: phone,
+            language: this.translate.languageKey,
             fullName: fullName
         });
         // TODO: Error messages

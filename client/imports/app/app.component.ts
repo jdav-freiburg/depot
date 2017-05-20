@@ -37,14 +37,6 @@ export class AppComponent {
         return this.userService.isAdmin;
     }
 
-    set language(value: string) {
-        this.translate.languageKey = value;
-    }
-
-    get language(): string {
-        return this.translate.languageKey;
-    }
-
     constructor(private userService: UserService, private debugService: DebugService,
         private translate: TranslateService) {
         //translate.setDefaultLang('en');

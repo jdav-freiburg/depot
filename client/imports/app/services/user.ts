@@ -82,6 +82,12 @@ export class UserService {
         Meteor.loginWithPassword(user, password);
     }
 
+    public setLanguage(language: string) {
+        if (this.user.language !== language) {
+            Meteor.call('users.setLanguage', {language});
+        }
+    }
+
     public get user(): User {
         return this._user;
     }

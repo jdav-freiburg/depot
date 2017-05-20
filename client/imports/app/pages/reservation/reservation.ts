@@ -346,7 +346,8 @@ export class ReservationPage implements OnInit, OnDestroy {
             (this.reservationForm.dirty || _.xor(this.selectedItemIds, this.originalSelectedItemIds).length !== 0)) {
             console.log("Dirty Form");
             this.alertCtrl.create({
-                message: this.translate.get('RESERVATION_PAGE.LEAVE.MESSAGE'),
+                title: this.translate.get('RESERVATION_PAGE.LEAVE.TITLE'),
+                subTitle: this.translate.get('RESERVATION_PAGE.LEAVE.SUB_TITLE'),
                 cssClass: 'three-button-alert',
                 buttons: [
                     {

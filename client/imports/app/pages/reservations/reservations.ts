@@ -70,7 +70,7 @@ export class ReservationsPage implements OnInit, OnDestroy {
         }
         this.alertCtrl.create({
             title: this.translate.get('RESERVATIONS_PAGE.DELETE.TITLE'),
-            message: this.translate.get('RESERVATIONS_PAGE.DELETE.MESSAGE'),
+            subTitle: this.translate.get('RESERVATIONS_PAGE.DELETE.SUB_TITLE'),
             buttons: [
                 {
                     text: this.translate.get('RESERVATIONS_PAGE.DELETE.NO'),

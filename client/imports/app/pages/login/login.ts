@@ -2,8 +2,9 @@ import { Component, OnInit } from "@angular/core";
 import template from "./login.html";
 import style from "./login.scss";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {ToastController} from "ionic-angular";
+import {AlertController, ToastController} from "ionic-angular";
 import {TranslateService} from "../../services/translate";
+import * as _ from 'lodash';
 
 @Component({
     selector: "login-page",
@@ -13,7 +14,8 @@ import {TranslateService} from "../../services/translate";
 export class LoginPage {
     public loginForm: FormGroup;
 
-    constructor(private fb: FormBuilder, private toastCtrl: ToastController, private translate: TranslateService) {
+    constructor(private fb: FormBuilder, private toastCtrl: ToastController, private translate: TranslateService,
+            private alert: AlertController) {
         this.loginForm = fb.group({
             email: ["", Validators.required],
             password: ["", Validators.required]

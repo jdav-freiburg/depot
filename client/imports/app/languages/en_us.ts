@@ -1,7 +1,9 @@
 import * as _ from 'lodash';
 import * as moment from 'moment';
 
-export const en = {
+export const en_us = {
+  "TITLE_LONG": "English",
+  "TITLE_SHORT": "en-us",
   "HOME_PAGE": {
     "TITLE": "Home",
     "WELCOME": "Welcome back!"
@@ -10,7 +12,7 @@ export const en = {
     "TITLE": "Login",
     "EMAIL_OR_USERNAME": "E-Mail or Username",
     "PASSWORD": "Password",
-    "LOG_IN": "Log In"
+    "LOG_IN": "Log In",
   },
   "ITEMS_PAGE": {
     "EXTERNAL_ID": "External ID",
@@ -36,7 +38,7 @@ export const en = {
     "ITEMS_REMOVED": (data) => `${_.join(data.items, ', ')} removed from reservation (already reserved).`,
     "LEAVE": {
       "TITLE": "Unsaved changes",
-      "MESSAGE": "Do you want to save before leaving?",
+      "SUB_TITLE": "Do you want to save before leaving?",
       "CANCEL": "Back",
       "LEAVE": "Leave",
       "SAVE": "Save"
@@ -54,7 +56,7 @@ export const en = {
     "CONTACT": "Contact",
     "DELETE": {
       "TITLE": (data) => `Delete ${data.name}?`,
-      "MESSAGE": (data) => `Do you really want to delete reservation ${data.name}?`,
+      "SUB_TITLE": (data) => `Do you really want to delete reservation ${data.name}?`,
       "YES": "Yes",
       "NO": "No"
     },
@@ -95,9 +97,15 @@ export const en = {
     "PASSWORD_NEW_REPEAT": "Repeat New Password",
     "ROLES": "Roles"
   },
+  "LANGUAGE_SELECT": {
+    "TITLE": "Language",
+    "OK": "Ok",
+    "CANCEL": "Cancel"
+  },
   "SIDEMENU": {
     "USERS": "Users",
-    "LOGOUT": "Log Out"
+    "LOGOUT": "Log Out",
+    "LANGUAGE": "Language"
   },
   "TABS": {
     "HOME": "Home",
