@@ -2,29 +2,40 @@ import {Component, NgZone, OnDestroy, OnInit} from "@angular/core";
 import template from "./user-modal.html";
 import style from "./user-modal.scss";
 import * as _ from "lodash";
-import {NavParams, ViewController} from "ionic-angular";
+import {NavParams, ToastController, ViewController} from "ionic-angular";
 import {User} from "../../../../../both/models/user.model";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {UserService} from "../../services/user";
-
-interface RoleDef {
-    name: string;
-    internalName: string;
-}
+import {TranslateHelperService} from "../../services/translate-helper";
+import {TranslateOption} from "../../services/translate";
+import {AdvancedEmailValidatorDirective} from "../../services/advanced-email-validator";
 
 class RoleAccess {
-    constructor(private user: User, public roleDef: RoleDef) {
+    constructor(private user: User, public roleDef: TranslateOption) {
     }
 
+    public isWorking: boolean;
+
     get isMember(): boolean {
-        return _.includes(this.user.roles, this.roleDef.internalName);
+        return _.includes(this.user.roles, this.roleDef.value);
     }
 
     set isMember(value: boolean) {
+        this.isWorking = true;
         if (value) {
-            Meteor.users.update({_id: this.user._id}, {$addToSet: {roles: this.roleDef.internalName}});
+            Meteor.users.update({_id: this.user._id}, {$addToSet: {roles: this.roleDef.value}}, {}, (err) => {
+                this.isWorking = false;
+                if (err) {
+                    console.log("Error:", err);
+                }
+            });
         } else {
-            Meteor.users.update({_id: this.user._id}, {$pull: {roles: this.roleDef.internalName}});
+            Meteor.users.update({_id: this.user._id}, {$pull: {roles: this.roleDef.value}}, {}, (err) => {
+                this.isWorking = false;
+                if (err) {
+                    console.log("Error:", err);
+                }
+            });
         }
     }
 }
@@ -63,26 +74,19 @@ export class UserModal implements OnInit, OnDestroy {
     usernameForm: FormGroup;
     userPasswordForm: FormGroup;
 
+    _userStatus: string = "";
+    userStatusIsWorking: boolean = false;
     newEmailAddress: string = "";
 
     roles: RoleAccess[] = [];
-    rolesDef: RoleDef[] = [
-        {
-            name: "ADMIN",
-            internalName: 'admin',
-        },
-        {
-            name: "MANAGER",
-            internalName: 'manager',
-        },
-    ];
 
     get titleParams() {
         return {name: (this.user?this.user.fullName:this.userId)};
     }
 
     constructor(private viewCtrl: ViewController, private params: NavParams,
-                private fb: FormBuilder, private ngZone: NgZone, private userService: UserService) {
+                private fb: FormBuilder, private ngZone: NgZone, private userService: UserService,
+                private toast: ToastController, private translateHelper: TranslateHelperService) {
         this.userId = this.params.get('userId');
         this.userForm = fb.group({
             fullName: ["", Validators.required],
@@ -95,6 +99,7 @@ export class UserModal implements OnInit, OnDestroy {
             oldPassword: [""],
             newPassword: ["", Validators.required],
             newPasswordRepeat: ["", Validators.required],
+            passwordRandom: ""
         }, {validator: this.matchPassword('newPassword', 'newPasswordRepeat')});
     }
 
@@ -108,13 +113,20 @@ export class UserModal implements OnInit, OnDestroy {
                 editAddress: email.address
             };
         });
+        this._userStatus = this.user.status;
+        this.roles = this.userService.userRolesOptions.map((roleDef) => {
+            return new RoleAccess(this.user, roleDef);
+        });
         if (!this.hadInitialData) {
             this.usernameForm.controls['username'].setValue(this.user.username);
-            this.userForm.controls['fullName'].setValue(this.user.fullName);
+            this.usernameForm.markAsPristine();
+            this.usernameForm.markAsUntouched();
+            this.usernameForm.updateValueAndValidity();
             this.userForm.controls['phone'].setValue(this.user.phone);
-            this.roles = this.rolesDef.map((roleDef) => {
-                return new RoleAccess(this.user, roleDef);
-            });
+            this.userForm.controls['fullName'].setValue(this.user.fullName);
+            this.userForm.markAsPristine();
+            this.userForm.markAsUntouched();
+            this.userForm.updateValueAndValidity();
             this.hadInitialData = true;
         }
     }
@@ -154,39 +166,166 @@ export class UserModal implements OnInit, OnDestroy {
     }
 
     savePersonal() {
+        this.userForm.disable();
+        console.log("Saving personal:", this.userForm.controls['fullName'].value, this.userForm.controls['phone'].value);
         Meteor.users.update({_id: this.user._id}, {$set: {
             fullName: this.userForm.controls['fullName'].value,
             phone: this.userForm.controls['phone'].value,
-        }});
+        }}, {}, (err, result) => {
+            this.userForm.enable();
+            console.log("Saved personal");
+            if (err) {
+                console.log("Error:", err);
+                this.toast.create({
+                    message: this.translateHelper.getError(err),
+                    duration: 2500
+                }).present();
+            } else {
+                this.userForm.markAsPristine();
+                this.userForm.markAsUntouched();
+                this.userForm.updateValueAndValidity();
+            }
+        });
     }
 
     saveUsername() {
-        Meteor.call('users.setUsername', {userId: this.user._id, username: this.userForm.controls['username'].value});
+        this.usernameForm.disable();
+        console.log("saveUsername", this.usernameForm.controls['username'].value);
+        Meteor.call('users.setUsername', {
+            userId: this.user._id,
+            name: this.usernameForm.controls['username'].value
+        }, (err, result) => {
+            this.usernameForm.enable();
+            if (err) {
+                console.log("Error:", err);
+                this.toast.create({
+                    message: this.translateHelper.getError(err),
+                    duration: 2500
+                }).present();
+            }
+        });
     }
 
     saveEmail(email: EditEmail) {
+        if (!AdvancedEmailValidatorDirective.check(email.editAddress)) {
+            return;
+        }
+        console.log("saveEmail", email.address, "==>", email.editAddress);
         if (email.editAddress !== email.address) {
-            Meteor.call('users.updateEmail', {userId: this.userId, oldEmail: email.address, newEmail: email.editAddress});
+            Meteor.call('users.updateEmail', {
+                userId: this.userId,
+                oldEmail: email.address,
+                newEmail: email.editAddress
+            }, (err, result) => {
+                if (err) {
+                    console.log("Error:", err);
+                    this.toast.create({
+                        message: this.translateHelper.getError(err),
+                        duration: 2500
+                    }).present();
+                }
+            });
         }
     }
 
     addEmail() {
+        if (!AdvancedEmailValidatorDirective.check(this.newEmailAddress)) {
+            return;
+        }
         console.log("addEmail", this.newEmailAddress);
-        Meteor.call('users.addEmail', {userId: this.userId, email: this.newEmailAddress});
+        Meteor.call('users.addEmail', {
+            userId: this.userId,
+            email: this.newEmailAddress
+        }, (err, result) => {
+            if (err) {
+                console.log("Error:", err);
+                this.toast.create({
+                    message: this.translateHelper.getError(err),
+                    duration: 2500
+                }).present();
+            }
+        });
         this.newEmailAddress = "";
     }
 
     deleteEmail(email: EditEmail) {
+        if (this.emails.length <= 1) {
+            return;
+        }
         console.log("deleteEmail", email);
-        Meteor.call('users.removeEmail', {userId: this.userId, email: email.address});
+        Meteor.call('users.removeEmail', {
+            userId: this.userId, email: email.address
+        }, (err, result) => {
+            if (err) {
+                console.log("Error:", err);
+                this.toast.create({
+                    message: this.translateHelper.getError(err),
+                    duration: 2500
+                }).present();
+            }
+        });
+    }
+
+    randomPassword() {
+        let text = "";
+        let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-!/=:?";
+
+        for (let i = 0; i < 10; i++) {
+            text += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+
+        this.userPasswordForm.controls['passwordRandom'].setValue(text);
+        this.userPasswordForm.controls['newPassword'].setValue(text);
+        this.userPasswordForm.controls['newPasswordRepeat'].setValue(text);
+        this.userPasswordForm.updateValueAndValidity();
     }
 
     savePassword() {
         console.log("savePassword");
+        this.userPasswordForm.disable();
         Meteor.call('users.updatePassword', {
             userId: this.userId,
             newPassword: this.userPasswordForm.controls['newPassword'].value,
             oldPassword: this.userPasswordForm.controls['oldPassword'].value
+        }, (err, result) => {
+            this.userPasswordForm.enable();
+            if (err) {
+                console.log("Error:", err);
+                this.toast.create({
+                    message: this.translateHelper.getError(err),
+                    duration: 2500
+                }).present();
+            } else {
+                this.userPasswordForm.markAsPristine();
+                this.userPasswordForm.markAsUntouched();
+                this.userPasswordForm.updateValueAndValidity();
+            }
+        });
+        this.userPasswordForm.controls['newPassword'].setValue("");
+        this.userPasswordForm.controls['newPasswordRepeat'].setValue("");
+        this.userPasswordForm.controls['oldPassword'].setValue("");
+    }
+
+    get userStatus(): string {
+        return this._userStatus;
+    }
+
+    set userStatus(value: string) {
+        this._userStatus = value;
+        console.log("saveStatus", value);
+        this.userStatusIsWorking = true;
+        Meteor.call('users.setStatus', {
+            userId: this.userId,
+            status: value
+        }, (err, result) => {
+            this.userStatusIsWorking = false;
+            if (err) {
+                console.log("Error:", err);
+                this.toast.create({
+                    message: this.translateHelper.getError(err),
+                    duration: 2500
+                }).present();
+            }
         });
     }
 

@@ -4,7 +4,7 @@
             {{'LOGIN_PAGE.TITLE' | translate}}
         </ion-title>
         <ion-buttons end>
-            <button ion-button icon-only (click)="translate.showLanguageSelect()"><ion-icon name="globe"></ion-icon></button>
+            <button ion-button icon-only (click)="translateHelper.showLanguageSelect()"><ion-icon name="globe"></ion-icon></button>
         </ion-buttons>
     </ion-navbar>
 </ion-header>
@@ -13,7 +13,7 @@
     <form [formGroup]="loginForm" (ngSubmit)="doLogin()">
         <ion-item>
             <ion-label floating>{{'LOGIN_PAGE.EMAIL_OR_USERNAME' | translate}}</ion-label>
-            <ion-input type="email" formControlName="email"></ion-input>
+            <ion-input type="text" formControlName="emailOrUsername"></ion-input>
         </ion-item>
         <ion-item>
             <ion-label floating>{{'LOGIN_PAGE.PASSWORD' | translate}}</ion-label>

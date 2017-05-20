@@ -11,8 +11,9 @@ Meteor.users.allow({
         return Roles.userHasRole(userId, 'admin');
     },
     update(userId, doc: Meteor.User, fieldNames, modifier): boolean {
+        console.log("User Updating", userId, doc, fieldNames, modifier);
         if (Roles.userHasRole(userId, 'admin')) {
-            return _.difference(fieldNames, ['fullName', 'phone', 'picture', 'language', 'status', 'roles']).length === 0;
+            return _.difference(fieldNames, ['fullName', 'phone', 'picture', 'language', 'roles']).length === 0;
         }
         if (userId !== doc._id) {
             return false;
@@ -78,10 +79,33 @@ Accounts.onCreateUser((options: User, user: User) => {
     user.fullName = options.fullName;
     user.picture = options.picture;
     user.language = options.language;
-    user.status = "unvalidated";
+    user.status = "locked";
     user.roles = [];
     console.log("Create User: ", user);
     return user;
+});
+
+Accounts.validateLoginAttempt(function(options) {
+    if (!options.allowed || !options.user) {
+        return false;
+    }
+
+    /*if (options.user.emails.length == 0 || _.any(options.user.emails, email.verified === true)) {
+        throw new Meteor.Error('user-email-not-verified', "user-email-not-verified", _.map(options.user.emails, email -> email.address));
+    }*/
+    if (options.user.status === 'locked') {
+        throw new Meteor.Error('user-locked', "user-locked");
+    }
+    if (options.user.status === 'disabled') {
+        throw new Meteor.Error('user-disabled', "user-disabled");
+    }
+    if (options.user.status === 'deleted') {
+        return false;
+    }
+    if (options.user.status !== 'normal') {
+        throw new Meteor.Error('status', "user-status-not-normal", options.user.status);
+    }
+    return true;
 });
 
 Meteor.methods({
@@ -113,7 +137,7 @@ Meteor.methods({
         });
 
         if (!Roles.userHasRole(this.userId, 'admin')) {
-            throw new Meteor.Error('unauthorized', "Only allowed by admin");
+            throw new Meteor.Error('unauthorized', "Not allowed to modify other user");
         }
 
         Accounts.setUsername(userId, name);
@@ -188,5 +212,41 @@ Meteor.methods({
             throw new Meteor.Error('unauthorized', "Not allowed to modify other user");
         }
         UserCollection.update({_id: userId || this.userId}, {$set: {language: language}});
+    },
+    'users.unlock'({userId}: { userId: string}): void {
+        new SimpleSchema({
+            userId: userId,
+        }).validate({
+            userId,
+        });
+        let user = UserCollection.findOne({_id: userId});
+        if (!user) {
+            throw new Meteor.Error('entity', "Invalid user");
+        }
+        if (user.status === 'normal') {
+            return;
+        }
+        if (user.status !== 'locked') {
+            throw new Meteor.Error('unauthorized', "Not allowed to modify other user");
+        }
+        UserCollection.update({_id: userId}, {$set: {status: 'normal'}});
+    },
+    'users.setStatus'({status, userId}: { status: string, userId: string}): void {
+        new SimpleSchema({
+            status: String,
+            userId: userId,
+        }).validate({
+            status,
+            userId,
+        });
+
+        if (!Roles.userHasRole(this.userId, 'admin')) {
+            throw new Meteor.Error('unauthorized', "Not allowed to modify other user");
+        }
+        if (status === 'deleted') {
+            UserCollection.update({_id: userId}, {$set: {status: status, username: null, emails: []}});
+        } else {
+            UserCollection.update({_id: userId}, {$set: {status: status}});
+        }
     },
 });

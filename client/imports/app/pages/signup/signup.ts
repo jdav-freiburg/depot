@@ -1,9 +1,11 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import template from "./signup.html";
 import style from "./signup.scss";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {ToastController} from "ionic-angular";
+import {TranslateHelperService} from "../../services/translate-helper";
 import {TranslateService} from "../../services/translate";
-import {AlertController} from "ionic-angular";
+import {AdvancedEmailValidatorDirective} from "../../services/advanced-email-validator";
 
 @Component({
     selector: "signup-page",
@@ -13,10 +15,11 @@ import {AlertController} from "ionic-angular";
 export class SignupPage {
     public signupForm: FormGroup;
 
-    constructor(private fb: FormBuilder, private translate: TranslateService, private alert: AlertController) {
+    constructor(private fb: FormBuilder, private translateHelper: TranslateHelperService,
+                private translate: TranslateService, private toast: ToastController) {
         this.signupForm = fb.group({
             username: ["", Validators.required],
-            email: ["", Validators.email],
+            email: ["", AdvancedEmailValidatorDirective.validator],
             password: ["", Validators.required],
             password2: ["", Validators.required],
             phone: ["", Validators.required],
@@ -47,6 +50,16 @@ export class SignupPage {
             phone: phone,
             language: this.translate.languageKey,
             fullName: fullName
+        }, (err, user) => {
+            if (err) {
+                console.log("Error:", err);
+                this.toast.create({
+                    message: this.translateHelper.getError(err),
+                    duration: 2500,
+                }).present();
+            } else {
+                console.log("Created:", user);
+            }
         });
         // TODO: Error messages
     }

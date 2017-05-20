@@ -44,7 +44,8 @@ export const de_de = {
       "LEAVE": "Verlassen",
       "SAVE": "Speichern"
     },
-    "FILTER": "Filtern"
+    "FILTER": "Filtern",
+    "SAVED": (reservation) => `Reservierung ${reservation.name} gespeichert`
   },
   "RESERVATIONS_PAGE": {
     "TITLE": "Reservierungen",
@@ -79,6 +80,7 @@ export const de_de = {
     "EMAIL": "E-Mail",
     "FULL_NAME": "Vollständiger Name",
     "PHONE": "Telefon",
+    "STATUS": "Status",
     "ROLES": "Rollen",
     "FILTER": "Filtern"
   },
@@ -96,7 +98,9 @@ export const de_de = {
     "PASSWORD_OLD": "Aktuelles Passwort",
     "PASSWORD_NEW": "Neues Passwort",
     "PASSWORD_NEW_REPEAT": "Neues Passwort Wiederholen",
-    "ROLES": "Rollen"
+    "PASSWORD_RANDOM": "Zufälliges Passwort",
+    "ROLES": "Rollen",
+    "STATUS": "Status"
   },
   "LANGUAGE_SELECT": {
     "TITLE": "Sprache",
@@ -144,13 +148,26 @@ export const de_de = {
     "TAGS": (data) => `Neue Tags: ${_.join(data.tags, ', ')}`,
     "STATUS": (data) => `Neuer Status: ${data.statusOption.text}`
   },
-  "ROLES": {
-    "admin": "Administrator",
-    "manager": "Materialwart"
+  "USER": {
+    "STATUS": {
+      "NORMAL": "Normal",
+      "LOCKED": "Gesperrt",
+      "DISABLED": "Deaktiviert",
+      "DELETED": "Gelöscht"
+    },
+    "ROLES": {
+      "ADMIN": "Administrator",
+      "MANAGER": "Materialwart"
+    }
   },
   "ERROR": {
     "GENERAL": "{{message}}",
     "Incorrect password": "Ungültiges Passwort",
-    "User not found": "Benutzer nicht gefunden"
+    "User not found": "Benutzer nicht gefunden",
+    "Username already exists.": "Benutzername bereits vergeben",
+    "Email already exists.": "Email bereits registriert",
+    "user-locked": "Du musst erst von einem anderen Benutzer aktiviert werden",
+    "user-disabled": "Du wurdest deaktiviert",
+    "user-email-not-verified": "E-Mail Adresse muss erst verifiziert werden",
   }
 };

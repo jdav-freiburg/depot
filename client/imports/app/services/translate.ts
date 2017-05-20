@@ -4,19 +4,26 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 
 import {languages, languages_alias} from "../languages/languages";
-import {AlertController, Platform} from "ionic-angular";
-import {UserService} from "./user";
+import {Platform} from "ionic-angular";
+import {Subject} from "rxjs/Subject";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
-interface Translatable {
+export interface Translatable {
     translate: string;
     text: string;
 }
 
-interface LanguageOption {
+export interface LanguageOption {
     titleLong: string;
     titleShort: string;
     name: string;
     active: boolean;
+}
+
+export interface TranslateOption extends Translatable {
+    value: string;
+    color: string;
+    colorCss: string;
 }
 
 @Injectable()
@@ -27,8 +34,9 @@ export class TranslateService {
     private _language: any;
     private _languageKey: string;
 
-    constructor(private app: ApplicationRef, private platform: Platform, private user: UserService,
-            private alert: AlertController) {
+    public readonly languageKeyChange: Subject<string> = new BehaviorSubject<string>("en");
+
+    constructor(private app: ApplicationRef, private platform: Platform) {
         this._language = this._languages.en_us;
 
         _.forIn(this._languages, (language, name) => {
@@ -37,13 +45,6 @@ export class TranslateService {
             }
         });
         moment.locale('en');
-
-        this.setDefaultLanguage(true);
-        user.userChange.subscribe(() => {
-            if (user.user && user.user.language) {
-                this.setDefaultLanguage();
-            }
-        });
     }
 
     public set languageKey(language: string) {
@@ -69,16 +70,6 @@ export class TranslateService {
         return result;
     }
 
-    public setDefaultLanguage(noTick?: boolean) {
-        let userLang;
-        if (this.user.user && this.user.user.language) {
-            userLang = this.user.user.language;
-        } else {
-            userLang = navigator.language || (<any>navigator).userLanguage;
-        }
-        this.setLanguage(userLang, noTick);
-    }
-
     public setLanguage(language: string, noTick?: boolean): void {
         if (language === this._languageKey) {
             return;
@@ -102,9 +93,7 @@ export class TranslateService {
             if (!noTick) {
                 this.app.tick();
             }
-            if (this.user.user) {
-                this.user.setLanguage(language);
-            }
+            this.languageKeyChange.next(language);
             return true;
         } else if (language.indexOf('_') !== -1) {
             return this.trySetLanguage(language.substring(0, language.indexOf('_')), noTick);
@@ -112,23 +101,31 @@ export class TranslateService {
         return false;
     }
 
-    public has(path: string): boolean {
+    public has(path: string|string[]): boolean {
         return _.has(this._language, path);
     }
 
-    public get(path: string, data?: any): string {
+    public get(path: string|string[], data?: any): string {
         let obj = _.get(this._language, path);
         if (_.isString(obj)) {
             return obj;
         }
         if (_.isFunction(obj)) {
-            let res = obj.call(null, data);
-            if (!_.isString(res)) {
-                throw new Error("Expected string result from translator for " + path);
+            try {
+                let res = obj.call(null, data);
+                if (_.isString(res)) {
+                    return res;
+                }
+                console.log("Expected string result from translator for", path);
+            } catch(err) {
+                console.log(err);
             }
-            return res;
         }
-        throw new Error("Expected string or function in translation for " + path);
+        console.log("No language entry in " + this.languageKey + " for", path);
+        if (_.isArray(path)) {
+            return _.join(path, '.');
+        }
+        return path;
     }
 
     public getAll<T extends Translatable>(translatables: T[], data?: any, cloneValue?: boolean): T[] {
@@ -140,31 +137,5 @@ export class TranslateService {
         }
         _.forEach(translatables, translatable => translatable.text = this.get(translatable.translate, data));
         return translatables;
-    }
-
-    public showLanguageSelect(): void {
-        this.alert.create({
-            inputs: _.map(this.languages, (language) => {
-                return {
-                    type: 'radio',
-                    label: language.titleLong,
-                    value: language.name,
-                    checked: language.active
-                };
-            }),
-            title: this.get('LANGUAGE_SELECT.TITLE'),
-            buttons: [
-                {
-                    text: this.get('LANGUAGE_SELECT.CANCEL'),
-                    role: 'cancel'
-                },
-                {
-                    text: this.get('LANGUAGE_SELECT.OK'),
-                    handler: (data) => {
-                        this.languageKey = data;
-                    }
-                }
-            ]
-        }).present();
     }
 }

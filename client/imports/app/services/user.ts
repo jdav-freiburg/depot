@@ -4,6 +4,8 @@ import {User} from "../../../../both/models/user.model";
 import * as _ from "lodash";
 import {Subject} from "rxjs/Subject";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {TranslateOption, TranslateService} from "./translate";
+import {colors} from "../colors";
 
 @Injectable()
 export class UserService {
@@ -15,10 +17,69 @@ export class UserService {
     public readonly userChange: Subject<User> = new BehaviorSubject<User>(null);
     public readonly usersChange: Subject<User[]> = new BehaviorSubject<User[]>([]);
 
-    constructor(private zone: NgZone, private ref: ApplicationRef) {
+    public get userRolesOptions(): TranslateOption[] {
+        return this.translate.getAll([
+            {
+                translate: 'USER.ROLES.ADMIN',
+                value: "admin",
+                color: 'good',
+                colorCss: colors.good,
+                text: ""
+            },
+            {
+                translate: 'USER.ROLES.MANAGER',
+                value: "manager",
+                color: 'warning',
+                colorCss: colors.warning,
+                text: ""
+            }
+        ]);
+    };
+
+    public getUserRoleOption(roleName: string): TranslateOption {
+        return this.userRolesOptions.find((role) => role.value === roleName);
+    }
+
+    public get userStatusOptions(): TranslateOption[] {
+        return this.translate.getAll([
+            {
+                translate: 'USER.STATUS.NORMAL',
+                value: "normal",
+                color: 'good',
+                colorCss: colors.good,
+                text: ""
+            },
+            {
+                translate: 'USER.STATUS.LOCKED',
+                value: "locked",
+                color: 'warning',
+                colorCss: colors.warning,
+                text: ""
+            },
+            {
+                translate: 'USER.STATUS.DISABLED',
+                value: "disabled",
+                color: 'danger',
+                colorCss: colors.danger,
+                text: ""
+            },
+            /*{
+                translate: 'USER.STATUS.DELETED',
+                value: "deleted",
+                color: 'danger',
+                colorCss: colors.danger,
+                text: ""
+            }*/
+        ]);
+    };
+
+    constructor(private zone: NgZone, private ref: ApplicationRef, private translate: TranslateService) {
         Accounts.onLogin(() => {
             zone.run(() => {
                 this._user = <User>Meteor.user();
+                if (this._user.status !== 'normal') {
+                    Accounts.logout();
+                }
                 console.log("User:", this._user);
                 this.userChange.next(this._user);
             });
@@ -33,6 +94,9 @@ export class UserService {
         Accounts.onPageLoadLogin(() => {
             zone.run(() => {
                 this._user = <User>Meteor.user();
+                if (this._user.status !== 'normal') {
+                    Accounts.logout();
+                }
                 console.log("User:", this._user);
                 this.userChange.next(this._user);
             });
@@ -52,6 +116,9 @@ export class UserService {
                 this.zone.run(() => {
                     if (this._user && this._user._id === data._id) {
                         this._user = data;
+                        if (this._user.status !== 'normal') {
+                            Accounts.logout();
+                        }
                         this.userChange.next(this._user);
                     }
                     let idx = _.findIndex(this._users, (user) => user._id === data._id);

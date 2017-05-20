@@ -14,10 +14,10 @@ import {Subscription} from "rxjs/Subscription";
     template,
     styles: [ style ]
 })
-export class UsersPage implements OnInit, OnDestroy {
+export class UsersPage implements OnDestroy {
     filter: string = "";
 
-    users: Observable<User[]>;
+    users: User[];
     private usersHandle: Subscription;
 
     get isAdmin(): boolean {
@@ -27,11 +27,12 @@ export class UsersPage implements OnInit, OnDestroy {
     constructor(private navCtrl: NavController, private ngZone: NgZone, private userService: UserService) {
         this.usersHandle = userService.usersChange.subscribe((users) => {
             console.log("users:", users);
+            this.users = users;
         });
     }
 
-    ngOnInit() {
-        this.users = this.userService.usersChange.asObservable();
+    getUserRoleOption(role: string) {
+        return this.userService.getUserRoleOption(role);
     }
 
     ngOnDestroy() {

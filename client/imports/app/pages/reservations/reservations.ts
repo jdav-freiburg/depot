@@ -6,11 +6,12 @@ import * as _ from "lodash";
 import {UserService} from "../../services/user";
 import {ReservationsDataService} from "../../services/reservations-data";
 import {Reservation} from "../../../../../both/models/reservation.model";
-import {AlertController, NavController} from "ionic-angular";
+import {AlertController, NavController, ToastController} from "ionic-angular";
 import {ReservationPage} from "../reservation/reservation";
 import {Subscription} from "rxjs/Subscription";
 import * as moment from 'moment';
 import {TranslateService} from "../../services/translate";
+import {TranslateHelperService} from "../../services/translate-helper";
 
 @Component({
     selector: "reservations-page",
@@ -36,7 +37,8 @@ export class ReservationsPage implements OnInit, OnDestroy {
     }
 
     constructor(private reservationsDataService: ReservationsDataService, private users: UserService,
-                private navCtrl: NavController, private alertCtrl: AlertController, private translate: TranslateService) {
+                private navCtrl: NavController, private alertCtrl: AlertController, private translate: TranslateService,
+                private translateHelper: TranslateHelperService, private toast: ToastController) {
     }
 
     ngOnInit() {
@@ -69,8 +71,8 @@ export class ReservationsPage implements OnInit, OnDestroy {
             return;
         }
         this.alertCtrl.create({
-            title: this.translate.get('RESERVATIONS_PAGE.DELETE.TITLE'),
-            subTitle: this.translate.get('RESERVATIONS_PAGE.DELETE.SUB_TITLE'),
+            title: this.translate.get('RESERVATIONS_PAGE.DELETE.TITLE', reservation),
+            subTitle: this.translate.get('RESERVATIONS_PAGE.DELETE.SUB_TITLE', reservation),
             buttons: [
                 {
                     text: this.translate.get('RESERVATIONS_PAGE.DELETE.NO'),
@@ -79,7 +81,14 @@ export class ReservationsPage implements OnInit, OnDestroy {
                 {
                     text: this.translate.get('RESERVATIONS_PAGE.DELETE.YES'),
                     handler: () => {
-                        this.reservationsDataService.remove(reservation._id);
+                        this.reservationsDataService.remove(reservation._id, (err) => {
+                            if (err) {
+                                this.toast.create({
+                                    message: this.translateHelper.getError(err),
+                                    duration: 2500
+                                }).present();
+                            }
+                        });
                     }
                 }
             ]

@@ -22,10 +22,11 @@
             <span class="edit-th">{{'USERS_PAGE.EMAIL' | translate}}</span>
             <span class="edit-th">{{'USERS_PAGE.FULL_NAME' | translate}}</span>
             <span class="edit-th">{{'USERS_PAGE.PHONE' | translate}}</span>
+            <span class="edit-th">{{'USERS_PAGE.STATUS' | translate}}</span>
             <span class="edit-th">{{'USERS_PAGE.ROLES' | translate}}</span>
             <span class="edit-th"></span>
         </div>
-        <ng-container *ngFor="let user of users | async | usersfilter:filter">
+        <ng-container *ngFor="let user of users | usersfilter:filter">
             <div class="edit-tr">
                 <span class="edit-td">{{user.username}}</span>
                 <span class="edit-td">
@@ -36,7 +37,22 @@
                 <span class="edit-td">{{user.fullName}}</span>
                 <span class="edit-td">{{user.phone}}</span>
                 <span class="edit-td">
-                    <span *ngFor="let role of user.roles"> {{'ROLES.' + role | translate}} </span>
+                    <span [ngSwitch]="user.status">
+                        <ng-container *ngFor="let option of userService.userStatusOptions">
+                            <span *ngSwitchCase="option.value" [style.color]="option.cssColor">{{option.text}}</span>
+                        </ng-container>
+                        <span *ngSwitchDefault>{{user.status}}</span>
+                    </span>
+                </span>
+                <span class="edit-td">
+                    <span *ngFor="let role of user.roles">
+                        <span [ngSwitch]="role">
+                            <ng-container *ngFor="let option of userService.userRolesOptions">
+                                <span *ngSwitchCase="option.value" [style.color]="option.cssColor">{{option.text}}</span>
+                            </ng-container>
+                            <span *ngSwitchDefault>{{role}}</span>
+                        </span>
+                    </span>
                 </span>
                 <span class="edit-td">
                     <button ion-button (click)="editItem(user._id)" clear icon-only>

@@ -43,7 +43,8 @@ export const en_us = {
       "LEAVE": "Leave",
       "SAVE": "Save"
     },
-    "FILTER": "Filter"
+    "FILTER": "Filter",
+    "SAVED": (reservation) => `Saved reservation ${reservation.name}`
   },
   "RESERVATIONS_PAGE": {
     "TITLE": "Reservations",
@@ -78,6 +79,7 @@ export const en_us = {
     "EMAIL": "E-Mail",
     "FULL_NAME": "Full Name",
     "PHONE": "Phone",
+    "STATUS": "Status",
     "ROLES": "Roles",
     "FILTER": "Filter"
   },
@@ -95,7 +97,9 @@ export const en_us = {
     "PASSWORD_OLD": "Current Password",
     "PASSWORD_NEW": "New Password",
     "PASSWORD_NEW_REPEAT": "Repeat New Password",
-    "ROLES": "Roles"
+    "PASSWORD_RANDOM": "Random Password",
+    "ROLES": "Roles",
+    "STATUS": "Status"
   },
   "LANGUAGE_SELECT": {
     "TITLE": "Language",
@@ -143,13 +147,26 @@ export const en_us = {
     "TAGS": (data) => `New Tags: ${_.join(data.tags, ', ')}`,
     "STATUS": (data) => `New Status: ${data.statusOption.text}`
   },
-  "ROLES": {
-    "admin": "Administrator",
-    "manager": "Item Manager"
+  "USER": {
+    "STATUS": {
+      "NORMAL": "Normal",
+      "LOCKED": "Locked",
+      "DISABLED": "Disabled",
+      "DELETED": "Deleted"
+    },
+    "ROLES": {
+      "ADMIN": "Administrator",
+      "MANAGER": "Item Manager"
+    }
   },
   "ERROR": {
     "GENERAL": (data) => `${data.message}`,
     "Incorrect password": "Incorrect Password",
-    "User not found": "User not found"
+    "User not found": "User not found",
+    "Username already exists.": "Username already exists",
+    "Email already exists.": "Email already exists",
+    "user-locked": "You must first be unlocked by another user",
+    "user-disabled": "You were disabled",
+    "user-email-not-verified": "You must first verify your E-Mail",
   }
 };

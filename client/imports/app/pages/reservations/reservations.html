@@ -8,7 +8,7 @@
         </button>
         <ion-buttons end>
             <button ion-button icon-only (click)="newReservation()">
-                <ion-icon name="calendar"></ion-icon>
+                <ion-icon name="add-circle"></ion-icon>
             </button>
         </ion-buttons>
     </ion-navbar>
@@ -36,13 +36,11 @@
                             <span *ngSwitchCase="option.value" [style.color]="option.cssColor">{{option.text}}</span>
                         </ng-container>
                         <span *ngSwitchDefault>{{reservation.type}}</span>
-                        <!--<span *ngSwitchCase="'public'">{{'RESERVATION.TYPE.PUBLIC' | translate}}</span>
-                        <span *ngSwitchCase="'group'">{{'RESERVATION.TYPE.GROUP' | translate}}</span>-->
                     </span>
                 </span>
                 <span class="edit-td">{{reservation.name}}</span>
-                <span class="edit-td">{{reservation.start | date: 'L'}}</span>
-                <span class="edit-td">{{reservation.end | date: 'L'}}</span>
+                <span class="edit-td">{{reservation.start | moment: 'L'}}</span>
+                <span class="edit-td">{{reservation.end | moment: 'L'}}</span>
                 <span class="edit-td"><user-ref [userId]="reservation.userId"></user-ref></span>
                 <span class="edit-td">{{reservation.groupId}}</span>
                 <span class="edit-td">{{reservation.contact}}</span>

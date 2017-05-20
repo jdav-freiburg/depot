@@ -8,7 +8,7 @@ import {Nav} from "ionic-angular";
 import {UsersPage} from "./pages/users/users";
 import {DebugService} from "./services/debug";
 import {UserModal} from "./pages/user-modal/user-modal";
-import {TranslateService} from "./services/translate";
+import {TranslateHelperService} from "./services/translate-helper";
 
 @Component({
     selector: "app",
@@ -38,9 +38,7 @@ export class AppComponent {
     }
 
     constructor(private userService: UserService, private debugService: DebugService,
-        private translate: TranslateService) {
-        //translate.setDefaultLang('en');
-        //this.translate.use(Platform.device.language);
+        private translateHelper: TranslateHelperService) {
     }
 
     editSelf() {

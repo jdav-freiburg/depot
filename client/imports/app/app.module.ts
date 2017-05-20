@@ -34,6 +34,8 @@ import {JoinPipe} from "./pipes/join";
 import {TranslateService} from "./services/translate";
 import {TranslatePipe} from "./pipes/translate";
 import {MomentPipe} from "./pipes/moment";
+import {TranslateHelperService} from "./services/translate-helper";
+import {AdvancedEmailValidatorDirective} from "./services/advanced-email-validator";
 
 /*const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -64,7 +66,8 @@ import {MomentPipe} from "./pipes/moment";
         UsersPage,
         JoinPipe,
         TranslatePipe,
-        MomentPipe
+        MomentPipe,
+        AdvancedEmailValidatorDirective
     ],
     // Entry Components
     entryComponents: [
@@ -92,6 +95,7 @@ import {MomentPipe} from "./pipes/moment";
         ReservationsDataService,
         DebugService,
         TranslateService,
+        TranslateHelperService
     ],
     // Modules
     imports: [

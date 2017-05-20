@@ -4,7 +4,7 @@ import {Item} from "../../../../both/models/item.model";
 import { ItemCollection } from "../../../../both/collections/item.collection";
 
 import * as _ from 'lodash';
-import {TranslateService} from "./translate";
+import {TranslateOption, TranslateService} from "./translate";
 import {colors} from "../colors";
 
 @Injectable()
@@ -18,7 +18,7 @@ export class ItemsDataService {
         this.items = ItemCollection.find({});
     }
 
-    get itemConditionOptions(): any[] {
+    get itemConditionOptions(): TranslateOption[] {
         return this.translate.getAll([
             {
                 translate: 'ITEM.CONDITION.100',
@@ -44,7 +44,7 @@ export class ItemsDataService {
         ]);
     }
 
-    get itemStatusOptions(): any[] {
+    get itemStatusOptions(): TranslateOption[] {
         return this.translate.getAll([
             {
                 translate: 'ITEM.STATUS.PUBLIC',

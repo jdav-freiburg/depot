@@ -16,6 +16,7 @@ import {ItemsDataService} from "../../services/items-data";
 import {ItemStateModal} from "../item-state-modal/item-state-modal";
 import {Subscription} from "rxjs/Subscription";
 import {TranslateService} from "../../services/translate";
+import {TranslateHelperService} from "../../services/translate-helper";
 
 
 interface SelectableItem extends Item {
@@ -111,9 +112,9 @@ export class ReservationPage implements OnInit, OnDestroy {
     constructor(private reservationsDataService: ReservationsDataService, private itemsDataService: ItemsDataService,
                 private fb: FormBuilder, private users: UserService, private navCtrl: NavController,
                 private params: NavParams, private loadingCtrl: LoadingController,
-                private modalCtrl: ModalController, private toastCtrl: ToastController,
+                private modalCtrl: ModalController, private toast: ToastController,
                 private alertCtrl: AlertController, private platform: Platform,
-                private translate: TranslateService) {
+                private translate: TranslateService, private translateHelper: TranslateHelperService) {
         this.reservationForm = fb.group({
             type: ["", Validators.required],
             name: ["", Validators.required],
@@ -156,7 +157,7 @@ export class ReservationPage implements OnInit, OnDestroy {
         });
         if (removedItems.length > 0) {
             console.log("Found items to remove:", this.reservation, removedItems);
-            this.toastCtrl.create({
+            this.toast.create({
                 message: this.translate.get("RESERVATION_PAGE.ITEMS_REMOVED", {'items': _.map(removedItems, item => item.name)}),
                 duration: 2500
             }).present();
@@ -204,6 +205,8 @@ export class ReservationPage implements OnInit, OnDestroy {
                 this.reservationForm.controls['end'].setValue(reservation.end?moment(reservation.end).toDate():null);
                 this.reservationForm.controls['contact'].setValue(reservation.contact);
                 this.reservationForm.markAsPristine();
+                this.reservationForm.markAsUntouched();
+                this.reservationForm.updateValueAndValidity();
                 this.selectedItemIds = _.clone(reservation.itemIds);
                 this.originalSelectedItemIds = _.clone(reservation.itemIds);
                 console.log("Set selectedItemIds:", this.selectedItemIds);
@@ -281,6 +284,29 @@ export class ReservationPage implements OnInit, OnDestroy {
         this.reservationsDataService.remove(this.params.get('id'));
     }
 
+    onSaved(err: any, callback?: Function) {
+        this.endLoading();
+        this.reservationForm.enable();
+        if (err) {
+            this.toast.create({
+                message: this.translateHelper.getError(err),
+                duration: 2500
+            }).present();
+        } else {
+            this.originalSelectedItemIds = _.clone(this.reservation.itemIds);
+            this.reservationForm.markAsPristine();
+            this.reservationForm.markAsUntouched();
+            this.reservationForm.updateValueAndValidity();
+            this.toast.create({
+                message: this.translate.get('RESERVATION_PAGE.SAVED', this.reservation),
+                duration: 2500
+            }).present();
+        }
+        if (callback) {
+            callback(err);
+        }
+    }
+
     save(callback?: Function) {
         if (!this.reservationForm.valid) {
             return;
@@ -288,6 +314,7 @@ export class ReservationPage implements OnInit, OnDestroy {
         if (this.readonly) {
             return callback();
         }
+        this.reservationForm.disable();
         console.log("Save");
         this.startLoading();
         if (!this.reservation) {
@@ -308,10 +335,7 @@ export class ReservationPage implements OnInit, OnDestroy {
                 console.log("Added", reservationData, "reloading");
                 this.isCreating = false;
                 this.load();
-                this.endLoading();
-                if (callback) {
-                    callback(err);
-                }
+                this.onSaved(err, callback);
             });
         } else {
             this.reservation.type = this.reservationForm.controls['type'].value;
@@ -323,13 +347,7 @@ export class ReservationPage implements OnInit, OnDestroy {
             console.log("Update: ", this.reservation);
             this.reservationsDataService.update(this.reservation, (err) => {
                 console.log("Updated", this.reservation);
-                this.endLoading();
-                if (callback) {
-                    callback(err);
-                }
-                if (!err) {
-                    this.reservationForm.markAsPristine();
-                }
+                this.onSaved(err, callback);
             });
         }
     }

@@ -20,6 +20,8 @@ export class Main {
                 password: '42',
                 picture: null,
                 phone: '00123456789',
+                language: 'en',
+                status: 'normal',
                 roles: ['admin', 'manager']
             };
             let user = Accounts.createUser(userData);
