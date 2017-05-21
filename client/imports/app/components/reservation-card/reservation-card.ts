@@ -22,7 +22,6 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
     @Input() reservationId: string = "";
     @Input() reservation: Reservation = null;
     items: Item[] = [];
-    private allItems: {[id: string]: Item} = {};
     private itemsSubscription: Subscription;
     private reservationSubscription: Subscription;
 
@@ -40,13 +39,6 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
                 private reservationsService: ReservationsDataService, private translate: TranslateService,
                 private alertCtrl: AlertController, private toast: ToastController,
                 private translateHelper: TranslateHelperService) {
-        this.itemsSubscription = this.itemsService.getItems().zone().subscribe((items) => {
-            this.allItems = {};
-            _.forEach(items, item => {
-                this.allItems[item._id] = item;
-            });
-            this.refreshItems();
-        });
     }
 
     ngOnInit() {
@@ -54,9 +46,14 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     refreshItems() {
+        if (this.itemsSubscription) {
+            this.itemsSubscription.unsubscribe();
+            this.itemsSubscription = null;
+        }
         if (this.reservation) {
-            this.items = _.filter(_.map(this.reservation.itemIds, itemId => this.allItems[itemId]), item => !_.isUndefined(item));
-            console.log("Items for ", this.reservation, this.items);
+            this.itemsSubscription = this.itemsService.getItemList(this.reservation.itemIds).zone().subscribe((items) => {
+                this.items = items;
+            });
         } else {
             this.items = [];
         }

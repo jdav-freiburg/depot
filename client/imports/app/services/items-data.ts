@@ -67,6 +67,10 @@ export class ItemsDataService {
         return this.items;
     }
 
+    public getItemList(itemIds: string[]): ObservableCursor<Item> {
+        return ItemCollection.find({_id: {$in: itemIds}});
+    }
+
     public add(item: Item, updateComment: string = "", callback: Function = null): void {
         Meteor.call('items.insert', {
             item: item,
