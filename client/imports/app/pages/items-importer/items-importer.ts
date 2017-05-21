@@ -49,6 +49,36 @@ export class ItemsImporterPage implements OnInit, OnDestroy {
     ngOnDestroy() {
     }
 
+    momentFormat(date: Date) {
+        let m = moment(date);
+        if (m.isValid()) {
+            return m.format('L');
+        }
+        return "";
+    }
+
+    exportItems() {
+        let itemsData = this.itemsDataService.getItems().fetch();
+        let header = ['_id', 'externalId', 'name', 'description', 'condition', 'conditionComment', 'purchaseDate',
+            'lastService', 'tags', 'status', 'itemGroup'];
+        let data = _.map(itemsData, (item) => [item._id, item.externalId, item.name, item.description, item.condition,
+            item.conditionComment, this.momentFormat(item.purchaseDate), this.momentFormat(item.lastService),
+            _.join(item.tags, ','), item.status, item.itemGroup]);
+        let exportData = Baby.unparse({fields: header, data: data}, {delimiter: ';'});
+        let blob = new Blob([exportData], { type: 'text/csv' });
+        let url= URL.createObjectURL(blob);
+        let temporaryDownloadLink = document.createElement("a");
+        if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
+            temporaryDownloadLink.setAttribute("target", "_blank");
+        }
+        temporaryDownloadLink.setAttribute("href", url);
+        temporaryDownloadLink.setAttribute("download", "items.csv");
+        temporaryDownloadLink.style.visibility = "hidden";
+        document.body.appendChild(temporaryDownloadLink);
+        temporaryDownloadLink.click();
+        document.body.removeChild(temporaryDownloadLink);
+    }
+
     fileDrop(data) {
         console.log("Drop:", data);
         let result = Baby.parse(data).data;

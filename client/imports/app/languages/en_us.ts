@@ -33,6 +33,14 @@ export const en_us = {
     "LOG_IN": "Log In",
   },
   "ITEMS_PAGE": {
+    "TITLE": "Items",
+    "FILTER": "Filter"
+  },
+  "ITEMS_IMPORTER_PAGE": {
+    "TITLE": "Import Items",
+    "FILE": "Choose file..."
+  },
+  "ITEM_CARD": {
     "EXTERNAL_ID": "External ID",
     "NAME": "Name",
     "DESCRIPTION": "Description",
@@ -43,11 +51,25 @@ export const en_us = {
     "STATUS": "Status",
     "ITEM_GROUP": "Group",
     "TAGS": "Tags",
-    "FILTER": "Filter"
-  },
-  "ITEMS_IMPORTER_PAGE": {
-    "TITLE": "Import Items",
-    "FILE": "Choose file..."
+    "SAVE": {
+      "TITLE": "Save",
+      "SUBTITLE": "Save Entry",
+      "COMMENT_LABEL": "Change Comment",
+      "SAVE": "Save",
+      "CANCEL": "Cancel"
+    },
+    "DELETE": {
+      "TITLE": (item) => `Delete ${item.name}?`,
+      "SUBTITLE": (item) => `Really delete ${item.name}?`,
+      "YES": "Delete",
+      "NO": "Cancel"
+    },
+    "CHANGE": {
+      "TITLE": "Foreign Changes",
+      "MESSAGE": (otherItem) => `There are changes from another source. Override your changes by received changes?`,
+      "ACCEPT": "Override",
+      "CANCEL": "Keep"
+    }
   },
   "RESERVATION_PAGE": {
     "TITLE": (data) => `Reservation - ${data.name}`,
@@ -190,7 +212,7 @@ export const en_us = {
     }
   },
   "ERROR": {
-    "GENERAL": (data) => `${data.message}`,
+    "GENERAL": (message) => `${message.reason}`,
     "Incorrect password": "Incorrect Password",
     "User not found": "User not found",
     "Username already exists.": "Username already exists",

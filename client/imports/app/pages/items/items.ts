@@ -25,7 +25,7 @@ export class ItemsPage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.items = new QueryObserver<Item>(this.itemsDataService.getItems(), this.ngZone);
+        this.items = new QueryObserver<Item>(this.itemsDataService.getItems(), this.ngZone, true);
     }
 
     ngOnDestroy() {

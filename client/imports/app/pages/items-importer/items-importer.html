@@ -7,6 +7,9 @@
             <ion-icon name="menu"></ion-icon>
         </button>
         <ion-buttons end>
+            <button ion-button icon-only clear (click)="exportItems()">
+                <ion-icon name="download"></ion-icon>
+            </button>
             <button ion-button icon-only *ngIf="items" (click)="save()" [disabled]="isWorking"><ion-icon name="checkmark"></ion-icon></button>
         </ion-buttons>
     </ion-navbar>
@@ -14,12 +17,7 @@
 
 <ion-content>
     <ion-card>
-        <ion-card-content>
-            <ion-item>
-                <ion-label floating>{{'ITEMS_IMPORTER_PAGE.FILE' | translate}}</ion-label>
-                <upload-button block item-content (fileDrop)="fileDrop($event)" fileResult="Text"></upload-button>
-            </ion-item>
-        </ion-card-content>
+        <upload-button block item-content (fileDrop)="fileDrop($event)" fileResult="Text" style="width: 100%"></upload-button>
     </ion-card>
     <ion-searchbar [(ngModel)]="filter" [placeholder]="'ITEMS_PAGE.FILTER' | translate" *ngIf="items"></ion-searchbar>
     <div class="edit-table" *ngIf="items">

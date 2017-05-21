@@ -5,17 +5,24 @@ import {Subject} from "rxjs/Subject";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import * as _ from 'lodash';
 
+export interface ChangeableData<T> {
+    _changed: Subject<T>;
+}
+
 export class QueryObserver<T> {
     private _data: T[] = [];
     private _index: {[id: string]: T} = {};
     public readonly dataChanged: Subject<T[]> = new BehaviorSubject<T[]>([]);
     private handle: Meteor.LiveQueryHandle;
 
-    public constructor(private query: ObservableCursor<T>, private zone: NgZone) {
+    public constructor(private query: ObservableCursor<T>, private zone: NgZone, keepObjectOnChange?: boolean) {
         let initialObservation = true;
         this.handle = query.observeChanges({
             addedBefore: (id: string, fields: T, before: string) => {
                 (<any>fields)._id = id;
+                if (keepObjectOnChange) {
+                    (<ChangeableData<T>><any>fields)._changed = new BehaviorSubject<T>(fields);
+                }
                 if (initialObservation) {
                     this._index[id] = fields;
                     if (!before) {
@@ -51,7 +58,17 @@ export class QueryObserver<T> {
                     if (!doc) {
                         throw new Error('Invalid id:' + id);
                     }
-                    _.assign(doc, fields);
+                    if (keepObjectOnChange) {
+                        _.assign(doc, fields);
+                        (<ChangeableData<T>><any>doc)._changed.next(doc);
+                    } else {
+                        doc = _.assign({}, doc, fields);
+                        for (let i = 0; i < this._data.length; i++) {
+                            if ((<any>this._data[i])._id === id) {
+                                this._data[i] = doc;
+                            }
+                        }
+                    }
                     this.dataChanged.next(this._data);
                 });
             },

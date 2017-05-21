@@ -34,6 +34,14 @@ export const de_de = {
     "LOG_IN": "Log In"
   },
   "ITEMS_PAGE": {
+    "TITLE": "Material",
+    "FILTER": "Filtern"
+  },
+  "ITEMS_IMPORTER_PAGE": {
+    "TITLE": "Material importieren",
+    "FILE": "Datei auswählen..."
+  },
+  "ITEM_CARD": {
     "EXTERNAL_ID": "Externe ID",
     "NAME": "Name",
     "DESCRIPTION": "Beschreibung",
@@ -44,19 +52,24 @@ export const de_de = {
     "STATUS": "Status",
     "ITEM_GROUP": "Gruppe",
     "TAGS": "Tags",
-    "FILTER": "Filtern"
-  },
-  "ITEMS_IMPORTER_PAGE": {
-    "TITLE": "Material importieren",
-    "FILE": "Datei auswählen..."
-  },
-  "ITEM_CARD": {
     "SAVE": {
       "TITLE": "Speichern",
       "SUBTITLE": "Eintrag Speichern",
       "COMMENT_LABEL": "Änderungskommentar",
       "SAVE": "Speichern",
-      "CANCEL": "Abbruch"
+      "CANCEL": "Abbrechen"
+    },
+    "DELETE": {
+      "TITLE": (item) => `${item.name} Löschen?`,
+      "SUBTITLE": (item) => `${item.name} Löschen?`,
+      "YES": "Löschen",
+      "NO": "Abbrechen"
+    },
+    "CHANGE": {
+      "TITLE": "Fremde Änderungen",
+      "MESSAGE": (otherItem) => `Es liegen Änderungen aus anderer Quelle vor. Sollen diese Änderungen übernommen werden?`,
+      "ACCEPT": "Überschreiben",
+      "CANCEL": "Behalten"
     }
   },
   "RESERVATION_PAGE": {
@@ -200,7 +213,7 @@ export const de_de = {
     }
   },
   "ERROR": {
-    "GENERAL": "{{message}}",
+    "GENERAL": (message) => `${message.reason}`,
     "Incorrect password": "Ungültiges Passwort",
     "User not found": "Benutzer nicht gefunden",
     "Username already exists.": "Benutzername bereits vergeben",

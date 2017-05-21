@@ -10,7 +10,8 @@ import {ItemStateModal} from "../../pages/item-state-modal/item-state-modal";
 import {TranslateService} from "../../services/translate";
 import {TranslateHelperService} from "../../services/translate-helper";
 import * as moment from 'moment';
-import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {ChangeableData} from "../../util/query-observer";
 
 @Component({
     selector: "item-card",
@@ -20,6 +21,7 @@ import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
     @Input() itemId: string = "";
     @Input() item: Item = null;
+    private lastItemId: string = null;
     private itemSubscription: Subscription;
     private itemForm: FormGroup;
 
@@ -41,37 +43,65 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
             status: ["public", Validators.required],
             tags: [""]
         });
-        this.itemForm.disable();
     }
 
     ngOnInit() {
         this.register();
     }
 
-    updateForm() {
-        if (this.itemForm.dirty && !this.isSaving) {
-            this.alertCtrl.create({
-                title: this.translate.get('ITEM_CARD.CHANGE.TITLE'),
-                message: this.translate.get('ITEM_CARD.CHANGE.MESSAGE'),
-                buttons: [
-                    {
-                        text: this.translate.get('ITEM_CARD.CHANGE.CANCEL'),
-                        role: 'cancel'
-                    },
-                    {
-                        text: this.translate.get('ITEM_CARD.CHANGE.ACCEPT'),
-                        handler: () => {
+    askSave() {
+        this.alertCtrl.create({
+            title: this.translate.get('ITEM_CARD.SAVE.TITLE'),
+            message: this.translate.get('ITEM_CARD.SAVE.MESSAGE'),
+            buttons: [
+                {
+                    text: this.translate.get('ITEM_CARD.SAVE.SAVE'),
+                    handler: () => {
+                        this.saveItem(() => {
                             this.setFormValues();
-                        }
-                    },
-                ]
-            }).present();
+                        });
+                    }
+                },
+                {
+                    text: this.translate.get('ITEM_CARD.SAVE.DISCARD'),
+                    role: 'cancel',
+                    handler: () => {
+                        this.setFormValues();
+                    }
+                },
+            ]
+        }).present();
+    }
+
+    updateForm() {
+        if (this.itemForm.dirty && !this.isSaving && this.item && this.lastItemId === this.item._id) {
+            if (this.lastItemId !== this.item._id) {
+                this.askSave();
+            } else {
+                this.alertCtrl.create({
+                    title: this.translate.get('ITEM_CARD.CHANGE.TITLE'),
+                    message: this.translate.get('ITEM_CARD.CHANGE.MESSAGE'),
+                    buttons: [
+                        {
+                            text: this.translate.get('ITEM_CARD.CHANGE.CANCEL'),
+                            role: 'cancel'
+                        },
+                        {
+                            text: this.translate.get('ITEM_CARD.CHANGE.ACCEPT'),
+                            handler: () => {
+                                this.setFormValues();
+                            }
+                        },
+                    ]
+                }).present();
+            }
         } else {
             this.setFormValues();
         }
     }
 
-    setFormValues(ignoreDirty?: boolean) {
+    setFormValues() {
+        this.lastItemId = this.item._id;
         this.itemForm.setValue({
             name: this.item.name,
             description: this.item.description || "",
@@ -99,15 +129,22 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
                 this.item = null;
                 if (items.length > 0) {
                     this.item = items[0];
-                    this.itemForm.enable();
                     this.updateForm();
                     console.log("Item for", this.itemId, this.item);
                 }
             });
         } else if (this.item) {
-            this.itemForm.enable();
-            this.updateForm();
+            if ((<any>this.item)._changed) {
+                this.itemSubscription = (<ChangeableData<Item>><any>this.item)._changed.subscribe((item) => {
+                    console.log("Item changed:", item);
+                    this.item = item;
+                    this.updateForm();
+                });
+            } else {
+                this.updateForm();
+            }
         } else {
+            console.log("Reset form");
             this.itemForm.reset();
             this.itemForm.markAsPristine();
             this.itemForm.markAsUntouched();
@@ -128,7 +165,7 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     openItem() {
-        if (this.item) {
+        if (this.item && this.item._id) {
             this.navCtrl.push(ItemStateModal, {
                 showReservations: true,
                 itemId: this.item._id
@@ -153,21 +190,21 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
 
     getItemValues(): Item {
         return {
-            name: this.itemForm.controls['name'].value,
-            description: this.itemForm.controls['description'].value,
+            name: this.itemForm.controls['name'].value || null,
+            description: this.itemForm.controls['description'].value || null,
             externalId: this.itemForm.controls['externalId'].value || null,
-            condition: this.itemForm.controls['condition'].value,
+            condition: this.itemForm.controls['condition'].value || null,
             conditionComment: this.itemForm.controls['conditionComment'].value || null,
             purchaseDate: this.getDate(this.itemForm.controls['purchaseDate'].value),
             lastService: this.getDate(this.itemForm.controls['lastService'].value),
             itemGroup: this.itemForm.controls['itemGroup'].value || null,
-            status: this.itemForm.controls['status'].value,
+            status: this.itemForm.controls['status'].value || null,
             tags: this.getTags(this.itemForm.controls['tags'].value),
             picture: null
         };
     }
 
-    saveItemActually(updateComment: string) {
+    saveItemActually(updateComment: string, callback?: Function) {
         let itemData = this.getItemValues();
         if (this.itemId || (this.item && this.item._id)) {
             itemData._id = this.itemId || this.item._id;
@@ -183,6 +220,9 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
                 } else {
                     console.log("Saved:", itemData);
                 }
+                if (callback) {
+                    callback();
+                }
             });
         } else {
             this.isSaving = true;
@@ -197,11 +237,14 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
                 } else {
                     console.log("Saved:", itemData);
                 }
+                if (callback) {
+                    callback();
+                }
             });
         }
     }
 
-    saveItem() {
+    saveItem(callback?: Function) {
         if (!this.itemForm.dirty) {
             return;
         }
@@ -210,7 +253,7 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
             subTitle: this.translate.get('ITEM_CARD.SAVE.SUBTITLE'),
             inputs: [
                 {
-                    label: this.translate.get('ITEM_CARD.SAVE.COMMENT_LABEL'),
+                    placeholder: this.translate.get('ITEM_CARD.SAVE.COMMENT_LABEL'),
                     type: 'text',
                     name: 'updateComment'
                 }
@@ -218,12 +261,17 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
             buttons: [
                 {
                     text: this.translate.get('ITEM_CARD.SAVE.CANCEL'),
-                    role: 'cancel'
+                    role: 'cancel',
+                    handler: () => {
+                        if (callback) {
+                            callback();
+                        }
+                    }
                 },
                 {
                     text: this.translate.get('ITEM_CARD.SAVE.SAVE'),
                     handler: (data) => {
-                        this.saveItemActually(data.updateComment);
+                        this.saveItemActually(data.updateComment, callback);
                     }
                 },
             ]
@@ -248,7 +296,7 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
     deleteItem() {
         this.alertCtrl.create({
             title: this.translate.get('ITEM_CARD.DELETE.TITLE', this.item),
-            subTitle: this.translate.get('ITEM_CARD.DELETE.SUB_TITLE', this.item),
+            subTitle: this.translate.get('ITEM_CARD.DELETE.SUBTITLE', this.item),
             buttons: [
                 {
                     text: this.translate.get('ITEM_CARD.DELETE.NO'),
