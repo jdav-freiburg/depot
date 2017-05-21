@@ -81,7 +81,9 @@ export class ItemsImporterPage implements OnInit, OnDestroy {
 
                 tags: _.map(_.split(<string>entry[8], ","), str => str.trim()),
 
-                status: <string>entry[9]
+                status: <string>entry[9],
+
+                itemGroup: <string>entry[10]
             };
         });
     }

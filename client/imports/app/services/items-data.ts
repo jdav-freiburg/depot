@@ -9,34 +9,31 @@ import {colors} from "../colors";
 
 @Injectable()
 export class ItemsDataService {
-    private items: ObservableCursor<Item>;
-
     constructor(private ngZone: NgZone, private translate: TranslateService) {
         Tracker.autorun(() => {
             Meteor.subscribe('items');
         });
-        this.items = ItemCollection.find({});
     }
 
     get itemConditionOptions(): TranslateOption[] {
         return this.translate.getAll([
             {
-                translate: 'ITEM.CONDITION.100',
-                value: "100",
+                translate: 'ITEM.CONDITION.GOOD',
+                value: "good",
                 color: 'good',
                 colorCss: colors.good,
                 text: ""
             },
             {
-                translate: 'ITEM.CONDITION.50',
-                value: "50",
+                translate: 'ITEM.CONDITION.BAD',
+                value: "bad",
                 color: 'warning',
                 colorCss: colors.warning,
                 text: ""
             },
             {
-                translate: 'ITEM.CONDITION.0',
-                value: "0",
+                translate: 'ITEM.CONDITION.BROKEN',
+                value: "broken",
                 color: 'danger',
                 colorCss: colors.danger,
                 text: ""
@@ -64,7 +61,7 @@ export class ItemsDataService {
     }
 
     public getItems(): ObservableCursor<Item> {
-        return this.items;
+        return ItemCollection.find({});
     }
 
     public getItemList(itemIds: string[]): ObservableCursor<Item> {
@@ -106,8 +103,23 @@ export class ItemsDataService {
         return ItemCollection.find({_id: id});
     }
 
-    public remove(id: string): void {
-        ItemCollection.remove({_id: id});
+    public remove(id: string, callback?: Function): void {
+        let result = ItemCollection.remove({_id: id});
+        result.subscribe((result) => {
+            this.ngZone.run(() => {
+                console.log("reservation remove:", result);
+                if (callback) {
+                    callback();
+                }
+            });
+        }, (error) => {
+            this.ngZone.run(() => {
+                console.log("reservation remove error:", error);
+                if (callback) {
+                    callback(error);
+                }
+            });
+        });
     }
 
     addAll(items: Item[], callback?: Function) {

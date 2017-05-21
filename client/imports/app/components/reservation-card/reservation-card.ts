@@ -66,11 +66,11 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
         }
         if (this.reservationId) {
             this.reservationSubscription = this.reservationsService.getReservation(this.reservationId).zone().subscribe((reservations) => {
+                this.reservation = null;
                 if (reservations.length > 0) {
                     this.reservation = reservations[0];
                     console.log("Reservation for", this.reservationId, this.reservation);
                 }
-                this.reservation = null;
                 this.refreshItems();
             });
         }

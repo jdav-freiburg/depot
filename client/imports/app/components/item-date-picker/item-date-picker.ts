@@ -38,12 +38,10 @@ export class ItemDatePickerComponent implements ControlValueAccessor {
     }
 
     setDisabledState(isDisabled: boolean): void {
-        console.log("disabled:", isDisabled);
         this._disabled = isDisabled;
     }
 
     writeValue(obj: any): void {
-        console.log("value:", obj);
         this.date = moment(obj).toDate();
     }
 

@@ -41,6 +41,7 @@ import {ReservationCardComponent} from "./components/reservation-card/reservatio
 import {ItemsImporterPage} from "./pages/items-importer/items-importer";
 import {FileDropModule} from "angular2-file-drop";
 import {UploadButton} from "./components/upload-button/upload-button";
+import {ItemCardComponent} from "./components/item-card/item-card";
 
 /*const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -75,7 +76,8 @@ import {UploadButton} from "./components/upload-button/upload-button";
         AdvancedEmailValidatorDirective,
         ReservationCardComponent,
         ItemsImporterPage,
-        UploadButton
+        UploadButton,
+        ItemCardComponent
     ],
     // Entry Components
     entryComponents: [

@@ -19,6 +19,8 @@ export const ItemSchema = new SimpleSchema({
     tags: { type: Array, optional: true },
     'tags.$': { type: String },
 
+    itemGroup: { type: String, optional: true },
+
     status: { type: String, optional: true }
 });
 
@@ -38,6 +40,8 @@ export interface Item {
     picture: string;
 
     tags: string[];
+
+    itemGroup: string;
 
     status: string;
 }

@@ -1,0 +1,76 @@
+<form [formGroup]="itemForm" (submit)="saveItem()" >
+    <ion-card>
+        <ion-grid no-padding padding-bottom>
+            <ion-row>
+                <ion-col>
+                    <ion-item padding-right>
+                        <ion-label floating>{{'ITEMS_PAGE.NAME' | translate}}</ion-label>
+                        <ion-input type="text" formControlName="name"></ion-input>
+                    </ion-item>
+                </ion-col>
+                <ion-col>
+                    <ion-item>
+                        <ion-label floating>{{'ITEMS_PAGE.DESCRIPTION' | translate}}</ion-label>
+                        <ion-input type="text" formControlName="description"></ion-input>
+                    </ion-item>
+                </ion-col>
+                <ion-col col-auto>
+                    <button *ngIf="itemForm.controls['status'].value=='public'" ion-button (click)="itemForm.controls['status'].setValue('hidden')" [disabled]="itemForm.controls['status'].disabled" clear icon-only>
+                        <ion-icon name="eye"></ion-icon>
+                    </button>
+                    <button *ngIf="itemForm.controls['status'].value!='public'" ion-button (click)="itemForm.controls['status'].setValue('public')" [disabled]="itemForm.controls['status'].disabled" clear icon-only>
+                        <ion-icon name="eye-off"></ion-icon>
+                    </button>
+                </ion-col>
+                <ion-col col-auto>
+                    <button ion-button clear icon-only type="submit" [disabled]="!itemForm.valid">
+                        <ion-icon name="checkmark"></ion-icon>
+                    </button>
+                </ion-col>
+                <ion-col col-auto>
+                    <button ion-button (click)="deleteItem()" *ngIf="item" type="button" clear icon-only>
+                        <ion-icon name="trash"></ion-icon>
+                    </button>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col>
+                    <ion-item>
+                        <ion-label floating>{{'ITEMS_PAGE.EXTERNAL_ID' | translate}}</ion-label>
+                        <ion-input type="text" formControlName="externalId"></ion-input>
+                    </ion-item>
+                </ion-col>
+                <ion-col>
+                    <ion-item>
+                        <ion-label floating>{{'ITEMS_PAGE.TAGS' | translate}}</ion-label>
+                        <ion-input type="text" formControlName="tags"></ion-input>
+                    </ion-item>
+                </ion-col>
+                <ion-col>
+                    <ion-item>
+                        <ion-label floating>{{'ITEMS_PAGE.ITEM_GROUP' | translate}}</ion-label>
+                        <ion-input type="text" formControlName="itemGroup"></ion-input>
+                    </ion-item>
+                </ion-col>
+                <ion-col><item-date-picker formControlName="purchaseDate" [label]="'ITEMS_PAGE.PURCHASE_DATE' | translate"></item-date-picker></ion-col>
+                <ion-col><item-date-picker formControlName="lastService" [label]="'ITEMS_PAGE.LAST_SERVICE' | translate"></item-date-picker></ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col col-auto>
+                    <ion-item>
+                        <ion-label floating>{{'ITEMS_PAGE.CONDITION' | translate}}</ion-label>
+                        <ion-select formControlName="condition">
+                            <ion-option *ngFor="let option of itemsService.itemConditionOptions" [value]="option.value">{{option.text}}</ion-option>
+                        </ion-select>
+                    </ion-item>
+                </ion-col>
+                <ion-col col-8>
+                    <ion-item>
+                        <ion-label floating>{{'ITEMS_PAGE.CONDITION_COMMENT' | translate}}</ion-label>
+                        <ion-input type="text" formControlName="conditionComment"></ion-input>
+                    </ion-item>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </ion-card>
+</form>

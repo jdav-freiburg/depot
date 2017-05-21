@@ -41,6 +41,7 @@ export const en_us = {
     "CONDITION": "Condition",
     "CONDITION_COMMENT": "Condition Comment",
     "STATUS": "Status",
+    "ITEM_GROUP": "Group",
     "TAGS": "Tags",
     "FILTER": "Filter"
   },
@@ -159,9 +160,9 @@ export const en_us = {
       "HIDDEN": "Hidden"
     },
     "CONDITION": {
-      "100": "Ok",
-      "50": "Damaged",
-      "0": "Broken"
+      "GOOD": "Good",
+      "BAD": "Bad",
+      "BROKEN": "Broken"
     }
   },
   "ITEM_STATE": {

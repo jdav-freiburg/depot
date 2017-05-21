@@ -125,7 +125,7 @@ function updateItem(item: Item, itemRef: Item, updateComment: string) {
         hadChange = true;
     }
     if (item.conditionComment !== itemRef.conditionComment) {
-        updateData.condition = item.conditionComment;
+        updateData.conditionComment = item.conditionComment;
         updateState.fields['conditionComment'] = item.conditionComment;
         hadChange = true;
     }

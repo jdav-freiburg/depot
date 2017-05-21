@@ -42,12 +42,22 @@ export const de_de = {
     "CONDITION": "Zustand",
     "CONDITION_COMMENT": "Zustandskommentar",
     "STATUS": "Status",
+    "ITEM_GROUP": "Gruppe",
     "TAGS": "Tags",
     "FILTER": "Filtern"
   },
   "ITEMS_IMPORTER_PAGE": {
     "TITLE": "Material importieren",
     "FILE": "Datei auswählen..."
+  },
+  "ITEM_CARD": {
+    "SAVE": {
+      "TITLE": "Speichern",
+      "SUBTITLE": "Eintrag Speichern",
+      "COMMENT_LABEL": "Änderungskommentar",
+      "SAVE": "Speichern",
+      "CANCEL": "Abbruch"
+    }
   },
   "RESERVATION_PAGE": {
     "TITLE": (data) => `Reservierung - ${data.name}`,
@@ -160,9 +170,9 @@ export const de_de = {
       "HIDDEN": "Versteckt"
     },
     "CONDITION": {
-      "100": "Ok",
-      "50": "Beschädigt",
-      "0": "Kaputt"
+      "GOOD": "Gut",
+      "BAD": "Schlecht",
+      "BROKEN": "Kaputt"
     }
   },
   "ITEM_STATE": {
