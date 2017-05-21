@@ -16,6 +16,7 @@
             <span class="edit-th">{{'ITEMS_PAGE.EXTERNAL_ID' | translate}}</span>
             <span class="edit-th">{{'ITEMS_PAGE.NAME' | translate}}</span>
             <span class="edit-th">{{'ITEMS_PAGE.DESCRIPTION' | translate}}</span>
+            <span class="edit-th">{{'ITEMS_PAGE.PURCHASE_DATE' | translate}}</span>
             <span class="edit-th">{{'ITEMS_PAGE.LAST_SERVICE' | translate}}</span>
             <span class="edit-th">{{'ITEMS_PAGE.CONDITION' | translate}}</span>
             <span class="edit-th">{{'ITEMS_PAGE.CONDITION_COMMENT' | translate}}</span>
@@ -43,6 +44,11 @@
                     <ion-label floating>{{'ITEMS_PAGE.DESCRIPTION' | translate}}</ion-label>
                     <ion-input type="text" formControlName="description"></ion-input>
                 </ion-item>
+            </span>
+            <span class="edit-td">
+                <span class="edit-td">
+                    <item-date-picker formControlName="purchaseDate" [label]="'ITEMS_PAGE.PURCHASE_DATE' | translate"></item-date-picker>
+                </span>
             </span>
             <span class="edit-td">
                 <span class="edit-td">
@@ -83,7 +89,7 @@
             <span class="edit-td"></span>
             <span class="edit-td"></span>
         </form>
-        <ng-container *ngFor="let item of data | itemsfilter:filter">
+        <ng-container *ngFor="let item of items | itemsfilter:filter">
             <form *ngIf="isManager && editItemId === item._id" class="edit-tr" [formGroup]="editItemForm"
                   (ngSubmit)="save(item, $event)">
                 <span class="edit-td">

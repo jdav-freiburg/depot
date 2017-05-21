@@ -36,12 +36,17 @@ export const en_us = {
     "EXTERNAL_ID": "External ID",
     "NAME": "Name",
     "DESCRIPTION": "Description",
+    "PURCHASE_DATE": "Purchase Date",
     "LAST_SERVICE": "Last Service",
     "CONDITION": "Condition",
     "CONDITION_COMMENT": "Condition Comment",
     "STATUS": "Status",
     "TAGS": "Tags",
     "FILTER": "Filter"
+  },
+  "ITEMS_IMPORTER_PAGE": {
+    "TITLE": "Import Items",
+    "FILE": "Choose file..."
   },
   "RESERVATION_PAGE": {
     "TITLE": (data) => `Reservation - ${data.name}`,
@@ -132,7 +137,8 @@ export const en_us = {
   "SIDEMENU": {
     "USERS": "Users",
     "LOGOUT": "Log Out",
-    "LANGUAGE": "Language"
+    "LANGUAGE": "Language",
+    "IMPORT_ITEMS": "Import Items"
   },
   "TABS": {
     "HOME": "Home",

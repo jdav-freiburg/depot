@@ -3,6 +3,7 @@
 /// <reference types="@types/lodash" />
 /// <reference types="@types/chai" />
 /// <reference types="@types/mocha" />
+/// <reference types="@types/babyparse" />
 
 declare module "*.html" {
   const template: string;

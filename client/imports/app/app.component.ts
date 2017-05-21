@@ -9,6 +9,7 @@ import {UsersPage} from "./pages/users/users";
 import {DebugService} from "./services/debug";
 import {UserModal} from "./pages/user-modal/user-modal";
 import {TranslateHelperService} from "./services/translate-helper";
+import {ItemsImporterPage} from "./pages/items-importer/items-importer";
 
 @Component({
     selector: "app",
@@ -37,6 +38,10 @@ export class AppComponent {
         return this.userService.isAdmin;
     }
 
+    get isManager(): boolean {
+        return this.userService.isManager;
+    }
+
     constructor(private userService: UserService, private debugService: DebugService,
         private translateHelper: TranslateHelperService) {
     }
@@ -47,6 +52,10 @@ export class AppComponent {
 
     showUsers() {
         this.nav.push(UsersPage);
+    }
+
+    importItems() {
+        this.nav.push(ItemsImporterPage);
     }
 
     logout() {

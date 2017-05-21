@@ -3,6 +3,7 @@
         <ion-list>
             <button ion-item (click)="editSelf()" menuClose icon-right *ngIf="userName">{{userName}}<ion-icon name="create"></ion-icon></button>
             <button ion-item (click)="showUsers()" menuClose icon-right *ngIf="isAdmin">{{'SIDEMENU.USERS' | translate}}<ion-icon name="people"></ion-icon></button>
+            <button ion-item (click)="importItems()" menuClose icon-right *ngIf="isManager">{{'SIDEMENU.IMPORT_ITEMS' | translate}}<ion-icon name="list"></ion-icon></button>
             <button ion-item (click)="logout()" menuClose icon-right>{{'SIDEMENU.LOGOUT' | translate}}<ion-icon name="log-out"></ion-icon></button>
         </ion-list>
         <ion-footer>

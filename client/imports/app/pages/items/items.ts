@@ -19,7 +19,7 @@ import {Subscription} from "rxjs/Subscription";
     styles: [ style ]
 })
 export class ItemsPage implements OnInit, OnDestroy {
-    data: Item[];
+    items: Item[];
 
     filter: string = "";
 
@@ -35,6 +35,7 @@ export class ItemsPage implements OnInit, OnDestroy {
             name: ["", Validators.required],
             description: ["", Validators.required],
             externalId: ["", Validators.required],
+            purchaseDate: [new Date()],
             lastService: [new Date(), Validators.required],
             condition: ["100"],
             conditionComment: [""],
@@ -46,6 +47,7 @@ export class ItemsPage implements OnInit, OnDestroy {
             name: ["", Validators.required],
             description: ["", Validators.required],
             externalId: ["", Validators.required],
+            purchaseDate: [null],
             lastService: [null, Validators.required],
             condition: ["100"],
             conditionComment: [""],
@@ -56,7 +58,7 @@ export class ItemsPage implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.itemsSubscription = this.itemsDataService.getItems().zone().subscribe((items) => {
-            this.data = items;
+            this.items = items;
             console.log("Items:", items);
         });
     }
@@ -90,6 +92,7 @@ export class ItemsPage implements OnInit, OnDestroy {
         this.editItemForm.controls['externalId'].setValue(item.externalId);
         this.editItemForm.controls['condition'].setValue(item.condition);
         this.editItemForm.controls['conditionComment'].setValue(item.conditionComment);
+        this.editItemForm.controls['purchaseDate'].setValue(moment(item.purchaseDate).toDate());
         this.editItemForm.controls['lastService'].setValue(moment(item.lastService).toDate());
         this.editItemForm.controls['status'].setValue(item.status);
         this.editItemForm.controls['tags'].setValue(_.join(item.tags, ','));
@@ -101,6 +104,7 @@ export class ItemsPage implements OnInit, OnDestroy {
         item.externalId = this.editItemForm.controls['externalId'].value;
         item.condition = this.editItemForm.controls['condition'].value;
         item.conditionComment = this.editItemForm.controls['conditionComment'].value;
+        item.purchaseDate = moment(this.editItemForm.controls['purchaseDate'].value).toDate();
         item.lastService = moment(this.editItemForm.controls['lastService'].value).toDate();
         item.status = this.editItemForm.controls['status'].value;
         item.tags = this.getTags(this.editItemForm.controls['tags'].value);
@@ -119,6 +123,7 @@ export class ItemsPage implements OnInit, OnDestroy {
         let newItem : Item = {
             name: this.newItemForm.controls['name'].value,
             description: this.newItemForm.controls['description'].value,
+            purchaseDate: moment(this.newItemForm.controls['purchaseDate'].value).toDate(),
             lastService: moment(this.newItemForm.controls['lastService'].value).toDate(),
             condition: this.newItemForm.controls['condition'].value,
             conditionComment: this.newItemForm.controls['conditionComment'].value,

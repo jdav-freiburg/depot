@@ -13,9 +13,9 @@ export class ItemsFilterPipe implements PipeTransform {
             return items;
         }
         let lowercaseFilter = filter.toLowerCase();
-        return items.filter(item => item.name.toLowerCase().indexOf(lowercaseFilter) !== -1 ||
-            _.some(item.tags, (tag) => tag.toLowerCase().indexOf(lowercaseFilter) !== -1) ||
-            item.description.toLowerCase().indexOf(lowercaseFilter) !== -1 ||
-            item.externalId.toLowerCase() === lowercaseFilter);
+        return items.filter(item => (item.name && item.name.toLowerCase().indexOf(lowercaseFilter) !== -1) ||
+            _.some(item.tags, (tag) => tag && tag.toLowerCase().indexOf(lowercaseFilter) !== -1) ||
+            (item.description && item.description.toLowerCase().indexOf(lowercaseFilter) !== -1) ||
+            (item.externalId && item.externalId.toLowerCase() === lowercaseFilter));
     }
 }

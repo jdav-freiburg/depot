@@ -37,12 +37,17 @@ export const de_de = {
     "EXTERNAL_ID": "Externe ID",
     "NAME": "Name",
     "DESCRIPTION": "Beschreibung",
+    "PURCHASE_DATE": "Kaufdatum",
     "LAST_SERVICE": "Letzte Wartung",
     "CONDITION": "Zustand",
     "CONDITION_COMMENT": "Zustandskommentar",
     "STATUS": "Status",
     "TAGS": "Tags",
     "FILTER": "Filtern"
+  },
+  "ITEMS_IMPORTER_PAGE": {
+    "TITLE": "Material importieren",
+    "FILE": "Datei auswählen..."
   },
   "RESERVATION_PAGE": {
     "TITLE": (data) => `Reservierung - ${data.name}`,
@@ -133,7 +138,8 @@ export const de_de = {
   "SIDEMENU": {
     "USERS": "Benutzer",
     "LOGOUT": "Abmelden",
-    "LANGUAGE": "Sprache"
+    "LANGUAGE": "Sprache",
+    "IMPORT_ITEMS": "Material Importieren"
   },
   "TABS": {
     "HOME": "Home",

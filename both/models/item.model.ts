@@ -11,6 +11,7 @@ export const ItemSchema = new SimpleSchema({
     condition: { type: String, optional: true },
     conditionComment: { type: String, optional: true },
 
+    purchaseDate: { type: Date, optional: true},
     lastService: { type: Date, optional: true },
 
     picture: { type: String, optional: true },
@@ -31,6 +32,7 @@ export interface Item {
     condition: string,
     conditionComment: string,
 
+    purchaseDate: Date;
     lastService: Date;
 
     picture: string;

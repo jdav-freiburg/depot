@@ -105,4 +105,17 @@ export class ItemsDataService {
     public remove(id: string): void {
         ItemCollection.remove({_id: id});
     }
+
+    addAll(items: Item[], callback?: Function) {
+        Meteor.call('items.addAll', {
+            items
+        }, (err, res) => {
+            this.ngZone.run(() => {
+                console.log("items update", err, res);
+                if (callback) {
+                    callback(err, res);
+                }
+            });
+        });
+    }
 }

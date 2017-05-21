@@ -38,6 +38,9 @@ import {AdvancedEmailValidatorDirective} from "./services/advanced-email-validat
 import {GlobalMessagesDataService} from "./services/global-messages-data";
 import {MarkdownModule} from "angular2-markdown";
 import {ReservationCardComponent} from "./components/reservation-card/reservation-card";
+import {ItemsImporterPage} from "./pages/items-importer/items-importer";
+import {FileDropModule} from "angular2-file-drop";
+import {UploadButton} from "./components/upload-button/upload-button";
 
 /*const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -70,7 +73,9 @@ import {ReservationCardComponent} from "./components/reservation-card/reservatio
         TranslatePipe,
         MomentPipe,
         AdvancedEmailValidatorDirective,
-        ReservationCardComponent
+        ReservationCardComponent,
+        ItemsImporterPage,
+        UploadButton
     ],
     // Entry Components
     entryComponents: [
@@ -87,7 +92,8 @@ import {ReservationCardComponent} from "./components/reservation-card/reservatio
         ReservationDatePickerComponent,
         ItemStateModal,
         UserModal,
-        UsersPage
+        UsersPage,
+        ItemsImporterPage
     ],
     // Providers
     providers: [
@@ -110,7 +116,8 @@ import {ReservationCardComponent} from "./components/reservation-card/reservatio
         FormsModule,
         ReactiveFormsModule,
         CalendarModule.forRoot(),
-        MarkdownModule.forRoot()
+        MarkdownModule.forRoot(),
+        FileDropModule
     ],
     // Main Component
     bootstrap: [ IonicApp ]

@@ -11,6 +11,10 @@ export class MomentPipe implements PipeTransform {
     }
 
     transform(value: string, args: string): string {
-        return moment(value).format(args);
+        let m = moment(value);
+        if (m.isValid()) {
+            return moment(value).format(args);
+        }
+        return "";
     }
 }

@@ -1,0 +1,69 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>
+            {{'ITEMS_IMPORTER_PAGE.TITLE' | translate}}
+        </ion-title>
+        <button ion-button icon-only menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-buttons end>
+            <button ion-button icon-only *ngIf="items" (click)="save()" [disabled]="isWorking"><ion-icon name="checkmark"></ion-icon></button>
+        </ion-buttons>
+    </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <ion-card>
+        <ion-card-content>
+            <ion-item>
+                <ion-label floating>{{'ITEMS_IMPORTER_PAGE.FILE' | translate}}</ion-label>
+                <upload-button block item-content (fileDrop)="fileDrop($event)" fileResult="Text"></upload-button>
+            </ion-item>
+        </ion-card-content>
+    </ion-card>
+    <ion-searchbar [(ngModel)]="filter" [placeholder]="'ITEMS_PAGE.FILTER' | translate" *ngIf="items"></ion-searchbar>
+    <div class="edit-table" *ngIf="items">
+        <div class="edit-tr">
+            <span class="edit-th">{{'ITEMS_PAGE.EXTERNAL_ID' | translate}}</span>
+            <span class="edit-th">{{'ITEMS_PAGE.NAME' | translate}}</span>
+            <span class="edit-th">{{'ITEMS_PAGE.DESCRIPTION' | translate}}</span>
+            <span class="edit-th">{{'ITEMS_PAGE.PURCHASE_DATE' | translate}}</span>
+            <span class="edit-th">{{'ITEMS_PAGE.LAST_SERVICE' | translate}}</span>
+            <span class="edit-th">{{'ITEMS_PAGE.CONDITION' | translate}}</span>
+            <span class="edit-th">{{'ITEMS_PAGE.CONDITION_COMMENT' | translate}}</span>
+            <span class="edit-th">{{'ITEMS_PAGE.STATUS' | translate}}</span>
+            <span class="edit-th">{{'ITEMS_PAGE.TAGS' | translate}}</span>
+        </div>
+        <ng-container *ngFor="let item of items | itemsfilter:filter">
+            <div *ngIf="editItemId !== item._id" class="edit-tr">
+                <span class="edit-td">{{item.externalId}}</span>
+                <span class="edit-td">{{item.name}}</span>
+                <span class="edit-td">{{item.description}}</span>
+                <span class="edit-td">{{item.purchaseDate | moment: 'L'}}</span>
+                <span class="edit-td">{{item.lastService | moment: 'L'}}</span>
+                <span class="edit-td">
+                    <span [ngSwitch]="item.condition">
+                        <ng-container *ngFor="let option of itemsDataService.itemConditionOptions">
+                            <span *ngSwitchCase="option.value" [style.color]="option.colorCss">{{option.text}}</span>
+                        </ng-container>
+                        <span *ngSwitchDefault>{{item.condition}}</span>
+                    </span>
+                </span>
+                <span class="edit-td">{{item.conditionComment}}</span>
+                <span class="edit-td">
+                    <span [ngSwitch]="item.status">
+                        <ng-container *ngFor="let option of itemsDataService.itemStatusOptions">
+                            <span *ngSwitchCase="option.value" [style.color]="option.colorCss">{{option.text}}</span>
+                        </ng-container>
+                        <span *ngSwitchDefault>{{item.status}}</span>
+                    </span>
+                </span>
+                <span class="edit-td">
+                    <ion-chip *ngFor="let tag of item.tags">
+                        <ion-label>{{tag}}</ion-label>
+                    </ion-chip>
+                </span>
+            </div>
+        </ng-container>
+    </div>
+</ion-content>
