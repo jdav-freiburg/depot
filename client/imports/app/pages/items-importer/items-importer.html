@@ -19,49 +19,13 @@
     <ion-card>
         <upload-button block item-content (fileDrop)="fileDrop($event)" fileResult="Text" style="width: 100%"></upload-button>
     </ion-card>
-    <ion-searchbar [(ngModel)]="filter" [placeholder]="'ITEMS_PAGE.FILTER' | translate" *ngIf="items"></ion-searchbar>
-    <div class="edit-table" *ngIf="items">
-        <div class="edit-tr">
-            <span class="edit-th">{{'ITEMS_PAGE.EXTERNAL_ID' | translate}}</span>
-            <span class="edit-th">{{'ITEMS_PAGE.NAME' | translate}}</span>
-            <span class="edit-th">{{'ITEMS_PAGE.DESCRIPTION' | translate}}</span>
-            <span class="edit-th">{{'ITEMS_PAGE.PURCHASE_DATE' | translate}}</span>
-            <span class="edit-th">{{'ITEMS_PAGE.LAST_SERVICE' | translate}}</span>
-            <span class="edit-th">{{'ITEMS_PAGE.CONDITION' | translate}}</span>
-            <span class="edit-th">{{'ITEMS_PAGE.CONDITION_COMMENT' | translate}}</span>
-            <span class="edit-th">{{'ITEMS_PAGE.STATUS' | translate}}</span>
-            <span class="edit-th">{{'ITEMS_PAGE.TAGS' | translate}}</span>
+    <ion-searchbar [(ngModel)]="filter" [placeholder]="'ITEMS_IMPORTER_PAGE.FILTER' | translate" *ngIf="items"></ion-searchbar>
+    <ion-list [virtualScroll]="items | itemsfilter:filter" approxItemHeight="25px" [headerFn]="headerFn">
+        <div *virtualHeader="let header" style="width: 100%">
+            <item-card view="listHeader" [extended]="true" [editable]="true" [saveDirect]="true"></item-card>
         </div>
-        <ng-container *ngFor="let item of items | itemsfilter:filter">
-            <div *ngIf="editItemId !== item._id" class="edit-tr">
-                <span class="edit-td">{{item.externalId}}</span>
-                <span class="edit-td">{{item.name}}</span>
-                <span class="edit-td">{{item.description}}</span>
-                <span class="edit-td">{{item.purchaseDate | moment: 'L'}}</span>
-                <span class="edit-td">{{item.lastService | moment: 'L'}}</span>
-                <span class="edit-td">
-                    <span [ngSwitch]="item.condition">
-                        <ng-container *ngFor="let option of itemsDataService.itemConditionOptions">
-                            <span *ngSwitchCase="option.value" [style.color]="option.colorCss">{{option.text}}</span>
-                        </ng-container>
-                        <span *ngSwitchDefault>{{item.condition}}</span>
-                    </span>
-                </span>
-                <span class="edit-td">{{item.conditionComment}}</span>
-                <span class="edit-td">
-                    <span [ngSwitch]="item.status">
-                        <ng-container *ngFor="let option of itemsDataService.itemStatusOptions">
-                            <span *ngSwitchCase="option.value" [style.color]="option.colorCss">{{option.text}}</span>
-                        </ng-container>
-                        <span *ngSwitchDefault>{{item.status}}</span>
-                    </span>
-                </span>
-                <span class="edit-td">
-                    <ion-chip *ngFor="let tag of item.tags">
-                        <ion-label>{{tag}}</ion-label>
-                    </ion-chip>
-                </span>
-            </div>
-        </ng-container>
-    </div>
+        <div *virtualItem="let item" style="width: 100%">
+            <item-card [item]="item" view="list" [extended]="true" [editable]="true" [saveDirect]="true"></item-card>
+        </div>
+    </ion-list>
 </ion-content>

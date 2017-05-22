@@ -6,10 +6,11 @@ import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import * as _ from 'lodash';
 
 export interface ChangeableData<T> {
-    _changed: Subject<T>;
+    _id?: string;
+    _changed?: Subject<T>;
 }
 
-export class QueryObserver<T> {
+export class QueryObserver<T extends ChangeableData<T>> {
     private _data: T[] = [];
     private _index: {[id: string]: T} = {};
     public readonly dataChanged: Subject<T[]> = new BehaviorSubject<T[]>([]);
@@ -19,9 +20,9 @@ export class QueryObserver<T> {
         let initialObservation = true;
         this.handle = query.observeChanges({
             addedBefore: (id: string, fields: T, before: string) => {
-                (<any>fields)._id = id;
+                fields._id = id;
                 if (keepObjectOnChange) {
-                    (<ChangeableData<T>><any>fields)._changed = new BehaviorSubject<T>(fields);
+                    fields._changed = new BehaviorSubject<T>(fields);
                 }
                 if (initialObservation) {
                     this._index[id] = fields;
@@ -29,7 +30,7 @@ export class QueryObserver<T> {
                         this._data.push(fields);
                     } else {
                         for (let i = 0; i < this._data.length; i++) {
-                            if ((<any>this.data[i])._id === before) {
+                            if (this._data[i]._id === before) {
                                 this._data.splice(i, 0, fields);
                                 break;
                             }
@@ -42,7 +43,7 @@ export class QueryObserver<T> {
                             this._data.push(fields);
                         } else {
                             for (let i = 0; i < this._data.length; i++) {
-                                if ((<any>this.data[i])._id === before) {
+                                if (this._data[i]._id === before) {
                                     this._data.splice(i, 0, fields);
                                     break;
                                 }
@@ -60,11 +61,11 @@ export class QueryObserver<T> {
                     }
                     if (keepObjectOnChange) {
                         _.assign(doc, fields);
-                        (<ChangeableData<T>><any>doc)._changed.next(doc);
+                        doc._changed.next(doc);
                     } else {
                         doc = _.assign({}, doc, fields);
                         for (let i = 0; i < this._data.length; i++) {
-                            if ((<any>this._data[i])._id === id) {
+                            if (this._data[i]._id === id) {
                                 this._data[i] = doc;
                             }
                         }
@@ -77,7 +78,7 @@ export class QueryObserver<T> {
                     let pickedItem: T = null;
                     let destinationIndex = (before?null:this._data.length);
                     for (let i = 0; i < this._data.length; i++) {
-                        let refId = (<any>this._data[i])._id;
+                        let refId = this._data[i]._id;
                         if (refId === id) {
                             pickedItem = this._data.splice(i, 1)[0];
                             if (destinationIndex === null) {
@@ -102,7 +103,7 @@ export class QueryObserver<T> {
                 zone.run(() => {
                     delete this._index[id];
                     for (let i = 0; i < this._data.length; i++) {
-                        if ((<any>this._data[i])._id === id) {
+                        if (this._data[i]._id === id) {
                             this._data.splice(i, 1);
                         }
                     }
@@ -154,8 +155,144 @@ export class QueryObserver<T> {
         this.dataChanged.next(this._data);
     }
 
+    public newList() {
+        this._data = _.map(this._data, (entry) => _.clone(entry));
+        this.dataChanged.next(this._data);
+    }
+
     public get data(): T[] {
         return this._data;
+    }
+
+    public unsubscribe(): void {
+        this.handle.stop();
+    }
+}
+
+export interface ChangeableDataTransform<T, U> extends ChangeableData<T> {
+    _transformed?: U;
+}
+
+export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> {
+    private _transformedData: U[] = [];
+    private _data: T[] = [];
+    private _index: {[id: string]: T} = {};
+    public readonly dataChanged: Subject<T[]> = new BehaviorSubject<T[]>([]);
+    private handle: Meteor.LiveQueryHandle;
+
+    public constructor(private query: ObservableCursor<T>, private zone: NgZone, private transformer: (item: T) => U) {
+        let initialObservation = true;
+        this.handle = query.observeChanges({
+            addedBefore: (id: string, fields: T, before: string) => {
+                fields._id = id;
+                fields._changed = new BehaviorSubject<T>(fields);
+                if (initialObservation) {
+                    this._index[id] = fields;
+                    let transformed = transformer(fields);
+                    fields._transformed = transformed;
+                    if (!before) {
+                        this._data.push(fields);
+                        this._transformedData.push(transformed);
+                    } else {
+                        for (let i = 0; i < this._data.length; i++) {
+                            if (this._data[i]._id === before) {
+                                this._data.splice(i, 0, fields);
+                                this._transformedData.splice(i, 0, transformed);
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    zone.run(() => {
+                        this._index[id] = fields;
+                        let transformed = transformer(fields);
+                        if (!before) {
+                            this._data.push(fields);
+                            this._transformedData.push(transformed);
+                        } else {
+                            for (let i = 0; i < this._data.length; i++) {
+                                if (this._data[i]._id === before) {
+                                    this._data.splice(i, 0, fields);
+                                    this._transformedData.splice(i, 0, transformed);
+                                    break;
+                                }
+                            }
+                        }
+                        this.dataChanged.next(this._data);
+                    });
+                }
+            },
+            changed: (id: string, fields: any) => {
+                zone.run(() => {
+                    let doc = this._index[id];
+                    if (!doc) {
+                        throw new Error('Invalid id:' + id);
+                    }
+                    _.assign(doc, fields);
+                    let transformed = transformer(doc);
+                    for (let i = 0; i < this._data.length; i++) {
+                        if (this._data[i]._id === id) {
+                            this._transformedData[i] = transformed;
+                            break;
+                        }
+                    }
+                    this.dataChanged.next(this._data);
+                });
+            },
+            movedBefore: (id: string, before: string) => {
+                zone.run(() => {
+                    let pickedData: T = null;
+                    let pickedTransformed: U = null;
+                    let destinationIndex = (before?null:this._data.length);
+                    for (let i = 0; i < this._data.length; i++) {
+                        let refId = this._data[i]._id;
+                        if (refId === id) {
+                            pickedData = this._data.splice(i, 1)[0];
+                            pickedTransformed = this._transformedData.splice(i, 1)[0];
+                            if (destinationIndex === null) {
+                                i--;
+                            } else {
+                                this._data.splice(destinationIndex, 0, pickedData);
+                                this._transformedData.splice(destinationIndex, 0, pickedTransformed);
+                                break;
+                            }
+                        }
+                        if (refId === before) {
+                            destinationIndex = i;
+                            if (pickedData !== null) {
+                                this._data.splice(destinationIndex, 0, pickedData);
+                                this._transformedData.splice(destinationIndex, 0, pickedTransformed);
+                                break;
+                            }
+                        }
+                    }
+                    this.dataChanged.next(this._data);
+                });
+            },
+            removed: (id: string) => {
+                zone.run(() => {
+                    delete this._index[id];
+                    for (let i = 0; i < this._data.length; i++) {
+                        if (this._data[i]._id === id) {
+                            this._data.splice(i, 1);
+                            this._transformedData.splice(i, 1);
+                        }
+                    }
+                    this.dataChanged.next(this._data);
+                });
+            }
+        });
+        initialObservation = false;
+        this.dataChanged.next(this._data);
+    }
+
+    public newList() {
+        this._data = _.map(this._data, (entry) => _.clone(entry));
+        this.dataChanged.next(this._data);
+    }
+
+    public get data(): U[] {
+        return this._transformedData;
     }
 
     public unsubscribe(): void {

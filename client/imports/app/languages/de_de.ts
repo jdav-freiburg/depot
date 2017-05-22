@@ -33,13 +33,28 @@ export const de_de = {
     "PASSWORD": "Passwort",
     "LOG_IN": "Log In"
   },
-  "ITEMS_PAGE": {
+  "ITEM_CARDS_PAGE": {
+    "TITLE": "Material",
+    "FILTER": "Filtern"
+  },
+  "ITEM_LIST_PAGE": {
     "TITLE": "Material",
     "FILTER": "Filtern"
   },
   "ITEMS_IMPORTER_PAGE": {
     "TITLE": "Material importieren",
-    "FILE": "Datei auswählen..."
+    "FILE": "Datei auswählen...",
+    "FILTER": "Filtern",
+    "EXTERNAL_ID": "Externe ID",
+    "NAME": "Name",
+    "DESCRIPTION": "Beschreibung",
+    "PURCHASE_DATE": "Kaufdatum",
+    "LAST_SERVICE": "Letzte Wartung",
+    "CONDITION": "Zustand",
+    "CONDITION_COMMENT": "Zustandskommentar",
+    "STATUS": "Status",
+    "ITEM_GROUP": "Gruppe",
+    "TAGS": "Tags"
   },
   "ITEM_CARD": {
     "EXTERNAL_ID": "Externe ID",
@@ -162,7 +177,8 @@ export const de_de = {
     "USERS": "Benutzer",
     "LOGOUT": "Abmelden",
     "LANGUAGE": "Sprache",
-    "IMPORT_ITEMS": "Material Importieren"
+    "IMPORT_ITEMS": "Material Importieren",
+    "ITEMS_LIST": "Materialien"
   },
   "TABS": {
     "HOME": "Home",

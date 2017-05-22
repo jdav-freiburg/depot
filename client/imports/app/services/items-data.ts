@@ -64,6 +64,10 @@ export class ItemsDataService {
         return ItemCollection.find({});
     }
 
+    public getPublicItems(): ObservableCursor<Item> {
+        return ItemCollection.find({status: 'public'});
+    }
+
     public getItemList(itemIds: string[]): ObservableCursor<Item> {
         return ItemCollection.find({_id: {$in: itemIds}});
     }
@@ -122,9 +126,10 @@ export class ItemsDataService {
         });
     }
 
-    addAll(items: Item[], callback?: Function) {
+    addAll(items: Item[], updateComment: string, callback?: Function) {
         Meteor.call('items.addAll', {
-            items
+            items,
+            updateComment
         }, (err, res) => {
             this.ngZone.run(() => {
                 console.log("items update", err, res);

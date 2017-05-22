@@ -4,11 +4,7 @@ import template from "./items-importer.html";
 import style from "./items-importer.scss";
 import * as _ from "lodash";
 import {UserService} from "../../services/user";
-import {ReservationsDataService} from "../../services/reservations-data";
-import {Reservation} from "../../../../../both/models/reservation.model";
 import {AlertController, NavController, ToastController} from "ionic-angular";
-import {ReservationPage} from "../reservation/reservation";
-import {Subscription} from "rxjs/Subscription";
 import * as moment from 'moment';
 import {TranslateService} from "../../services/translate";
 import {TranslateHelperService} from "../../services/translate-helper";
@@ -37,7 +33,7 @@ export class ItemsImporterPage implements OnInit, OnDestroy {
     constructor(private fb: FormBuilder,
                 private itemsDataService: ItemsDataService, private userService: UserService,
                 private navCtrl: NavController, private translate: TranslateService, private toast: ToastController,
-                private translateHelper: TranslateHelperService) {
+                private translateHelper: TranslateHelperService, private alert: AlertController) {
         this.uploadForm = fb.group({
             file: ["", Validators.required],
         });
@@ -55,6 +51,10 @@ export class ItemsImporterPage implements OnInit, OnDestroy {
             return m.format('L');
         }
         return "";
+    }
+
+    headerFn(rec, idx) {
+        return idx === 0 ? true : null;
     }
 
     exportItems() {
@@ -129,9 +129,9 @@ export class ItemsImporterPage implements OnInit, OnDestroy {
         return this.userService.isManager;
     }
 
-    save() {
+    saveActually(updateComment: string) {
         this.isWorking = true;
-        this.itemsDataService.addAll(this.items, (err, res) => {
+        this.itemsDataService.addAll(this.items, updateComment, (err, res) => {
             this.isWorking = false;
             if (err) {
                 console.log("Error:", err);
@@ -141,5 +141,31 @@ export class ItemsImporterPage implements OnInit, OnDestroy {
                 }).present();
             }
         });
+    }
+
+    save() {
+        this.alert.create({
+            title: this.translate.get('ITEM_CARD.SAVE.TITLE'),
+            subTitle: this.translate.get('ITEM_CARD.SAVE.SUBTITLE'),
+            inputs: [
+                {
+                    placeholder: this.translate.get('ITEM_CARD.SAVE.COMMENT_LABEL'),
+                    type: 'text',
+                    name: 'updateComment'
+                }
+            ],
+            buttons: [
+                {
+                    text: this.translate.get('ITEM_CARD.SAVE.CANCEL'),
+                    role: 'cancel'
+                },
+                {
+                    text: this.translate.get('ITEM_CARD.SAVE.SAVE'),
+                    handler: (data) => {
+                        this.saveActually(data.updateComment);
+                    }
+                },
+            ]
+        }).present();
     }
 }

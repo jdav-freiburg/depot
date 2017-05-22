@@ -7,7 +7,7 @@ import {LoginPage} from "./pages/login/login";
 import {RouterModule, Routes} from '@angular/router';
 import {SignupPage} from "./pages/signup/signup";
 import {UserService} from "./services/user";
-import {ItemsPage} from "./pages/items/items";
+import {ItemCardsPage} from "./pages/item-cards/item-cards";
 import {ItemsDataService} from "./services/items-data";
 import {IonicApp, IonicModule, IonicErrorHandler} from 'ionic-angular';
 import {METEOR_PROVIDERS} from "angular2-meteor";
@@ -42,6 +42,7 @@ import {ItemsImporterPage} from "./pages/items-importer/items-importer";
 import {FileDropModule} from "angular2-file-drop";
 import {UploadButton} from "./components/upload-button/upload-button";
 import {ItemCardComponent} from "./components/item-card/item-card";
+import {ItemListPage} from "./pages/items-list/item-list";
 
 /*const appRoutes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -55,7 +56,7 @@ import {ItemCardComponent} from "./components/item-card/item-card";
         TabsPage,
         TabsNouserPage,
         HomePage,
-        ItemsPage,
+        ItemCardsPage,
         LoginPage,
         SignupPage,
         ReservationsPage,
@@ -77,7 +78,8 @@ import {ItemCardComponent} from "./components/item-card/item-card";
         ReservationCardComponent,
         ItemsImporterPage,
         UploadButton,
-        ItemCardComponent
+        ItemCardComponent,
+        ItemListPage
     ],
     // Entry Components
     entryComponents: [
@@ -85,7 +87,8 @@ import {ItemCardComponent} from "./components/item-card/item-card";
         TabsPage,
         TabsNouserPage,
         HomePage,
-        ItemsPage,
+        ItemCardsPage,
+        ItemListPage,
         LoginPage,
         SignupPage,
         ReservationsPage,

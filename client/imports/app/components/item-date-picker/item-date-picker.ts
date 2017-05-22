@@ -29,6 +29,8 @@ export class ItemDatePickerComponent implements ControlValueAccessor {
 
     @Input() readonly: boolean = false;
 
+    @Input() compact: boolean = false;
+
     registerOnChange(fn: any): void {
         this.onChangeCallback = fn;
     }

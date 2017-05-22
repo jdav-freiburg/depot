@@ -32,13 +32,28 @@ export const en_us = {
     "PASSWORD": "Password",
     "LOG_IN": "Log In",
   },
-  "ITEMS_PAGE": {
+  "ITEM_CARDS_PAGE": {
+    "TITLE": "Items",
+    "FILTER": "Filter"
+  },
+  "ITEM_LIST_PAGE": {
     "TITLE": "Items",
     "FILTER": "Filter"
   },
   "ITEMS_IMPORTER_PAGE": {
     "TITLE": "Import Items",
-    "FILE": "Choose file..."
+    "FILE": "Choose file...",
+    "FILTER": "Filter",
+    "EXTERNAL_ID": "External ID",
+    "NAME": "Name",
+    "DESCRIPTION": "Description",
+    "PURCHASE_DATE": "Purchase Date",
+    "LAST_SERVICE": "Last Service",
+    "CONDITION": "Condition",
+    "CONDITION_COMMENT": "Condition Comment",
+    "STATUS": "Status",
+    "ITEM_GROUP": "Group",
+    "TAGS": "Tags"
   },
   "ITEM_CARD": {
     "EXTERNAL_ID": "External ID",
@@ -161,7 +176,8 @@ export const en_us = {
     "USERS": "Users",
     "LOGOUT": "Log Out",
     "LANGUAGE": "Language",
-    "IMPORT_ITEMS": "Import Items"
+    "IMPORT_ITEMS": "Import Items",
+    "ITEMS_LIST": "Items"
   },
   "TABS": {
     "HOME": "Home",

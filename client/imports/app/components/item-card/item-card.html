@@ -1,34 +1,34 @@
-<form [formGroup]="itemForm" (submit)="saveItem()" >
+<form [formGroup]="itemForm" (submit)="saveItem()" *ngIf="viewCards">
     <ion-card>
         <ion-grid no-padding padding-bottom>
-            <ion-row>
+            <ion-row class="header-row">
                 <ion-col>
-                    <ion-item padding-right>
+                    <ion-item>
                         <ion-label floating>{{'ITEM_CARD.NAME' | translate}}</ion-label>
-                        <ion-input type="text" formControlName="name"></ion-input>
+                        <ion-input type="text" formControlName="name" [disabled]="!editable"></ion-input>
                     </ion-item>
                 </ion-col>
                 <ion-col>
                     <ion-item>
                         <ion-label floating>{{'ITEM_CARD.DESCRIPTION' | translate}}</ion-label>
-                        <ion-input type="text" formControlName="description"></ion-input>
+                        <ion-input type="text" formControlName="description" [disabled]="!editable"></ion-input>
                     </ion-item>
                 </ion-col>
                 <ion-col col-auto>
-                    <button *ngIf="itemForm.controls['status'].value=='public'" ion-button (click)="itemForm.controls['status'].setValue('hidden')" [disabled]="itemForm.controls['status'].disabled" clear icon-only>
+                    <button *ngIf="itemForm.controls['status'].value=='public'" ion-button (click)="itemForm.controls['status'].setValue('hidden');itemForm.controls['status'].markAsDirty()" [disabled]="itemForm.controls['status'].disabled || !editable" clear icon-only>
                         <ion-icon name="eye"></ion-icon>
                     </button>
-                    <button *ngIf="itemForm.controls['status'].value!='public'" ion-button (click)="itemForm.controls['status'].setValue('public')" [disabled]="itemForm.controls['status'].disabled" clear icon-only>
+                    <button *ngIf="itemForm.controls['status'].value!='public'" ion-button (click)="itemForm.controls['status'].setValue('public');itemForm.controls['status'].markAsDirty()" [disabled]="itemForm.controls['status'].disabled || !editable" clear icon-only>
                         <ion-icon name="eye-off"></ion-icon>
                     </button>
                 </ion-col>
                 <ion-col col-auto>
-                    <button ion-button clear icon-only type="submit" [disabled]="!itemForm.valid || !itemForm.dirty">
+                    <button ion-button clear icon-only type="submit" [disabled]="!itemForm.valid || !itemForm.dirty || !editable">
                         <ion-icon name="checkmark"></ion-icon>
                     </button>
                 </ion-col>
                 <ion-col col-auto>
-                    <button ion-button (click)="deleteItem()" *ngIf="item" type="button" clear icon-only>
+                    <button ion-button (click)="deleteItem()" *ngIf="item" type="button" clear icon-only [disabled]="!editable">
                         <ion-icon name="trash"></ion-icon>
                     </button>
                 </ion-col>
@@ -37,29 +37,33 @@
                 <ion-col>
                     <ion-item>
                         <ion-label floating>{{'ITEM_CARD.EXTERNAL_ID' | translate}}</ion-label>
-                        <ion-input type="text" formControlName="externalId"></ion-input>
+                        <ion-input type="text" formControlName="externalId" [disabled]="!editable"></ion-input>
                     </ion-item>
                 </ion-col>
                 <ion-col>
                     <ion-item>
                         <ion-label floating>{{'ITEM_CARD.TAGS' | translate}}</ion-label>
-                        <ion-input type="text" formControlName="tags"></ion-input>
+                        <ion-input type="text" formControlName="tags" [disabled]="!editable"></ion-input>
                     </ion-item>
                 </ion-col>
                 <ion-col>
                     <ion-item>
                         <ion-label floating>{{'ITEM_CARD.ITEM_GROUP' | translate}}</ion-label>
-                        <ion-input type="text" formControlName="itemGroup"></ion-input>
+                        <ion-input type="text" formControlName="itemGroup" [disabled]="!editable"></ion-input>
                     </ion-item>
                 </ion-col>
-                <ion-col><item-date-picker formControlName="purchaseDate" [label]="'ITEM_CARD.PURCHASE_DATE' | translate"></item-date-picker></ion-col>
-                <ion-col><item-date-picker formControlName="lastService" [label]="'ITEM_CARD.LAST_SERVICE' | translate"></item-date-picker></ion-col>
+                <ion-col>
+                    <item-date-picker formControlName="purchaseDate" [label]="'ITEM_CARD.PURCHASE_DATE' | translate" [disabled]="!editable"></item-date-picker>
+                </ion-col>
+                <ion-col>
+                    <item-date-picker formControlName="lastService" [label]="'ITEM_CARD.LAST_SERVICE' | translate" [disabled]="!editable"></item-date-picker>
+                </ion-col>
             </ion-row>
             <ion-row>
                 <ion-col col-auto>
                     <ion-item>
                         <ion-label floating>{{'ITEM_CARD.CONDITION' | translate}}</ion-label>
-                        <ion-select formControlName="condition">
+                        <ion-select formControlName="condition" [disabled]="!editable">
                             <ion-option *ngFor="let option of itemsService.itemConditionOptions" [value]="option.value">{{option.text}}</ion-option>
                         </ion-select>
                     </ion-item>
@@ -67,10 +71,144 @@
                 <ion-col>
                     <ion-item>
                         <ion-label floating>{{'ITEM_CARD.CONDITION_COMMENT' | translate}}</ion-label>
-                        <ion-input type="text" formControlName="conditionComment"></ion-input>
+                        <ion-input type="text" formControlName="conditionComment" [disabled]="!editable"></ion-input>
                     </ion-item>
                 </ion-col>
             </ion-row>
         </ion-grid>
     </ion-card>
 </form>
+
+<ion-row *ngIf="viewList && !editable" class="item-card-row">
+    <ion-col col-1>
+        {{item.externalId}}
+    </ion-col>
+    <ion-col col-2>
+        {{item.name}}
+    </ion-col>
+    <ion-col>
+        {{item.description}}
+    </ion-col>
+    <ion-col col-1>
+        <ng-container [ngSwitch]="item.condition">
+            <ng-container *ngFor="let option of itemsService.itemConditionOptions">
+                <span *ngSwitchCase="option.value" [style.color]="option.colorCss">{{option.text}}</span>
+            </ng-container>
+            <ng-container *ngSwitchDefault>{{item.condition}}</ng-container>
+        </ng-container>
+    </ion-col>
+    <ion-col>
+        {{item.conditionComment}}
+    </ion-col>
+    <ion-col *ngIf="extended">
+        {{item.purchaseDate | moment: 'L'}}
+    </ion-col>
+    <ion-col *ngIf="extended">
+        {{item.lastService | moment: 'L'}}
+    </ion-col>
+    <ion-col *ngIf="extended">
+        <ng-container *ngFor="let tag of item.tags">
+            <span *ngIf="!first">, </span>
+            <span>{{tag}}</span>
+        </ng-container>
+    </ion-col>
+    <ion-col col-auto>
+        <ion-icon *ngIf="item.status=='public'" name="eye"></ion-icon>
+        <ion-icon *ngIf="item.status!='public'" name="eye-off"></ion-icon>
+    </ion-col>
+</ion-row>
+
+
+<form [formGroup]="itemForm" (submit)="saveItem()" *ngIf="viewList && editable">
+    <ion-row class="item-card-row">
+        <ion-col col-1>
+            <ion-input type="text" formControlName="externalId"></ion-input>
+        </ion-col>
+        <ion-col col-2>
+            <ion-input type="text" formControlName="name"></ion-input>
+        </ion-col>
+        <ion-col>
+            <ion-input type="text" formControlName="description"></ion-input>
+        </ion-col>
+        <ion-col col-1>
+            <ion-select formControlName="condition" [disabled]="!editable">
+                <ion-option *ngFor="let option of itemsService.itemConditionOptions" [value]="option.value">{{option.text}}</ion-option>
+            </ion-select>
+        </ion-col>
+        <ion-col>
+            <ion-input type="text" formControlName="conditionComment"></ion-input>
+        </ion-col>
+        <ion-col col-1>
+            <item-date-picker formControlName="lastService" [label]="'ITEM_CARD.LAST_SERVICE' | translate" [compact]="true" [disabled]="!editable"></item-date-picker>
+        </ion-col>
+        <ion-col col-1 *ngIf="extended">
+            <item-date-picker formControlName="purchaseDate" [label]="'ITEM_CARD.PURCHASE_DATE' | translate" [compact]="true" [disabled]="!editable"></item-date-picker>
+        </ion-col>
+        <ion-col *ngIf="extended">
+            <ion-input type="text" formControlName="tags"></ion-input>
+        </ion-col>
+        <ion-col col-auto>
+            <button *ngIf="itemForm.controls['status'].value=='public'" ion-button (click)="itemForm.controls['status'].setValue('hidden');itemForm.controls['status'].markAsDirty()" [disabled]="itemForm.controls['status'].disabled" clear icon-only small no-padding>
+                <ion-icon name="eye"></ion-icon>
+            </button>
+            <button *ngIf="itemForm.controls['status'].value!='public'" ion-button (click)="itemForm.controls['status'].setValue('public');itemForm.controls['status'].markAsDirty()" [disabled]="itemForm.controls['status'].disabled" clear icon-only small no-padding>
+                <ion-icon name="eye-off"></ion-icon>
+            </button>
+        </ion-col>
+        <ion-col col-auto>
+            <button ion-button clear icon-only type="submit" [disabled]="!itemForm.valid || !itemForm.dirty" small no-padding>
+                <ion-icon name="checkmark"></ion-icon>
+            </button>
+        </ion-col>
+        <ion-col col-auto>
+            <button ion-button (click)="deleteItem()" *ngIf="item && !saveDirect" type="button" clear icon-only small no-padding>
+                <ion-icon name="trash"></ion-icon>
+            </button>
+        </ion-col>
+    </ion-row>
+</form>
+
+<ion-row *ngIf="viewListHeader" class="item-card-row">
+    <ion-col col-1>
+        {{'ITEM_CARD.EXTERNAL_ID' | translate}}
+    </ion-col>
+    <ion-col col-2>
+        {{'ITEM_CARD.NAME' | translate}}
+    </ion-col>
+    <ion-col>
+        {{'ITEM_CARD.DESCRIPTION' | translate}}
+    </ion-col>
+    <ion-col col-1>
+        {{'ITEM_CARD.CONDITION' | translate}}
+    </ion-col>
+    <ion-col>
+        {{'ITEM_CARD.CONDITION_COMMENT' | translate}}
+    </ion-col>
+    <ion-col col-1>
+        {{'ITEM_CARD.LAST_SERVICE' | translate}}
+    </ion-col>
+    <ion-col col-1 *ngIf="extended">
+        {{'ITEM_CARD.PURCHASE_DATE' | translate}}
+    </ion-col>
+    <ion-col *ngIf="extended">
+        {{'ITEM_CARD.TAGS' | translate}}
+    </ion-col>
+    <ion-col col-auto *ngIf="!editable">
+        <ion-icon name="eye"></ion-icon>
+    </ion-col>
+    <ion-col col-auto *ngIf="editable">
+        <button ion-button [disabled]="true" clear icon-only small no-padding>
+            <ion-icon name="eye"></ion-icon>
+        </button>
+    </ion-col>
+    <ion-col col-auto *ngIf="editable">
+        <button ion-button clear icon-only [disabled]="true" small no-padding>
+            <ion-icon name="checkmark"></ion-icon>
+        </button>
+    </ion-col>
+    <ion-col col-auto *ngIf="editable && !saveDirect">
+        <button ion-button type="button" clear icon-only [disabled]="true" small no-padding>
+            <ion-icon name="trash"></ion-icon>
+        </button>
+    </ion-col>
+</ion-row>

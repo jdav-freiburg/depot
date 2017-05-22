@@ -1,0 +1,25 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>
+            {{'ITEM_CARDS_PAGE.TITLE' | translate}}
+        </ion-title>
+        <button ion-button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-buttons right>
+            <button ion-button clear icon-only (click)="showList()">
+                <ion-icon name="list"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <ion-searchbar [(ngModel)]="filter" [placeholder]="'ITEM_CARDS_PAGE.FILTER' | translate"></ion-searchbar>
+    <ion-list [virtualScroll]="items.data | itemsfilter:filter" approxItemHeight="200px">
+        <div *virtualItem="let item" style="width: 100%">
+            <item-card [item]="item" view="cards"></item-card>
+            <div padding-bottom></div>
+        </div>
+    </ion-list>
+</ion-content>

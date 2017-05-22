@@ -10,6 +10,7 @@ import {DebugService} from "./services/debug";
 import {UserModal} from "./pages/user-modal/user-modal";
 import {TranslateHelperService} from "./services/translate-helper";
 import {ItemsImporterPage} from "./pages/items-importer/items-importer";
+import {ItemListPage} from "./pages/items-list/item-list";
 
 @Component({
     selector: "app",
@@ -52,6 +53,10 @@ export class AppComponent {
 
     showUsers() {
         this.nav.push(UsersPage);
+    }
+
+    showItems() {
+        this.nav.push(ItemListPage);
     }
 
     importItems() {

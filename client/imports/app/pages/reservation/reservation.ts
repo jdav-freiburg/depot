@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
+import {AfterViewInit, Component, NgZone, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import template from "./reservation.html";
 import style from "./reservation.scss";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
@@ -8,7 +8,7 @@ import {Reservation} from "../../../../../both/models/reservation.model";
 import {ReservationsDataService} from "../../services/reservations-data";
 import {
     AlertController, Loading, LoadingController, ModalController, NavController, NavParams, Platform,
-    ToastController
+    ToastController, VirtualScroll
 } from "ionic-angular";
 import * as moment from 'moment';
 import {Item} from "../../../../../both/models/item.model";
@@ -17,6 +17,7 @@ import {ItemStateModal} from "../item-state-modal/item-state-modal";
 import {Subscription} from "rxjs/Subscription";
 import {TranslateService} from "../../services/translate";
 import {TranslateHelperService} from "../../services/translate-helper";
+import {QueryObserver, QueryObserverTransform, ChangeableDataTransform} from "../../util/query-observer";
 
 
 interface SelectableItem extends Item {
@@ -31,12 +32,11 @@ interface SelectableItem extends Item {
     template,
     styles: [ style ]
 })
-export class ReservationPage implements OnInit, OnDestroy {
+export class ReservationPage implements OnInit, OnDestroy, AfterViewInit {
     reservation: Reservation;
 
     private siblingReservationsHandle: Subscription;
     private selfSubscription: Subscription;
-    private itemsSubscription: Subscription;
 
     unavailableItems: {[_id: string]: boolean} = {};
 
@@ -54,7 +54,8 @@ export class ReservationPage implements OnInit, OnDestroy {
 
     originalSelectedItemIds: string[] = [];
     selectedItemIds: string[] = [];
-    items: SelectableItem[] = [];
+
+    private items: QueryObserverTransform<Item, SelectableItem>;
 
     filter: string = "";
 
@@ -114,7 +115,8 @@ export class ReservationPage implements OnInit, OnDestroy {
                 private params: NavParams, private loadingCtrl: LoadingController,
                 private modalCtrl: ModalController, private toast: ToastController,
                 private alertCtrl: AlertController, private platform: Platform,
-                private translate: TranslateService, private translateHelper: TranslateHelperService) {
+                private translate: TranslateService, private translateHelper: TranslateHelperService,
+                private ngZone: NgZone) {
         this.reservationForm = fb.group({
             type: ["", Validators.required],
             name: ["", Validators.required],
@@ -147,7 +149,7 @@ export class ReservationPage implements OnInit, OnDestroy {
 
     updateUnavailableItems() {
         let removedItems = [];
-        this.items.forEach((item) => {
+        this.items.data.forEach((item) => {
             item.deselected = false;
             if (!item.available && item.selected) {
                 item.selected = false;
@@ -186,7 +188,6 @@ export class ReservationPage implements OnInit, OnDestroy {
                         _.forEach(reservation.itemIds, (itemId) => this.unavailableItems[itemId] = true);
                     }
                 });
-                console.log("Unavailable items:", _.map(_.keys(this.unavailableItems), (_id) => _.find(this.items, (item) => item._id === _id) || _id));
                 this.updateUnavailableItems();
             });
         }
@@ -210,7 +211,7 @@ export class ReservationPage implements OnInit, OnDestroy {
                 this.selectedItemIds = _.clone(reservation.itemIds);
                 this.originalSelectedItemIds = _.clone(reservation.itemIds);
                 console.log("Set selectedItemIds:", this.selectedItemIds);
-                this.items.forEach((item) => {
+                this.items.data.forEach((item) => {
                     item.update();
                 });
                 this.reservation = reservation;
@@ -222,43 +223,40 @@ export class ReservationPage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        let items = this.itemsDataService.getItems().zone();
-        this.itemsSubscription = items.subscribe((items) => {
-            let self = this;
-            this.items = _.map(items, (item) => {
-                let ext = {
-                    _id: item._id,
-                    _selected: this.selectedItemIds.indexOf(item._id) !== -1,
-                    deselected: false,
-                    update(): void {
-                        this._selected = self.selectedItemIds.indexOf(item._id) !== -1;
-                    },
-                    get selected(): boolean {
-                        return this._selected;
-                    },
-                    set selected(value: boolean) {
-                        if (this._selected !== value) {
-                            this._selected = value;
-                            console.log(this._id, "->", value);
-                            if (value) {
-                                if (!_.includes(self.selectedItemIds, this._id)) {
-                                    self.selectedItemIds.push(this._id);
-                                }
-                            } else {
-                                _.pull(self.selectedItemIds, this._id);
+        let self = this;
+        this.items = new QueryObserverTransform<Item, SelectableItem>(this.itemsDataService.getPublicItems(), this.ngZone, (item) => {
+            if ((<any>item)._transformed) {
+                return <SelectableItem>_.assignIn((<any>item)._transformed, item);
+            }
+            let ext = {
+                _selected: this.selectedItemIds.indexOf(item._id) !== -1,
+                deselected: false,
+                update(): void {
+                    this._selected = self.selectedItemIds.indexOf(this._id) !== -1;
+                },
+                get selected(): boolean {
+                    return this._selected;
+                },
+                set selected(value: boolean) {
+                    if (this._selected !== value) {
+                        this._selected = value;
+                        console.log(this._id, "->", value);
+                        if (value) {
+                            if (!_.includes(self.selectedItemIds, this._id)) {
+                                self.selectedItemIds.push(this._id);
                             }
-                            console.log("result selectedItemIds:", self.selectedItemIds);
+                        } else {
+                            _.pull(self.selectedItemIds, this._id);
                         }
-                        this.deselected = false;
-                    },
-                    get available(): boolean {
-                        return !self.unavailableItems.hasOwnProperty(this._id);
+                        console.log("result selectedItemIds:", self.selectedItemIds);
                     }
-                };
-                return _.assignIn(ext, item);
-            });
-            console.log("Items:", this.items);
-            this.updateUnavailableItems();
+                    this.deselected = false;
+                },
+                get available(): boolean {
+                    return !self.unavailableItems.hasOwnProperty(this._id);
+                }
+            };
+            return <SelectableItem>_.assignIn(ext, item);
         });
         if (this.editId) {
             this.load();
@@ -274,9 +272,9 @@ export class ReservationPage implements OnInit, OnDestroy {
             this.selfSubscription.unsubscribe();
             this.selfSubscription = null;
         }
-        if (this.itemsSubscription != null) {
-            this.itemsSubscription.unsubscribe();
-            this.itemsSubscription = null;
+        if (this.items != null) {
+            this.items.unsubscribe();
+            this.items = null;
         }
     }
 
@@ -408,5 +406,19 @@ export class ReservationPage implements OnInit, OnDestroy {
         }).then(() => {
             this.forceClose = false;
         });
+    }
+
+
+    @ViewChild(VirtualScroll) _virtualScroll: VirtualScroll;
+
+    ngAfterViewInit() {
+        setTimeout(() => {
+            this.ngZone.run(() => {
+                if (this._virtualScroll) {
+                    this._virtualScroll.resize();
+                    console.log("Resize after 1 sec");
+                }
+            });
+        }, 1000);
     }
 }

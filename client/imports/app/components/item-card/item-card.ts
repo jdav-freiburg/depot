@@ -21,11 +21,27 @@ import {ChangeableData} from "../../util/query-observer";
 export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
     @Input() itemId: string = "";
     @Input() item: Item = null;
+    @Input() view: string = "cards";
+    @Input() extended: boolean = false;
+    @Input() editable: boolean = false;
+    @Input() saveDirect: boolean = false;
     private lastItemId: string = null;
     private itemSubscription: Subscription;
     private itemForm: FormGroup;
 
     private isSaving: boolean = false;
+
+    private get viewList() {
+        return this.view == 'list';
+    }
+
+    private get viewListHeader() {
+        return this.view == 'listHeader';
+    }
+
+    private get viewCards() {
+        return this.view == 'cards';
+    }
 
     constructor(private navCtrl: NavController, private itemsService: ItemsDataService,
                 private translate: TranslateService, private fb: FormBuilder,
@@ -103,15 +119,15 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
     setFormValues() {
         this.lastItemId = this.item._id;
         this.itemForm.setValue({
-            name: this.item.name,
+            name: this.item.name || "",
             description: this.item.description || "",
             externalId: this.item.externalId || "",
             purchaseDate: this.item.purchaseDate || null,
             lastService: this.item.lastService || null,
-            condition: this.item.condition,
-            conditionComment: this.item.conditionComment,
+            condition: this.item.condition || "good",
+            conditionComment: this.item.conditionComment || "",
             itemGroup: this.item.itemGroup || "",
-            status: this.item.status || null,
+            status: this.item.status || "public",
             tags: _.join(this.item.tags, ','),
         });
         this.itemForm.markAsPristine();
@@ -190,21 +206,28 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
 
     getItemValues(): Item {
         return {
-            name: this.itemForm.controls['name'].value || null,
-            description: this.itemForm.controls['description'].value || null,
-            externalId: this.itemForm.controls['externalId'].value || null,
-            condition: this.itemForm.controls['condition'].value || null,
-            conditionComment: this.itemForm.controls['conditionComment'].value || null,
+            name: this.itemForm.controls['name'].value || "",
+            description: this.itemForm.controls['description'].value || "",
+            externalId: this.itemForm.controls['externalId'].value || "",
+            condition: this.itemForm.controls['condition'].value || "good",
+            conditionComment: this.itemForm.controls['conditionComment'].value || "",
             purchaseDate: this.getDate(this.itemForm.controls['purchaseDate'].value),
             lastService: this.getDate(this.itemForm.controls['lastService'].value),
             itemGroup: this.itemForm.controls['itemGroup'].value || null,
-            status: this.itemForm.controls['status'].value || null,
+            status: this.itemForm.controls['status'].value || "public",
             tags: this.getTags(this.itemForm.controls['tags'].value),
             picture: null
         };
     }
 
     saveItemActually(updateComment: string, callback?: Function) {
+        if (this.saveDirect) {
+            _.assign(this.item, this.getItemValues());
+            if (callback) {
+                callback();
+            }
+            return;
+        }
         let itemData = this.getItemValues();
         if (this.itemId || (this.item && this.item._id)) {
             itemData._id = this.itemId || this.item._id;
@@ -245,37 +268,41 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     saveItem(callback?: Function) {
-        if (!this.itemForm.dirty) {
+        if (!this.itemForm.dirty || !this.itemForm.valid) {
             return;
         }
-        this.alertCtrl.create({
-            title: this.translate.get('ITEM_CARD.SAVE.TITLE'),
-            subTitle: this.translate.get('ITEM_CARD.SAVE.SUBTITLE'),
-            inputs: [
-                {
-                    placeholder: this.translate.get('ITEM_CARD.SAVE.COMMENT_LABEL'),
-                    type: 'text',
-                    name: 'updateComment'
-                }
-            ],
-            buttons: [
-                {
-                    text: this.translate.get('ITEM_CARD.SAVE.CANCEL'),
-                    role: 'cancel',
-                    handler: () => {
-                        if (callback) {
-                            callback();
+        if (this.saveDirect) {
+            this.saveItemActually("", callback);
+        } else {
+            this.alertCtrl.create({
+                title: this.translate.get('ITEM_CARD.SAVE.TITLE'),
+                subTitle: this.translate.get('ITEM_CARD.SAVE.SUBTITLE'),
+                inputs: [
+                    {
+                        placeholder: this.translate.get('ITEM_CARD.SAVE.COMMENT_LABEL'),
+                        type: 'text',
+                        name: 'updateComment'
+                    }
+                ],
+                buttons: [
+                    {
+                        text: this.translate.get('ITEM_CARD.SAVE.CANCEL'),
+                        role: 'cancel',
+                        handler: () => {
+                            if (callback) {
+                                callback();
+                            }
                         }
-                    }
-                },
-                {
-                    text: this.translate.get('ITEM_CARD.SAVE.SAVE'),
-                    handler: (data) => {
-                        this.saveItemActually(data.updateComment, callback);
-                    }
-                },
-            ]
-        }).present();
+                    },
+                    {
+                        text: this.translate.get('ITEM_CARD.SAVE.SAVE'),
+                        handler: (data) => {
+                            this.saveItemActually(data.updateComment, callback);
+                        }
+                    },
+                ]
+            }).present();
+        }
     }
 
     deleteItemActually() {

@@ -9,7 +9,10 @@ import * as _ from 'lodash';
 })
 export class ItemsFilterPipe implements PipeTransform {
     transform(items: Item[], filter: string): any {
-        if (!items || !filter) {
+        if (!items) {
+            return [];
+        }
+        if (!filter || filter.length < 3) {
             return items;
         }
         let lowercaseFilter = filter.toLowerCase();
