@@ -21,9 +21,9 @@ export class Main {
         /*if (Accounts.findUserByUsername('admin')) {
             Meteor.users.remove({'username': 'admin'});
         }*/
-        if (!Accounts.findUserByUsername('admin') && !process.env.ADMIN_NO_CREATE) {
+        if (!process.env.ADMIN_NO_CREATE && !Accounts.findUserByUsername(process.env.ADMIN_USERNAME || 'admin') ) {
             let userData: CreateUser = {
-                username: process.env.ADMIN_USERNAME ||'admin',
+                username: process.env.ADMIN_USERNAME || 'admin',
                 fullName: 'Admin Admin',
                 email: process.env.ADMIN_EMAIL || 'admin@localhost',
                 password: process.env.ADMIN_PASSWORD ||'42',
