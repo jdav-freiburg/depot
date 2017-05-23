@@ -135,15 +135,15 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
 
     deleteReservation() {
         this.alertCtrl.create({
-            title: this.translate.get('RESERVATIONS_PAGE.DELETE.TITLE', this.reservation),
-            subTitle: this.translate.get('RESERVATIONS_PAGE.DELETE.SUB_TITLE', this.reservation),
+            title: this.translate.get('RESERVATION_CARD.DELETE.TITLE', this.reservation),
+            subTitle: this.translate.get('RESERVATION_CARD.DELETE.SUB_TITLE', this.reservation),
             buttons: [
                 {
-                    text: this.translate.get('RESERVATIONS_PAGE.DELETE.NO'),
+                    text: this.translate.get('RESERVATION_CARD.DELETE.NO'),
                     role: 'cancel'
                 },
                 {
-                    text: this.translate.get('RESERVATIONS_PAGE.DELETE.YES'),
+                    text: this.translate.get('RESERVATION_CARD.DELETE.YES'),
                     handler: () => {
                         this.reservationsService.remove(this.reservation._id, (err) => {
                             if (err) {
