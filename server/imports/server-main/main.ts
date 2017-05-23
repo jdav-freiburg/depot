@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 import './user.ts';
 import './item.ts';
 import './reservation.ts';
@@ -8,6 +10,7 @@ import {ReservationCollection} from "../../../both/collections/reservation.colle
 import {TokenCollection} from "../../../both/collections/token.collection";
 import {GlobalMessageCollection} from "../../../both/collections/global-message.collection";
 import * as util from "util";
+import {UserCollection} from "../../../both/collections/user.collection";
 
 export class Main {
     start(): void {
@@ -20,10 +23,10 @@ export class Main {
         }*/
         if (!Accounts.findUserByUsername('admin')) {
             let userData: CreateUser = {
-                username: 'admin',
+                username: process.env.ADMIN_USERNAME ||'admin',
                 fullName: 'Admin Admin',
-                email: 'admin@localhost',
-                password: '42',
+                email: process.env.ADMIN_EMAIL || 'admin@localhost',
+                password: process.env.ADMIN_PASSWORD ||'42',
                 picture: null,
                 phone: '00123456789',
                 language: 'en',
