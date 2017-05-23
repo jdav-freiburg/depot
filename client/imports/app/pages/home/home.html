@@ -80,7 +80,7 @@
         </ion-card-content>
     </ion-card>
 
-    <reservation-card *ngFor="let reservation of reservations" [reservation]="reservation"></reservation-card>
+    <reservation-card *ngFor="let reservation of reservations" [reservation]="reservation" view="cards"></reservation-card>
 
     <ion-card *ngFor="let message of messages">
         <ion-toolbar>

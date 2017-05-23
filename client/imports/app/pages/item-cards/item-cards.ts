@@ -8,7 +8,7 @@ import {UserService} from "../../services/user";
 import * as moment from 'moment';
 import {NavController} from "ionic-angular";
 import {TranslateService} from "../../services/translate";
-import {QueryObserver} from "../../util/query-observer";
+import {QueryObserver, QueryObserverTransform} from "../../util/query-observer";
 import {ItemListPage} from "../items-list/item-list";
 
 @Component({
@@ -19,7 +19,7 @@ import {ItemListPage} from "../items-list/item-list";
 export class ItemCardsPage implements OnInit, OnDestroy {
     private filter: string = "";
 
-    private items: QueryObserver<Item>;
+    private items: QueryObserverTransform<Item, Item>;
 
     headerFn(rec, idx) {
         return idx === 0 ? true : null;
@@ -30,7 +30,33 @@ export class ItemCardsPage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.items = new QueryObserver<Item>(this.itemsService.getItems(), this.ngZone, true);
+        this.items = new QueryObserverTransform<Item, Item>(this.itemsService.getItems(), this.ngZone, (item) => {
+            if (item) {
+                return item;
+            } else {
+                return {
+                    _id: null,
+                    externalId: "",
+                    name: "",
+
+                    description: "",
+
+                    condition: "good",
+                    conditionComment: "",
+
+                    purchaseDate: new Date(),
+                    lastService: new Date(),
+
+                    picture: null,
+
+                    tags: [],
+
+                    itemGroup: null,
+
+                    status: "public"
+                };
+            }
+        }, true);
     }
 
     ngOnDestroy() {

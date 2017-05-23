@@ -1,0 +1,9 @@
+.item-card-row .col {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.item-card-row .col, .item-card-row .col /deep/ input, .item-card-row .col /deep/ .select, .item-card-row .col /deep/ .button {
+  padding: 0;
+  margin: 0;
+}

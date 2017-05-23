@@ -135,11 +135,21 @@
                     </ion-label>
                     <ion-input type="password" formControlName="newPassword"></ion-input>
                 </ion-item>
+                <ion-item *ngIf="!userPasswordForm.controls['newPassword'].valid && userPasswordForm.controls['newPassword'].touched" color="danger">
+                    <p *ngIf="userPasswordForm.controls['newPassword'].hasError('minlength')">
+                        {{'USER_MODAL.ERROR.PASSWORD_MINLENGTH' | translate}}
+                    </p>
+                </ion-item>
                 <ion-item>
                     <ion-label floating>
                         {{'USER_MODAL.PASSWORD_NEW_REPEAT' | translate}}
                     </ion-label>
                     <ion-input type="password" formControlName="newPasswordRepeat"></ion-input>
+                </ion-item>
+                <ion-item *ngIf="!userPasswordForm.controls['newPasswordRepeat'].valid && userPasswordForm.controls['newPasswordRepeat'].touched" color="danger">
+                    <p *ngIf="userPasswordForm.controls['newPasswordRepeat'].hasError('noMatch')">
+                        {{'USER_MODAL.ERROR.PASSWORD_MATCH' | translate}}
+                    </p>
                 </ion-item>
                 <ion-item>
                     <ion-label floating>

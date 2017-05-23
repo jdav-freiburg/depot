@@ -1,13 +1,14 @@
-<ion-card>
+<ion-card *ngIf="viewCards">
     <ion-toolbar>
         <ion-title>
             {{'RESERVATION_CARD.HEADER' | translate}}
         </ion-title>
         <ion-buttons right>
-            <button ion-button (click)="editReservation(reservation._id)" clear icon-only>
-                <ion-icon name="create"></ion-icon>
+            <button ion-button (click)="editReservation()" clear icon-only *ngIf="canEdit">
+                <ion-icon *ngIf="isAdmin || isOwner" name="create"></ion-icon>
+                <ion-icon *ngIf="!isAdmin && !isOwner" name="search"></ion-icon>
             </button>
-            <button ion-button (click)="deleteReservation(reservation)" clear icon-only>
+            <button ion-button (click)="deleteReservation()" clear icon-only *ngIf="canDelete">
                 <ion-icon name="trash"></ion-icon>
             </button>
         </ion-buttons>
@@ -33,3 +34,71 @@
         </ion-item-group>
     </ion-card-content>
 </ion-card>
+
+
+<ion-row *ngIf="viewList" class="reservation-card-row">
+    <ion-col col-1>
+        <ng-container [ngSwitch]="reservation.type">
+            <ion-icon *ngSwitchCase="'private'" name="lock"></ion-icon>
+            <ion-icon *ngSwitchCase="'group'" name="people"></ion-icon>
+        </ng-container>
+    </ion-col>
+    <ion-col col-2>
+        {{reservation.name}}
+    </ion-col>
+    <ion-col>
+        {{reservation.start | moment: 'L'}}
+    </ion-col>
+    <ion-col>
+        {{reservation.end | moment: 'L'}}
+    </ion-col>
+    <ion-col>
+        <user-ref [userId]="reservation.userId"></user-ref>
+    </ion-col>
+    <ion-col col-2>
+        {{reservation.contact}}
+    </ion-col>
+    <ion-col col-auto>
+        <button ion-button (click)="editReservation()" clear icon-only small no-padding>
+            <ion-icon *ngIf="isAdmin || isOwner" name="create"></ion-icon>
+            <ion-icon *ngIf="!isAdmin && !isOwner" name="search"></ion-icon>
+        </button>
+    </ion-col>
+    <ion-col col-auto>
+        <button ion-button (click)="deleteReservation()" clear icon-only [disabled]="!canDelete" small no-padding>
+            <ion-icon name="trash"></ion-icon>
+        </button>
+    </ion-col>
+</ion-row>
+
+
+<ion-row *ngIf="viewListHeader" class="reservation-card-row">
+    <ion-col col-1>
+        <ion-icon name="people"></ion-icon>
+    </ion-col>
+    <ion-col col-2>
+        {{'RESERVATION_CARD.NAME' | translate}}
+    </ion-col>
+    <ion-col>
+        {{'RESERVATION_CARD.START' | translate}}
+    </ion-col>
+    <ion-col>
+        {{'RESERVATION_CARD.END' | translate}}
+    </ion-col>
+    <ion-col>
+        {{'RESERVATION_CARD.USER' | translate}}
+    </ion-col>
+    <ion-col col-2>
+        {{'RESERVATION_CARD.CONTACT' | translate}}
+    </ion-col>
+    <ion-col col-auto>
+        <button ion-button clear icon-only [disabled]="true" small no-padding>
+            <ion-icon name="create"></ion-icon>
+        </button>
+    </ion-col>
+    <ion-col col-auto>
+        <button ion-button clear icon-only [disabled]="true" small no-padding>
+            <ion-icon name="trash"></ion-icon>
+        </button>
+    </ion-col>
+</ion-row>

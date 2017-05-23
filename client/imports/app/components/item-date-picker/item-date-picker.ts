@@ -31,6 +31,8 @@ export class ItemDatePickerComponent implements ControlValueAccessor {
 
     @Input() compact: boolean = false;
 
+    @Input() disabled: boolean = false;
+
     registerOnChange(fn: any): void {
         this.onChangeCallback = fn;
     }
@@ -92,7 +94,7 @@ export class ItemDatePickerComponent implements ControlValueAccessor {
     }
 
     open() {
-        if (this._disabled) {
+        if (this._disabled || this.disabled) {
             return;
         }
         let modalView = this.modalCtrl.create(ItemStateModal, {

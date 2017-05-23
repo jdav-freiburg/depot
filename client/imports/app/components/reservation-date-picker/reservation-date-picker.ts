@@ -28,6 +28,7 @@ export class ReservationDatePickerComponent implements ControlValueAccessor {
     @Input() skipReservationId: string = null;
 
     @Input() readonly: boolean = false;
+    @Input() disabled: boolean = false;
 
     registerOnChange(fn: any): void {
         this.onChangeCallback = fn;
@@ -90,7 +91,7 @@ export class ReservationDatePickerComponent implements ControlValueAccessor {
     }
 
     open() {
-        if (this._disabled) {
+        if (this._disabled || this.disabled) {
             return;
         }
         let modalView = this.modalCtrl.create(DatePickerModal, {

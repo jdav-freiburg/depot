@@ -12,6 +12,8 @@ import {ReservationsDataService} from "../../services/reservations-data";
 import {ReservationPage} from "../../pages/reservation/reservation";
 import {TranslateService} from "../../services/translate";
 import {TranslateHelperService} from "../../services/translate-helper";
+import {UserService} from "../../services/user";
+import * as moment from 'moment';
 
 @Component({
     selector: "reservation-card",
@@ -21,9 +23,22 @@ import {TranslateHelperService} from "../../services/translate-helper";
 export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
     @Input() reservationId: string = "";
     @Input() reservation: Reservation = null;
+    @Input() view: string = "cards";
     items: Item[] = [];
     private itemsSubscription: Subscription;
     private reservationSubscription: Subscription;
+
+    private get viewList() {
+        return this.view == 'list';
+    }
+
+    private get viewListHeader() {
+        return this.view == 'listHeader';
+    }
+
+    private get viewCards() {
+        return this.view == 'cards';
+    }
 
     private get descriptionData() {
         return {
@@ -38,7 +53,7 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
     constructor(private navCtrl: NavController, private itemsService: ItemsDataService,
                 private reservationsService: ReservationsDataService, private translate: TranslateService,
                 private alertCtrl: AlertController, private toast: ToastController,
-                private translateHelper: TranslateHelperService) {
+                private translateHelper: TranslateHelperService, private users: UserService) {
     }
 
     ngOnInit() {
@@ -98,14 +113,30 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
         });
     }
 
-    editReservation(id: string) {
-        this.navCtrl.push(ReservationPage, {reservationId: id});
+    editReservation() {
+        this.navCtrl.push(ReservationPage, {reservationId: this.reservation._id});
     }
 
-    deleteReservation(reservation: Reservation) {
+    get isOwner(): boolean {
+        return this.users.user && this.users.user._id === this.reservation.userId;
+    }
+
+    get isAdmin(): boolean {
+        return this.users.isAdmin;
+    }
+
+    get canEdit(): boolean {
+        return this.isAdmin || this.isOwner;
+    }
+
+    get canDelete(): boolean {
+        return this.isAdmin || (this.isOwner && moment(this.reservation.start).isAfter(moment()));
+    }
+
+    deleteReservation() {
         this.alertCtrl.create({
-            title: this.translate.get('RESERVATIONS_PAGE.DELETE.TITLE', reservation),
-            subTitle: this.translate.get('RESERVATIONS_PAGE.DELETE.SUB_TITLE', reservation),
+            title: this.translate.get('RESERVATIONS_PAGE.DELETE.TITLE', this.reservation),
+            subTitle: this.translate.get('RESERVATIONS_PAGE.DELETE.SUB_TITLE', this.reservation),
             buttons: [
                 {
                     text: this.translate.get('RESERVATIONS_PAGE.DELETE.NO'),
@@ -114,7 +145,7 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
                 {
                     text: this.translate.get('RESERVATIONS_PAGE.DELETE.YES'),
                     handler: () => {
-                        this.reservationsService.remove(reservation._id, (err) => {
+                        this.reservationsService.remove(this.reservation._id, (err) => {
                             if (err) {
                                 this.toast.create({
                                     message: this.translateHelper.getError(err),

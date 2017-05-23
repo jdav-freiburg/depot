@@ -5,13 +5,13 @@
                 <ion-col>
                     <ion-item>
                         <ion-label floating>{{'ITEM_CARD.NAME' | translate}}</ion-label>
-                        <ion-input type="text" formControlName="name" [disabled]="!editable"></ion-input>
+                        <ion-input type="text" formControlName="name"></ion-input>
                     </ion-item>
                 </ion-col>
                 <ion-col>
                     <ion-item>
                         <ion-label floating>{{'ITEM_CARD.DESCRIPTION' | translate}}</ion-label>
-                        <ion-input type="text" formControlName="description" [disabled]="!editable"></ion-input>
+                        <ion-input type="text" formControlName="description"></ion-input>
                     </ion-item>
                 </ion-col>
                 <ion-col col-auto>
@@ -37,33 +37,33 @@
                 <ion-col>
                     <ion-item>
                         <ion-label floating>{{'ITEM_CARD.EXTERNAL_ID' | translate}}</ion-label>
-                        <ion-input type="text" formControlName="externalId" [disabled]="!editable"></ion-input>
+                        <ion-input type="text" formControlName="externalId"></ion-input>
                     </ion-item>
                 </ion-col>
                 <ion-col>
                     <ion-item>
                         <ion-label floating>{{'ITEM_CARD.TAGS' | translate}}</ion-label>
-                        <ion-input type="text" formControlName="tags" [disabled]="!editable"></ion-input>
+                        <ion-input type="text" formControlName="tags"></ion-input>
                     </ion-item>
                 </ion-col>
                 <ion-col>
                     <ion-item>
                         <ion-label floating>{{'ITEM_CARD.ITEM_GROUP' | translate}}</ion-label>
-                        <ion-input type="text" formControlName="itemGroup" [disabled]="!editable"></ion-input>
+                        <ion-input type="text" formControlName="itemGroup"></ion-input>
                     </ion-item>
                 </ion-col>
                 <ion-col>
-                    <item-date-picker formControlName="purchaseDate" [label]="'ITEM_CARD.PURCHASE_DATE' | translate" [disabled]="!editable"></item-date-picker>
+                    <item-date-picker formControlName="purchaseDate" [label]="'ITEM_CARD.PURCHASE_DATE' | translate" [readonly]="!editable"></item-date-picker>
                 </ion-col>
                 <ion-col>
-                    <item-date-picker formControlName="lastService" [label]="'ITEM_CARD.LAST_SERVICE' | translate" [disabled]="!editable"></item-date-picker>
+                    <item-date-picker formControlName="lastService" [label]="'ITEM_CARD.LAST_SERVICE' | translate" [readonly]="!editable"></item-date-picker>
                 </ion-col>
             </ion-row>
             <ion-row>
                 <ion-col col-auto>
                     <ion-item>
                         <ion-label floating>{{'ITEM_CARD.CONDITION' | translate}}</ion-label>
-                        <ion-select formControlName="condition" [disabled]="!editable">
+                        <ion-select formControlName="condition">
                             <ion-option *ngFor="let option of itemsService.itemConditionOptions" [value]="option.value">{{option.text}}</ion-option>
                         </ion-select>
                     </ion-item>
@@ -71,7 +71,7 @@
                 <ion-col>
                     <ion-item>
                         <ion-label floating>{{'ITEM_CARD.CONDITION_COMMENT' | translate}}</ion-label>
-                        <ion-input type="text" formControlName="conditionComment" [disabled]="!editable"></ion-input>
+                        <ion-input type="text" formControlName="conditionComment"></ion-input>
                     </ion-item>
                 </ion-col>
             </ion-row>
@@ -131,7 +131,7 @@
             <ion-input type="text" formControlName="description"></ion-input>
         </ion-col>
         <ion-col col-1>
-            <ion-select formControlName="condition" [disabled]="!editable">
+            <ion-select formControlName="condition">
                 <ion-option *ngFor="let option of itemsService.itemConditionOptions" [value]="option.value">{{option.text}}</ion-option>
             </ion-select>
         </ion-col>
@@ -139,10 +139,10 @@
             <ion-input type="text" formControlName="conditionComment"></ion-input>
         </ion-col>
         <ion-col col-1>
-            <item-date-picker formControlName="lastService" [label]="'ITEM_CARD.LAST_SERVICE' | translate" [compact]="true" [disabled]="!editable"></item-date-picker>
+            <item-date-picker formControlName="lastService" [label]="'ITEM_CARD.LAST_SERVICE' | translate" [compact]="true" [readonly]="!editable"></item-date-picker>
         </ion-col>
         <ion-col col-1 *ngIf="extended">
-            <item-date-picker formControlName="purchaseDate" [label]="'ITEM_CARD.PURCHASE_DATE' | translate" [compact]="true" [disabled]="!editable"></item-date-picker>
+            <item-date-picker formControlName="purchaseDate" [label]="'ITEM_CARD.PURCHASE_DATE' | translate" [compact]="true" [readonly]="!editable"></item-date-picker>
         </ion-col>
         <ion-col *ngIf="extended">
             <ion-input type="text" formControlName="tags"></ion-input>

@@ -25,6 +25,7 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
     @Input() extended: boolean = false;
     @Input() editable: boolean = false;
     @Input() saveDirect: boolean = false;
+    @Input() createReset: boolean = false;
     private lastItemId: string = null;
     private itemSubscription: Subscription;
     private itemForm: FormGroup;
@@ -152,7 +153,6 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
         } else if (this.item) {
             if ((<any>this.item)._changed) {
                 this.itemSubscription = (<ChangeableData<Item>><any>this.item)._changed.subscribe((item) => {
-                    console.log("Item changed:", item);
                     this.item = item;
                     this.updateForm();
                 });
@@ -251,6 +251,9 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
             this.isSaving = true;
             this.itemsService.add(itemData, updateComment, (err) => {
                 this.isSaving = false;
+                if (this.createReset) {
+                    this.setFormValues();
+                }
                 if (err) {
                     console.log("Error:", err);
                     this.toast.create({

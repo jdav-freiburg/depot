@@ -110,19 +110,6 @@ export const de_de = {
   },
   "RESERVATIONS_PAGE": {
     "TITLE": "Reservierungen",
-    "TYPE": "Typ",
-    "NAME": "Name",
-    "START": "Start",
-    "END": "Ende",
-    "USER": "Benutzer",
-    "GROUP": "Gruppe",
-    "CONTACT": "Kontakt",
-    "DELETE": {
-      "TITLE": (data) => `Lösche ${data.name}?`,
-      "SUB_TITLE": (data) => `Reservierung ${data.name} wirklich löschen?`,
-      "YES": "Ja",
-      "NO": "Nein"
-    },
     "FILTER": "Filtern"
   },
   "SIGNUP_PAGE": {
@@ -133,7 +120,11 @@ export const de_de = {
     "PASSWORD_REPEAT": "Passwort Wiederholen",
     "FULL_NAME": "Vollständiger Name",
     "PHONE": "Telefon",
-    "SIGN_UP": "Anmelden"
+    "SIGN_UP": "Anmelden",
+    "ERROR": {
+      "PASSWORD_MINLENGTH": "Passwort muss mindestens 6 Zeichen lang sein",
+      "PASSWORD_MATCH": "Passwörter stimmen nicht überein",
+    }
   },
   "USERS_PAGE": {
     "TITLE": "Benutzer",
@@ -161,12 +152,29 @@ export const de_de = {
     "PASSWORD_NEW_REPEAT": "Neues Passwort Wiederholen",
     "PASSWORD_RANDOM": "Zufälliges Passwort",
     "ROLES": "Rollen",
-    "STATUS": "Status"
+    "STATUS": "Status",
+    "ERROR": {
+      "PASSWORD_MINLENGTH": "Passwort muss mindestens 6 Zeichen lang sein",
+      "PASSWORD_MATCH": "Passwörter stimmen nicht überein",
+    }
   },
   "RESERVATION_CARD": {
     "HEADER": "Reservierung",
     "ITEMS": "Material",
-    "DESCRIPTION": (reservation) => `${reservation.type.text}. Vom ${moment(reservation.start).format('L')} bis ${moment(reservation.end).format('L')}.`
+    "DESCRIPTION": (reservation) => `${reservation.type.text}. Vom ${moment(reservation.start).format('L')} bis ${moment(reservation.end).format('L')}.`,
+    "TYPE": "Typ",
+    "NAME": "Name",
+    "START": "Start",
+    "END": "Ende",
+    "USER": "Benutzer",
+    "GROUP": "Gruppe",
+    "CONTACT": "Kontakt",
+    "DELETE": {
+      "TITLE": (data) => `Lösche ${data.name}?`,
+      "SUB_TITLE": (data) => `Reservierung ${data.name} wirklich löschen?`,
+      "YES": "Ja",
+      "NO": "Nein"
+    }
   },
   "LANGUAGE_SELECT": {
     "TITLE": "Sprache",

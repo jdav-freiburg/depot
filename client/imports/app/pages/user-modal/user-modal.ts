@@ -97,7 +97,7 @@ export class UserModal implements OnInit, OnDestroy {
         });
         this.userPasswordForm = fb.group({
             oldPassword: [""],
-            newPassword: ["", Validators.required],
+            newPassword: ["", Validators.minLength(6)],
             newPasswordRepeat: ["", Validators.required],
             passwordRandom: ""
         }, {validator: this.matchPassword('newPassword', 'newPasswordRepeat')});

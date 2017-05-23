@@ -14,48 +14,15 @@
     </ion-navbar>
 </ion-header>
 
+
 <ion-content>
     <ion-searchbar [(ngModel)]="filter" [placeholder]="'RESERVATIONS_PAGE.FILTER' | translate"></ion-searchbar>
-    <div class="edit-table">
-        <div class="edit-tr">
-            <span class="edit-th">{{'RESERVATIONS_PAGE.TYPE' | translate}}</span>
-            <span class="edit-th">{{'RESERVATIONS_PAGE.NAME' | translate}}</span>
-            <span class="edit-th">{{'RESERVATIONS_PAGE.START' | translate}}</span>
-            <span class="edit-th">{{'RESERVATIONS_PAGE.END' | translate}}</span>
-            <span class="edit-th">{{'RESERVATIONS_PAGE.USER' | translate}}</span>
-            <span class="edit-th">{{'RESERVATIONS_PAGE.GROUP' | translate}}</span>
-            <span class="edit-th">{{'RESERVATIONS_PAGE.CONTACT' | translate}}</span>
-            <span class="edit-th"></span>
-            <span class="edit-th"></span>
+    <ion-list [virtualScroll]="reservations.data | reservationsfilter:filter" approxItemHeight="25px" [headerFn]="headerFn">
+        <div *virtualHeader="let header" style="width: 100%">
+            <reservation-card view="listHeader"></reservation-card>
         </div>
-        <ng-container *ngFor="let reservation of reservations | reservationsfilter:filter">
-            <div class="edit-tr">
-                <span class="edit-td">
-                    <span [ngSwitch]="reservation.type">
-                        <ng-container *ngFor="let option of reservationsDataService.reservationTypeOptions">
-                            <span *ngSwitchCase="option.value" [style.color]="option.colorCss">{{option.text}}</span>
-                        </ng-container>
-                        <span *ngSwitchDefault>{{reservation.type}}</span>
-                    </span>
-                </span>
-                <span class="edit-td">{{reservation.name}}</span>
-                <span class="edit-td">{{reservation.start | moment: 'L'}}</span>
-                <span class="edit-td">{{reservation.end | moment: 'L'}}</span>
-                <span class="edit-td"><user-ref [userId]="reservation.userId"></user-ref></span>
-                <span class="edit-td">{{reservation.groupId}}</span>
-                <span class="edit-td">{{reservation.contact}}</span>
-                <span class="edit-td">
-                    <button ion-button (click)="editReservation(reservation._id)" clear icon-only>
-                        <ion-icon *ngIf="isAdmin || isOwner(reservation.userId)" name="create"></ion-icon>
-                        <ion-icon *ngIf="!isAdmin && !isOwner(reservation.userId)" name="search"></ion-icon>
-                    </button>
-                </span>
-                <span class="edit-td">
-                    <button ion-button (click)="deleteReservation(reservation)" clear icon-only *ngIf="canDelete(reservation)">
-                        <ion-icon name="trash"></ion-icon>
-                    </button>
-                </span>
-            </div>
-        </ng-container>
-    </div>
+        <div *virtualItem="let reservation" style="width: 100%">
+            <reservation-card [reservation]="reservation" view="list"></reservation-card>
+        </div>
+    </ion-list>
 </ion-content>

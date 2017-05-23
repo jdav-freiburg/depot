@@ -20,7 +20,7 @@ export class SignupPage {
         this.signupForm = fb.group({
             username: ["", Validators.required],
             email: ["", AdvancedEmailValidatorDirective.validator],
-            password: ["", Validators.required],
+            password: ["", Validators.minLength(6)],
             password2: ["", Validators.required],
             phone: ["", Validators.required],
             fullName: ["", Validators.required],

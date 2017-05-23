@@ -109,19 +109,6 @@ export const en_us = {
   },
   "RESERVATIONS_PAGE": {
     "TITLE": "Reservations",
-    "TYPE": "Type",
-    "NAME": "Name",
-    "START": "Start",
-    "END": "End",
-    "USER": "User",
-    "GROUP": "Group",
-    "CONTACT": "Contact",
-    "DELETE": {
-      "TITLE": (data) => `Delete ${data.name}?`,
-      "SUB_TITLE": (data) => `Do you really want to delete reservation ${data.name}?`,
-      "YES": "Yes",
-      "NO": "No"
-    },
     "FILTER": "Filter"
   },
   "SIGNUP_PAGE": {
@@ -132,7 +119,11 @@ export const en_us = {
     "PASSWORD_REPEAT": "Repeat Password",
     "FULL_NAME": "Full Name",
     "PHONE": "Phone",
-    "SIGN_UP": "Sign Up"
+    "SIGN_UP": "Sign Up",
+    "ERROR": {
+      "PASSWORD_MINLENGTH": "Password must be at least 6 characters",
+      "PASSWORD_MATCH": "Passwords do not match",
+    }
   },
   "USERS_PAGE": {
     "TITLE": "Users",
@@ -160,12 +151,29 @@ export const en_us = {
     "PASSWORD_NEW_REPEAT": "Repeat New Password",
     "PASSWORD_RANDOM": "Random Password",
     "ROLES": "Roles",
-    "STATUS": "Status"
+    "STATUS": "Status",
+    "ERROR": {
+      "PASSWORD_MINLENGTH": "Password must be at least 6 characters",
+      "PASSWORD_MATCH": "Passwords do not match",
+    }
   },
   "RESERVATION_CARD": {
     "HEADER": "Reservation",
     "ITEMS": "Items",
-    "DESCRIPTION": (reservation) => `${reservation.type.text}. From ${moment(reservation.start).format('L')} until ${moment(reservation.end).format('L')}.`
+    "DESCRIPTION": (reservation) => `${reservation.type.text}. From ${moment(reservation.start).format('L')} until ${moment(reservation.end).format('L')}.`,
+    "TYPE": "Type",
+    "NAME": "Name",
+    "START": "Start",
+    "END": "End",
+    "USER": "User",
+    "GROUP": "Group",
+    "CONTACT": "Contact",
+    "DELETE": {
+      "TITLE": (data) => `Delete ${data.name}?`,
+      "SUB_TITLE": (data) => `Do you really want to delete reservation ${data.name}?`,
+      "YES": "Yes",
+      "NO": "No"
+    }
   },
   "LANGUAGE_SELECT": {
     "TITLE": "Language",

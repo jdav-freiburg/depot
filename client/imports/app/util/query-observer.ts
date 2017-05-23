@@ -177,11 +177,14 @@ export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> 
     private _transformedData: U[] = [];
     private _data: T[] = [];
     private _index: {[id: string]: T} = {};
-    public readonly dataChanged: Subject<T[]> = new BehaviorSubject<T[]>([]);
+    public readonly dataChanged: Subject<U[]> = new BehaviorSubject<U[]>([]);
     private handle: Meteor.LiveQueryHandle;
 
-    public constructor(private query: ObservableCursor<T>, private zone: NgZone, private transformer: (item: T) => U) {
+    public constructor(private query: ObservableCursor<T>, private zone: NgZone, private transformer: (item: T) => U, private addFirstEmpty?: boolean) {
         let initialObservation = true;
+        if (addFirstEmpty) {
+            this._transformedData.push(transformer(null));
+        }
         this.handle = query.observeChanges({
             addedBefore: (id: string, fields: T, before: string) => {
                 fields._id = id;
@@ -197,7 +200,7 @@ export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> 
                         for (let i = 0; i < this._data.length; i++) {
                             if (this._data[i]._id === before) {
                                 this._data.splice(i, 0, fields);
-                                this._transformedData.splice(i, 0, transformed);
+                                this._transformedData.splice((addFirstEmpty?i+1:i), 0, transformed);
                                 break;
                             }
                         }
@@ -213,12 +216,12 @@ export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> 
                             for (let i = 0; i < this._data.length; i++) {
                                 if (this._data[i]._id === before) {
                                     this._data.splice(i, 0, fields);
-                                    this._transformedData.splice(i, 0, transformed);
+                                    this._transformedData.splice((addFirstEmpty?i+1:i), 0, transformed);
                                     break;
                                 }
                             }
                         }
-                        this.dataChanged.next(this._data);
+                        this.dataChanged.next(this._transformedData);
                     });
                 }
             },
@@ -232,11 +235,11 @@ export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> 
                     let transformed = transformer(doc);
                     for (let i = 0; i < this._data.length; i++) {
                         if (this._data[i]._id === id) {
-                            this._transformedData[i] = transformed;
+                            this._transformedData[(addFirstEmpty?i+1:i)] = transformed;
                             break;
                         }
                     }
-                    this.dataChanged.next(this._data);
+                    this.dataChanged.next(this._transformedData);
                 });
             },
             movedBefore: (id: string, before: string) => {
@@ -248,12 +251,12 @@ export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> 
                         let refId = this._data[i]._id;
                         if (refId === id) {
                             pickedData = this._data.splice(i, 1)[0];
-                            pickedTransformed = this._transformedData.splice(i, 1)[0];
+                            pickedTransformed = this._transformedData.splice((addFirstEmpty?i+1:i), 1)[0];
                             if (destinationIndex === null) {
                                 i--;
                             } else {
                                 this._data.splice(destinationIndex, 0, pickedData);
-                                this._transformedData.splice(destinationIndex, 0, pickedTransformed);
+                                this._transformedData.splice((destinationIndex?destinationIndex+1:destinationIndex), 0, pickedTransformed);
                                 break;
                             }
                         }
@@ -261,12 +264,12 @@ export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> 
                             destinationIndex = i;
                             if (pickedData !== null) {
                                 this._data.splice(destinationIndex, 0, pickedData);
-                                this._transformedData.splice(destinationIndex, 0, pickedTransformed);
+                                this._transformedData.splice((destinationIndex?destinationIndex+1:destinationIndex), 0, pickedTransformed);
                                 break;
                             }
                         }
                     }
-                    this.dataChanged.next(this._data);
+                    this.dataChanged.next(this._transformedData);
                 });
             },
             removed: (id: string) => {
@@ -275,20 +278,26 @@ export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> 
                     for (let i = 0; i < this._data.length; i++) {
                         if (this._data[i]._id === id) {
                             this._data.splice(i, 1);
-                            this._transformedData.splice(i, 1);
+                            this._transformedData.splice((i?i+1:i), 1);
                         }
                     }
-                    this.dataChanged.next(this._data);
+                    this.dataChanged.next(this._transformedData);
                 });
             }
         });
         initialObservation = false;
-        this.dataChanged.next(this._data);
+        this.dataChanged.next(this._transformedData);
+    }
+
+    public resetFirst() {
+        if (this.addFirstEmpty) {
+            this._transformedData[0] = this.transformer(null);
+        }
     }
 
     public newList() {
         this._data = _.map(this._data, (entry) => _.clone(entry));
-        this.dataChanged.next(this._data);
+        this.dataChanged.next(this._transformedData);
     }
 
     public get data(): U[] {

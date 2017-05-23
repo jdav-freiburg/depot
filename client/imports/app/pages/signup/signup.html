@@ -23,9 +23,19 @@
             <ion-label floating>{{'SIGNUP_PAGE.PASSWORD' | translate}}</ion-label>
             <ion-input type="password" formControlName="password"></ion-input>
         </ion-item>
+        <ion-item *ngIf="!signupForm.controls['password'].valid && signupForm.controls['password'].touched" color="danger">
+            <p *ngIf="signupForm.controls['password'].hasError('minlength')">
+                {{'SIGNUP_PAGE.ERROR.PASSWORD_MINLENGTH' | translate}}
+            </p>
+        </ion-item>
         <ion-item>
             <ion-label floating>{{'SIGNUP_PAGE.PASSWORD_REPEAT' | translate}}</ion-label>
             <ion-input type="password" formControlName="password2"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="!signupForm.controls['password2'].valid && signupForm.controls['password2'].touched" color="danger">
+            <p *ngIf="signupForm.controls['password2'].hasError('noMatch')">
+                {{'SIGNUP_PAGE.ERROR.PASSWORD_MATCH' | translate}}
+            </p>
         </ion-item>
         <ion-item>
             <ion-label floating>{{'SIGNUP_PAGE.FULL_NAME' | translate}}</ion-label>
