@@ -31,6 +31,33 @@ export const en_us = {
     "EMAIL_OR_USERNAME": "E-Mail or Username",
     "PASSWORD": "Password",
     "LOG_IN": "Log In",
+    "FORGOT_PASSWORD": "Forgot Password",
+    "RESEND_EMAIL": "Resend Verification E-Mail",
+    "PASSWORD_RESET_REQUEST": {
+      "TITLE": "Request Password Reset",
+      "MESSAGE": "Shall a password reset link be sent via E-Mail?",
+      "EMAIL_OR_USERNAME": "E-Mail or Username",
+      "OK": "Ok",
+      "CANCEL": "Cancel"
+    },
+    "PASSWORD_RESET_SUCCESS": {
+      "TITLE": "Password Reset Requested",
+      "MESSAGE": "Password Reset Link was sent by E-Mail",
+      "OK": "Ok"
+    },
+    "RESEND_EMAIL_REQUEST": {
+      "TITLE": "No Verified E-Mail",
+      "MESSAGE": "There was no verified E-Mail for this user. Resend verification mail?",
+      "EMAIL_OR_USERNAME": "E-Mail oder Benutzername",
+      "EMAIL": "E-Mail",
+      "OK": "Ok",
+      "CANCEL": "Abbruch"
+    },
+    "RESEND_EMAIL_SUCCESS": {
+      "TITLE": "E-Mail sent",
+      "MESSAGE": "E-Mail sent",
+      "OK": "Ok"
+    },
   },
   "ITEM_CARDS_PAGE": {
     "TITLE": "Items",
@@ -120,6 +147,10 @@ export const en_us = {
     "FULL_NAME": "Full Name",
     "PHONE": "Phone",
     "SIGN_UP": "Sign Up",
+    "SUCCESS": {
+      "TITLE": "Registered Successfully",
+      "MESSAGE": "You have registered successfully. Within the next few minutes you should receive a verification e-mail. You can login as soon as you have been verified by another user."
+    },
     "ERROR": {
       "PASSWORD_MINLENGTH": "Password must be at least 6 characters",
       "PASSWORD_MATCH": "Passwords do not match",
@@ -173,6 +204,30 @@ export const en_us = {
       "SUB_TITLE": (data) => `Do you really want to delete reservation ${data.name}?`,
       "YES": "Yes",
       "NO": "No"
+    }
+  },
+  "VERIFY_EMAIL_PAGE": {
+    "TITLE": "Verify E-Mail",
+    "VERIFY": "Verify E-Mail",
+    "SUCCESS": {
+      "TITLE": "E-Mail Verified",
+      "MESSAGE": "E-Mail successfully verified",
+      "OK": "Ok"
+    }
+  },
+  "RESET_PASSWORD_PAGE": {
+    "TITLE": "Change Password",
+    "PASSWORD": "New Password",
+    "PASSWORD_REPEAT": "Repeat New Password",
+    "SAVE": "Save Password",
+    "SUCCESS": {
+      "TITLE": "Password Changed",
+      "MESSAGE": "Password successfully changed",
+      "OK": "Ok"
+    },
+    "ERROR": {
+      "PASSWORD_MINLENGTH": "Password must be at least 6 characters",
+      "PASSWORD_MATCH": "Passwords do not match",
     }
   },
   "LANGUAGE_SELECT": {
@@ -244,5 +299,7 @@ export const en_us = {
     "user-locked": "You must first be unlocked by another user",
     "user-disabled": "You were disabled",
     "user-email-not-verified": "You must first verify your E-Mail",
+    "invalid-token": "Invalid token or token expired",
+    "no-valid-email": "There is no verified E-Mail address registered"
   }
 };

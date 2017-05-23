@@ -31,7 +31,34 @@ export const de_de = {
     "TITLE": "Login",
     "EMAIL_OR_USERNAME": "E-Mail oder Benutzername",
     "PASSWORD": "Passwort",
-    "LOG_IN": "Log In"
+    "LOG_IN": "Log In",
+    "FORGOT_PASSWORD": "Passwort Vergessen",
+    "RESEND_EMAIL": "Verifizierungs E-Mail Erneut Senden",
+    "PASSWORD_RESET_REQUEST": {
+      "TITLE": "Passwort Reset Anfordern",
+      "MESSAGE": "Soll ein Passwort Reset Link per E-Mail versendet werden?",
+      "EMAIL_OR_USERNAME": "E-Mail oder Benutzername",
+      "OK": "Ok",
+      "CANCEL": "Abbruch"
+    },
+    "PASSWORD_RESET_SUCCESS": {
+      "TITLE": "Passwort Reset Angefordert",
+      "MESSAGE": "Passwort Reset Link wurde per E-Mail versendet",
+      "OK": "Ok",
+    },
+    "RESEND_EMAIL_REQUEST": {
+      "TITLE": "Keine verifizierte E-Mail Adresse",
+      "MESSAGE": "Es existiert keine verifizierte E-Mail Adresse. Soll die Bestätigungs E-Mail erneut angefordert werden?",
+      "EMAIL_OR_USERNAME": "E-Mail oder Benutzername",
+      "EMAIL": "E-Mail",
+      "OK": "Ok",
+      "CANCEL": "Abbruch"
+    },
+    "RESEND_EMAIL_SUCCESS": {
+      "TITLE": "E-Mail Versendet",
+      "MESSAGE": "E-Mail versendet",
+      "OK": "Ok"
+    },
   },
   "ITEM_CARDS_PAGE": {
     "TITLE": "Material",
@@ -121,6 +148,10 @@ export const de_de = {
     "FULL_NAME": "Vollständiger Name",
     "PHONE": "Telefon",
     "SIGN_UP": "Anmelden",
+    "SUCCESS": {
+      "TITLE": "Erfolgreich registriert",
+      "MESSAGE": "Du hast dich erfolgreich registriert. In den nächsten Minuten wirst du eine Verifizierungs E-Mail erhalten. Du kannst dich anmelden sobald du von einem anderen Benutzer bestätigt wurdest."
+    },
     "ERROR": {
       "PASSWORD_MINLENGTH": "Passwort muss mindestens 6 Zeichen lang sein",
       "PASSWORD_MATCH": "Passwörter stimmen nicht überein",
@@ -174,6 +205,30 @@ export const de_de = {
       "SUB_TITLE": (data) => `Reservierung ${data.name} wirklich löschen?`,
       "YES": "Ja",
       "NO": "Nein"
+    }
+  },
+  "VERIFY_EMAIL_PAGE": {
+    "TITLE": "E-Mail Verifizieren",
+    "VERIFY": "E-Mail Verifizieren",
+    "SUCCESS": {
+      "TITLE": "E-Mail verifiziert",
+      "MESSAGE": "E-Mail erfolgreich verifiziert",
+      "OK": "Ok"
+    }
+  },
+  "RESET_PASSWORD_PAGE": {
+    "TITLE": "Passwort ändern",
+    "PASSWORD": "Neues Passwort",
+    "PASSWORD_REPEAT": "Neues Passwort wiederholen",
+    "SAVE": "Passwort speichern",
+    "SUCCESS": {
+      "TITLE": "Passwort geändert",
+      "MESSAGE": "Passwort erfolgreich geändert",
+      "OK": "Ok"
+    },
+    "ERROR": {
+      "PASSWORD_MINLENGTH": "Passwort muss mindestens 6 Zeichen lang sein",
+      "PASSWORD_MATCH": "Passwörter stimmen nicht überein",
     }
   },
   "LANGUAGE_SELECT": {
@@ -245,5 +300,7 @@ export const de_de = {
     "user-locked": "Du musst erst von einem anderen Benutzer aktiviert werden",
     "user-disabled": "Du wurdest deaktiviert",
     "user-email-not-verified": "E-Mail Adresse muss erst verifiziert werden",
+    "invalid-token": "Ungültiges Token oder Token abgelaufen",
+    "no-valid-email": "Keine verifiziert E-Mail Adress gefunden"
   }
 };

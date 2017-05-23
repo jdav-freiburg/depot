@@ -4,12 +4,11 @@ import {AppComponent} from "./app.component";
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {LoginPage} from "./pages/login/login";
-import {RouterModule, Routes} from '@angular/router';
 import {SignupPage} from "./pages/signup/signup";
 import {UserService} from "./services/user";
 import {ItemCardsPage} from "./pages/item-cards/item-cards";
 import {ItemsDataService} from "./services/items-data";
-import {IonicApp, IonicModule, IonicErrorHandler} from 'ionic-angular';
+import {IonicApp, IonicModule, IonicErrorHandler, IonicPageModule} from 'ionic-angular';
 import {METEOR_PROVIDERS} from "angular2-meteor";
 import {TabsPage} from "./pages/tabs/tabs";
 import {HomePage} from "./pages/home/home";
@@ -43,11 +42,9 @@ import {FileDropModule} from "angular2-file-drop";
 import {UploadButton} from "./components/upload-button/upload-button";
 import {ItemCardComponent} from "./components/item-card/item-card";
 import {ItemListPage} from "./pages/items-list/item-list";
-
-/*const appRoutes: Routes = [
-    { path: 'login', component: LoginComponent },
-    { path: 'signup', component: SignupComponent },
-];*/
+import {VerifyEmailPage} from "./pages/verify-email/verify-email";
+import {LocationStrategy, PathLocationStrategy} from "@angular/common";
+import {ResetPasswordPage} from "./pages/reset-password/reset-password";
 
 @NgModule({
     // Components, Pipes, Directive
@@ -79,7 +76,9 @@ import {ItemListPage} from "./pages/items-list/item-list";
         ItemsImporterPage,
         UploadButton,
         ItemCardComponent,
-        ItemListPage
+        ItemListPage,
+        VerifyEmailPage,
+        ResetPasswordPage
     ],
     // Entry Components
     entryComponents: [
@@ -98,12 +97,15 @@ import {ItemListPage} from "./pages/items-list/item-list";
         ItemStateModal,
         UserModal,
         UsersPage,
-        ItemsImporterPage
+        ItemsImporterPage,
+        VerifyEmailPage,
+        ResetPasswordPage
     ],
     // Providers
     providers: [
         METEOR_PROVIDERS,
         { provide: ErrorHandler, useClass: IonicErrorHandler },
+        { provide: LocationStrategy, useClass: PathLocationStrategy },
         UserService,
         ItemsDataService,
         ReservationsDataService,
@@ -114,9 +116,33 @@ import {ItemListPage} from "./pages/items-list/item-list";
     ],
     // Modules
     imports: [
-        IonicModule.forRoot(AppComponent),
+        //IonicModule.forRoot(AppComponent),
+        IonicModule.forRoot(AppComponent, {locationStratagy: 'path'}, {
+            links: [
+                {
+                    component: AppComponent,
+                    name: "home",
+                    segment: "home",
+                    defaultHistory: []
+                },
+                {
+                    component: VerifyEmailPage,
+                    //loadChildren: string;
+                    name: "verify-email",
+                    segment: "verify-email/:token",
+                    defaultHistory: ["home"]
+                },
+                {
+                    component: ResetPasswordPage,
+                    //loadChildren: string;
+                    name: "reset-password",
+                    segment: "reset-password/:token",
+                    defaultHistory: ["home"]
+                }
+            ]
+        }),
+        //IonicPageModule.forChild(VerifyEmailPage),
         BrowserModule,
-        //RouterModule.forRoot(appRoutes),
         BrowserAnimationsModule,
         FormsModule,
         ReactiveFormsModule,

@@ -1,0 +1,7 @@
+Hi,
+
+du hast dich beim Depot registriert. Bitte öffne den folgenden Link um die E-Mail Addresse zu bestätigen: {{verificationUrl}}
+Falls du keine Verifizierung angefordert hast, kannst du diese E-Mail ignorieren.
+
+LG,
+Deine Depot Administratoren

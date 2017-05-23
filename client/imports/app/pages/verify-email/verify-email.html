@@ -1,0 +1,14 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>
+            {{'VERIFY_EMAIL_PAGE.TITLE' | translate}}
+        </ion-title>
+        <ion-buttons end>
+            <button ion-button icon-only (click)="translateHelper.showLanguageSelect()"><ion-icon name="globe"></ion-icon></button>
+        </ion-buttons>
+    </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <button ion-button block (click)="verifyEmail()">{{'VERIFY_EMAIL_PAGE.VERIFY' | translate}}</button>
+</ion-content>

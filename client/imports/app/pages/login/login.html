@@ -20,5 +20,7 @@
             <ion-input type="password" formControlName="password"></ion-input>
         </ion-item>
         <button ion-button type="submit" block [disabled]="!loginForm.valid">{{'LOGIN_PAGE.LOG_IN' | translate}}</button>
+        <button ion-button block *ngIf="hadInvalidPassword" (click)="showForgotPassword()">{{'LOGIN_PAGE.FORGOT_PASSWORD' | translate}}</button>
+        <button ion-button block *ngIf="hadInvalidEmail" (click)="showResendEmail(loginForm.controls['emailOrUsername'].value)">{{'LOGIN_PAGE.RESEND_EMAIL' | translate}}</button>
     </form>
 </ion-content>

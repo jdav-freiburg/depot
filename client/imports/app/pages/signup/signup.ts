@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import template from "./signup.html";
 import style from "./signup.scss";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {ToastController} from "ionic-angular";
+import {AlertController, ToastController} from "ionic-angular";
 import {TranslateHelperService} from "../../services/translate-helper";
 import {TranslateService} from "../../services/translate";
 import {AdvancedEmailValidatorDirective} from "../../services/advanced-email-validator";
@@ -16,7 +16,7 @@ export class SignupPage {
     public signupForm: FormGroup;
 
     constructor(private fb: FormBuilder, private translateHelper: TranslateHelperService,
-                private translate: TranslateService, private toast: ToastController) {
+                private translate: TranslateService, private toast: ToastController, private alert: AlertController) {
         this.signupForm = fb.group({
             username: ["", Validators.required],
             email: ["", AdvancedEmailValidatorDirective.validator],
@@ -43,7 +43,7 @@ export class SignupPage {
         let password = this.signupForm.controls['password'].value;
         let phone = this.signupForm.controls['phone'].value;
         let fullName = this.signupForm.controls['fullName'].value;
-        Accounts.createUser(<Meteor.User>{
+        Meteor.call('users.createAccount', {
             username: username,
             email: email,
             password: password,
@@ -59,6 +59,11 @@ export class SignupPage {
                 }).present();
             } else {
                 console.log("Created:", user);
+                this.signupForm.reset();
+                this.alert.create({
+                    title: this.translate.get('SIGNUP_PAGE.SUCCESS.TITLE'),
+                    message: this.translate.get('SIGNUP_PAGE.SUCCESS.MESSAGE')
+                }).present();
             }
         });
         // TODO: Error messages
