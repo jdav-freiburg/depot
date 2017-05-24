@@ -123,8 +123,19 @@ export const de_de = {
     "CONTACT": "Kontakt",
     "ITEMS": "Material",
     "NOT_AVAILABLE": "Nicht verfügbar",
+    "ITEM_CONDITION_BAD": "Schlecht",
+    "ITEM_CONDITION_BROKEN": "Kaputt",
+    "SOME_NOT_AVAILABLE": (data) => `${data.total - data.available}/${data.total} nicht verfügbar`,
+    "SOME_REMOVED": (data) => `${data.total}/${data.selected + data.total} entfernt`,
     "REMOVED": "Entfernt",
     "ITEMS_REMOVED": (data) => `${_.join(data.items, ', ')} aus der Reservierung entfernt (bereits reserviert).`,
+    "FILTER_TAG": {
+      "NAME": "name",
+      "DESCRIPTION": "beschreibung\0description",
+      "TAG": "tag",
+      "EXTERNAL_ID": "id",
+      "SELECTED": "wahl\0gewählt\0selektiert\0selected\0reserviert"
+    },
     "LEAVE": {
       "TITLE": "Ungespeicherte Änderungen",
       "SUB_TITLE": "Sollen ungespeicherte Änderungen gespeichert werden?",

@@ -108,20 +108,15 @@ export class ItemsDataService {
     }
 
     public remove(id: string, callback?: Function): void {
-        let result = ItemCollection.remove({_id: id});
-        result.subscribe((result) => {
+        Meteor.call('items.remove', {
+            itemId: id
+        }, (err, res) => {
             this.ngZone.run(() => {
-                console.log("reservation remove:", result);
+                console.log("reservation remove:", err, res);
                 if (callback) {
-                    callback();
+                    callback(err, res);
                 }
-            });
-        }, (error) => {
-            this.ngZone.run(() => {
-                console.log("reservation remove error:", error);
-                if (callback) {
-                    callback(error);
-                }
+
             });
         });
     }

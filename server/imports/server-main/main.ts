@@ -18,10 +18,10 @@ export class Main {
     }
 
     initFakeData(): void {
-        /*if (Accounts.findUserByUsername('admin')) {
+        if (process.env.ADMIN_FORCE_CREATE && Accounts.findUserByUsername('admin')) {
             Meteor.users.remove({'username': 'admin'});
-        }*/
-        if (!process.env.ADMIN_NO_CREATE && !Accounts.findUserByUsername(process.env.ADMIN_USERNAME || 'admin') ) {
+        }
+        if (process.env.ADMIN_FORCE_CREATE || (!process.env.ADMIN_NO_CREATE && !Accounts.findUserByUsername(process.env.ADMIN_USERNAME || 'admin'))) {
             let userData: CreateUser = {
                 username: process.env.ADMIN_USERNAME || 'admin',
                 fullName: 'Admin Admin',

@@ -9,23 +9,26 @@ import * as moment from 'moment';
 
 ItemCollection.allow({
     insert(userId: string, doc: Item): boolean {
-        console.log("Insert", doc);
-        return Roles.userHasRole(userId, 'manager');
+        return false;
     },
     update(userId: string, doc: Item, fieldNames: string[], modifier: any): boolean {
-        console.log("Update", doc);
-        return Roles.userHasRole(userId, 'manager');
+        return false;
     },
     remove(userId: string, doc: Item): boolean {
-        console.log("Remove", doc);
-        return Roles.userHasRole(userId, 'manager');
+        return false;
     }
 });
 
 Meteor.publish('items.public', function() {
+    if (!this.userId) {
+        return [];
+    }
     return ItemCollection.find({status: 'public'});
 });
 Meteor.publish('items', function() {
+    if (!this.userId) {
+        return [];
+    }
     if (Roles.userHasRole(this.userId, 'manager')) {
         return ItemCollection.find({});
     }
@@ -33,6 +36,9 @@ Meteor.publish('items', function() {
 });
 
 Meteor.publish('item.states.all', function() {
+    if (!this.userId) {
+        return [];
+    }
     if (Roles.userHasRole(this.userId, 'admin')) {
         return ItemStateCollection.find();
     }
@@ -40,6 +46,9 @@ Meteor.publish('item.states.all', function() {
 });
 
 Meteor.publish('item.states', function(params: {itemId: string, start?: Date, end?: Date}) {
+    if (!this.userId) {
+        return [];
+    }
     console.log("register itemStates");
     if (!params) {
         throw new Meteor.Error('validation', 'Missing parameters');
@@ -148,6 +157,11 @@ function updateItem(item: Item, itemRef: Item, updateComment: string) {
         updateState.fields['tags'] = item.tags;
         hadChange = true;
     }
+    if (item.itemGroup !== itemRef.itemGroup) {
+        updateData.itemGroup = item.itemGroup;
+        updateState.fields['itemGroup'] = item.itemGroup;
+        hadChange = true;
+    }
     if (item.status !== itemRef.status) {
         updateData.status = item.status;
         updateState.fields['status'] = item.status;
@@ -165,6 +179,9 @@ function updateItem(item: Item, itemRef: Item, updateComment: string) {
 
 Meteor.methods({
     'items.insert'({item, updateComment}: {item: Item, updateComment: string}): string {
+        if (!this.userId) {
+            return;
+        }
         if (!Roles.userHasRole(this.userId, 'manager')) {
             throw new Meteor.Error('unauthorized', 'User is not manager');
         }
@@ -176,6 +193,9 @@ Meteor.methods({
         return insertItem(item, updateComment);
     },
     'items.addAll'({items, updateComment}: {items: Item[], updateComment?: string}): void {
+        if (!this.userId) {
+            return;
+        }
         if (!Roles.userHasRole(this.userId, 'manager')) {
             throw new Meteor.Error('unauthorized', 'User it not manager');
         }
@@ -201,6 +221,9 @@ Meteor.methods({
         });
     },
     'items.update'({item, updateComment}: {item: Item, updateComment: string}): void {
+        if (!this.userId) {
+            return;
+        }
         if (!Roles.userHasRole(this.userId, 'manager')) {
             throw new Meteor.Error('unauthorized', 'User it not manager');
         }
@@ -217,5 +240,23 @@ Meteor.methods({
         }
 
         updateItem(item, itemRef, updateComment);
+    },
+    'items.remove'({itemId}: {itemId: string}): void {
+        if (!this.userId) {
+            return;
+        }
+        if (!Roles.userHasRole(this.userId, 'manager')) {
+            throw new Meteor.Error('unauthorized', 'User it not manager');
+        }
+        new SimpleSchema({
+            itemId: String
+        }).validate({itemId});
+
+        let itemRef = ItemCollection.findOne({_id: itemId});
+        if (!itemRef) {
+            throw new Meteor.Error('id', 'Invalid id');
+        }
+        ItemCollection.remove({_id: itemId});
+        ItemStateCollection.remove({itemId: itemId});
     }
 });

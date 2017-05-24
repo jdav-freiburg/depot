@@ -45,6 +45,7 @@ import {ItemListPage} from "./pages/items-list/item-list";
 import {VerifyEmailPage} from "./pages/verify-email/verify-email";
 import {LocationStrategy, PathLocationStrategy} from "@angular/common";
 import {ResetPasswordPage} from "./pages/reset-password/reset-password";
+import {FilterFilterPipe} from "./pipes/filter-filter";
 
 @NgModule({
     // Components, Pipes, Directive
@@ -60,6 +61,7 @@ import {ResetPasswordPage} from "./pages/reset-password/reset-password";
         ReservationPage,
         DatePickerModal,
         ItemsFilterPipe,
+        FilterFilterPipe,
         ReservationsFilterPipe,
         UserComponent,
         ReservationDatePickerComponent,

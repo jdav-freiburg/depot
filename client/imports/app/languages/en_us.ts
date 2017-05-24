@@ -122,8 +122,19 @@ export const en_us = {
     "CONTACT": "Contact",
     "ITEMS": "Items",
     "NOT_AVAILABLE": "Not Available",
+    "ITEM_CONDITION_BAD": "Bad",
+    "ITEM_CONDITION_BROKEN": "Broken",
+    "SOME_NOT_AVAILABLE": (data) => `${data.total - data.available}/${data.total} not available`,
+    "SOME_REMOVED": (data) => `${data.total}/${data.selected + data.total} removed`,
     "REMOVED": "Removed",
     "ITEMS_REMOVED": (data) => `${_.join(data.items, ', ')} removed from reservation (already reserved).`,
+    "FILTER_TAG": {
+      "NAME": "name",
+      "DESCRIPTION": "description",
+      "TAG": "tag",
+      "EXTERNAL_ID": "externalid",
+      "SELECTED": "selected\0reserved\0reservated"
+    },
     "LEAVE": {
       "TITLE": "Unsaved changes",
       "SUB_TITLE": "Do you want to save before leaving?",

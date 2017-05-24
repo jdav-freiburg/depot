@@ -15,9 +15,15 @@ import * as util from "util";
 
 Meteor.users.allow({
     insert(userId: string, doc: Meteor.User): boolean {
+        if (!userId) {
+            return false;
+        }
         return Roles.userHasRole(userId, 'admin');
     },
     update(userId, doc: Meteor.User, fieldNames, modifier): boolean {
+        if (!userId) {
+            return false;
+        }
         console.log("User Updating", userId, doc, fieldNames, modifier);
         if (Roles.userHasRole(userId, 'admin')) {
             return _.difference(fieldNames, ['fullName', 'phone', 'picture', 'language', 'roles']).length === 0;
@@ -28,6 +34,9 @@ Meteor.users.allow({
         return _.difference(fieldNames, ['fullName', 'phone', 'picture', 'language']).length === 0;
     },
     remove(userId: string, doc: Meteor.User): boolean {
+        if (!userId) {
+            return false;
+        }
         return Roles.userHasRole(userId, 'admin');
     }
 });
@@ -211,6 +220,9 @@ Meteor.methods({
         sendPasswordReset(user._id, user.language, userEmail);
     },
     'users.addEmail'({userId, email}: { userId: string, email: string}): void {
+        if (!this.userId) {
+            return;
+        }
         console.log("addEmail:", this.userId, userId, email);
         new SimpleSchema({
             userId: String,
@@ -233,6 +245,9 @@ Meteor.methods({
         console.log("addedEmail:", this.userId, userId, email);
     },
     'users.setUsername'({userId, name}: {userId: string, name: string}): void {
+        if (!this.userId) {
+            return;
+        }
         new SimpleSchema({
             userId: String,
             name: String
@@ -248,6 +263,9 @@ Meteor.methods({
         Accounts.setUsername(userId, name);
     },
     'users.removeEmail'({userId, email}: { userId: string, email: string}): void {
+        if (!this.userId) {
+            return;
+        }
         new SimpleSchema({
             userId: String,
             email: String
@@ -263,6 +281,9 @@ Meteor.methods({
         Accounts.removeEmail(userId, email);
     },
     'users.updateEmail'({userId, oldEmail, newEmail}: { userId: string, oldEmail: string, newEmail: string}): void {
+        if (!this.userId) {
+            return;
+        }
         new SimpleSchema({
             userId: String,
             oldEmail: String,
@@ -286,6 +307,9 @@ Meteor.methods({
         sendAddressVerification(userId, user.language, newEmail);
     },
     'users.updatePassword'({userId, newPassword, oldPassword}: { userId: string, newPassword: string, oldPassword?: string}): void {
+        if (!this.userId) {
+            return;
+        }
         new SimpleSchema({
             userId: String,
             newPassword: String,
@@ -372,6 +396,9 @@ Meteor.methods({
         console.log("Password reset successful");
     },
     'users.setLanguage'({language, userId}: { language: string, userId?: string}): void {
+        if (!this.userId) {
+            return;
+        }
         new SimpleSchema({
             language: String,
             userId: {type: String, optional: true},
@@ -386,6 +413,9 @@ Meteor.methods({
         UserCollection.update({_id: userId || this.userId}, {$set: {language: language}});
     },
     'users.unlock'({userId}: { userId: string}): void {
+        if (!this.userId) {
+            return;
+        }
         new SimpleSchema({
             userId: userId,
         }).validate({
@@ -413,6 +443,9 @@ Meteor.methods({
         GlobalMessageCollection.insert(globalMessage);
     },
     'users.setStatus'({status, userId}: { status: string, userId: string}): void {
+        if (!this.userId) {
+            return;
+        }
         new SimpleSchema({
             status: String,
             userId: userId,

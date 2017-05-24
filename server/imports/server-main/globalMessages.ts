@@ -19,6 +19,9 @@ GlobalMessageCollection.allow({
 });
 
 Meteor.publish('globalMessages', function(params?: {start?: Date, end?: Date}) {
+    if (!this.userId) {
+        return [];
+    }
     if (params) {
         new SimpleSchema({
             start: { type: Date, optional: true },

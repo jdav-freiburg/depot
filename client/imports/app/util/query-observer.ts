@@ -180,7 +180,7 @@ export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> 
     public readonly dataChanged: Subject<U[]> = new BehaviorSubject<U[]>([]);
     private handle: Meteor.LiveQueryHandle;
 
-    public constructor(private query: ObservableCursor<T>, private zone: NgZone, private transformer: (item: T) => U, private addFirstEmpty?: boolean) {
+    public constructor(private query: ObservableCursor<T>, private zone: NgZone, private transformer: (item: T) => U, private addFirstEmpty?: boolean, private removed?: (item: T, index: number) => void) {
         let initialObservation = true;
         if (addFirstEmpty) {
             this._transformedData.push(transformer(null));
@@ -277,8 +277,11 @@ export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> 
                     delete this._index[id];
                     for (let i = 0; i < this._data.length; i++) {
                         if (this._data[i]._id === id) {
-                            this._data.splice(i, 1);
+                            let removedItem = this._data.splice(i, 1)[0];
                             this._transformedData.splice((i?i+1:i), 1);
+                            if (removed) {
+                                removed(removedItem, i);
+                            }
                         }
                     }
                     this.dataChanged.next(this._transformedData);

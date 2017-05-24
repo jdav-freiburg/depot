@@ -84,6 +84,9 @@ export class ItemsImporterPage implements OnInit, OnDestroy {
         let result = Baby.parse(data).data;
         let isFirst = true;
         let first = result.splice(0, 1)[0];
+        if (_.every(result[result.length - 1], (field) => !field)) {
+            result.splice(result.length - 1, 1);
+        }
         console.log("First entry:", first);
         console.log("Second entry:", result[1]);
         this.items = _.map(result, entry => {
@@ -113,7 +116,7 @@ export class ItemsImporterPage implements OnInit, OnDestroy {
 
                 status: <string>entry[9],
 
-                itemGroup: <string>entry[10]
+                itemGroup: <string>entry[10] || null
             };
         });
     }
