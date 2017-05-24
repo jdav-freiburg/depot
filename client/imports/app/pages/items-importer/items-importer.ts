@@ -84,11 +84,13 @@ export class ItemsImporterPage implements OnInit, OnDestroy {
         let result = Baby.parse(data).data;
         let isFirst = true;
         let first = result.splice(0, 1)[0];
-        if (_.every(result[result.length - 1], (field) => !field)) {
-            result.splice(result.length - 1, 1);
+        while (_.every(result[result.length - 1], (field) => !field)) {
+            let removed = result.pop();
+            console.log("Remove last entry: ", removed);
         }
         console.log("First entry:", first);
         console.log("Second entry:", result[1]);
+        console.log("Last entry:", result[result.length - 1]);
         this.items = _.map(result, entry => {
             let purchaseDate;
             if (entry[6] && (<string>entry[6]).length == 4) {
@@ -112,13 +114,14 @@ export class ItemsImporterPage implements OnInit, OnDestroy {
 
                 picture: null,
 
-                tags: _.map(_.split(<string>entry[8], ","), str => str.trim()),
+                tags: (!(<string>entry[8]).trim()?[]:_.map(_.split(<string>entry[8], ","), str => str.trim())),
 
                 status: <string>entry[9],
 
                 itemGroup: <string>entry[10] || null
             };
         });
+        console.log("Imported entries", this.items);
     }
 
     getTags(tags: string): string[] {
