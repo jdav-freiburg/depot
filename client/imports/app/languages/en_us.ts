@@ -9,7 +9,7 @@ export const en_us = {
     "NEW_USER": {
       "HEADER": "New User Registered",
       "HELP": "A new user has registered. If you can authenticate the user, press unlock, so the user is allowed to use the system. Hint: You will be stored as the authenticator.",
-      "USERNAME": "Username",
+      "USER": "User",
       "EMAIL": "E-Mail",
       "PHONE": "Phone",
       "UNLOCK": "Unlock"

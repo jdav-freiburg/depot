@@ -10,7 +10,7 @@ export const de_de = {
     "NEW_USER": {
       "HEADER": "Neuer Benutzer registriert",
       "HELP": "Ein neuer Benutzer hat sich angemeldet. Wenn du den Benutzer authentisieren kannst, schalte ihn frei damit er sich anmelden kann. Hinweis: Du wirst als Authentisierer gespeichert.",
-      "USERNAME": "Benutzername",
+      "USER": "Benutzer",
       "EMAIL": "E-Mail",
       "PHONE": "Telefon",
       "UNLOCK": "Freischalten"
