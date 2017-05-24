@@ -11,6 +11,7 @@ import {TokenCollection} from "../../../both/collections/token.collection";
 import {GlobalMessageCollection} from "../../../both/collections/global-message.collection";
 import * as util from "util";
 import {UserCollection} from "../../../both/collections/user.collection";
+import {ItemCollection} from "../../../both/collections/item.collection";
 
 export class Main {
     start(): void {
@@ -43,6 +44,7 @@ Meteor.startup(function () {
     Meteor.users._ensureIndex({username: 1});
     Meteor.users._ensureIndex({email: 1});
     ItemStateCollection.rawCollection().createIndex({itemId: 1});
+    ItemCollection.rawCollection().createIndex({status: 1, name: 1, description: 1, condition: -1});
     ReservationCollection.rawCollection().createIndex({start: -1, end: 1});
     ReservationCollection.rawCollection().createIndex({userId: 1, start: -1, end: 1});
     ReservationCollection.rawCollection().createIndex({itemIds: 1, start: -1, end: 1});
