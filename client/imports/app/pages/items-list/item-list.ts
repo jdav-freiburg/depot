@@ -8,8 +8,9 @@ import {UserService} from "../../services/user";
 import * as moment from 'moment';
 import {NavController} from "ionic-angular";
 import {TranslateService} from "../../services/translate";
-import {QueryObserver} from "../../util/query-observer";
+import {ChangeableDataTransform, QueryObserverTransform} from "../../util/query-observer";
 import {ItemCardsPage} from "../item-cards/item-cards";
+import {ExtendedItem, FilterItem, SelectableItemSingle} from "../../util/item";
 
 @Component({
     selector: "item-list-page",
@@ -19,7 +20,7 @@ import {ItemCardsPage} from "../item-cards/item-cards";
 export class ItemListPage implements OnInit, OnDestroy {
     private filter: string = "";
 
-    private items: QueryObserver<Item>;
+    private items: QueryObserverTransform<Item, FilterItem>;
 
     headerFn(rec, idx) {
         return idx === 0 ? true : null;
@@ -30,7 +31,18 @@ export class ItemListPage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.items = new QueryObserver<Item>(this.itemsService.getItems(), this.ngZone, true);
+        this.items = new QueryObserverTransform<Item, FilterItem>(this.itemsService.getItems(), this.ngZone, (item) => {
+            if (!item) {
+                return null;
+            }
+            let transformed: FilterItem = (<ChangeableDataTransform<Item, FilterItem>>item)._transformed;
+            if (transformed) {
+                transformed.updateFrom(item, this.translate);
+            } else {
+                transformed = new ExtendedItem(item, this.translate);
+            }
+            return transformed;
+        }, false);
     }
 
     ngOnDestroy() {

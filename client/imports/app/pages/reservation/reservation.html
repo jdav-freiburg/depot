@@ -49,7 +49,7 @@
                     <ion-label>
                         <h2>{{item.name}}</h2>
                         <h3>{{item.description}}</h3>
-                        <p>{{item.tags}}</p>
+                        <p>{{item.tags}}<ng-container *ngIf="item.conditionComment">; {{item.conditionComment}}</ng-container></p>
                     </ion-label>
                     <ion-badge item-right *ngIf="item.condition=='bad'" color="warning">{{'RESERVATION_PAGE.ITEM_CONDITION_BAD' | translate}}</ion-badge>
                     <ion-badge item-right *ngIf="item.condition=='broken'" color="danger">{{'RESERVATION_PAGE.ITEM_CONDITION_BROKEN' | translate}}</ion-badge>

@@ -128,13 +128,6 @@ export const en_us = {
     "SOME_REMOVED": (data) => `${data.total}/${data.selected + data.total} removed`,
     "REMOVED": "Removed",
     "ITEMS_REMOVED": (data) => `${_.join(data.items, ', ')} removed from reservation (already reserved).`,
-    "FILTER_TAG": {
-      "NAME": "name",
-      "DESCRIPTION": "description",
-      "TAG": "tag",
-      "EXTERNAL_ID": "externalid",
-      "SELECTED": "selected\0reserved\0reservated"
-    },
     "LEAVE": {
       "TITLE": "Unsaved changes",
       "SUB_TITLE": "Do you want to save before leaving?",
@@ -275,6 +268,13 @@ export const en_us = {
       "GOOD": "Good",
       "BAD": "Bad",
       "BROKEN": "Broken"
+    },
+    "FILTER_TAG": {
+      "NAME": "name",
+      "DESCRIPTION": "description",
+      "TAG": "tag",
+      "EXTERNAL_ID": "externalid",
+      "SELECTED": "selected\0reserved\0reservated"
     }
   },
   "ITEM_STATE": {

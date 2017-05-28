@@ -129,13 +129,6 @@ export const de_de = {
     "SOME_REMOVED": (data) => `${data.total}/${data.selected + data.total} entfernt`,
     "REMOVED": "Entfernt",
     "ITEMS_REMOVED": (data) => `${_.join(data.items, ', ')} aus der Reservierung entfernt (bereits reserviert).`,
-    "FILTER_TAG": {
-      "NAME": "name",
-      "DESCRIPTION": "beschreibung\0description",
-      "TAG": "tag",
-      "EXTERNAL_ID": "id",
-      "SELECTED": "wahl\0gewählt\0selektiert\0selected\0reserviert"
-    },
     "LEAVE": {
       "TITLE": "Ungespeicherte Änderungen",
       "SUB_TITLE": "Sollen ungespeicherte Änderungen gespeichert werden?",
@@ -276,6 +269,13 @@ export const de_de = {
       "GOOD": "Gut",
       "BAD": "Schlecht",
       "BROKEN": "Kaputt"
+    },
+    "FILTER_TAG": {
+      "NAME": "name",
+      "DESCRIPTION": "beschreibung\0description",
+      "TAG": "tag",
+      "EXTERNAL_ID": "id",
+      "SELECTED": "wahl\0gewählt\0selektiert\0selected\0reserviert"
     }
   },
   "ITEM_STATE": {
