@@ -7,6 +7,9 @@
             <ion-icon name="menu"></ion-icon>
         </button>
         <ion-buttons end>
+            <button ion-button icon-only (click)="upload()">
+                <ion-icon name="cloud-upload"></ion-icon>
+            </button>
             <button ion-button icon-only clear (click)="exportItems()">
                 <ion-icon name="download"></ion-icon>
             </button>
@@ -16,11 +19,10 @@
 </ion-header>
 
 <ion-content>
-    <ion-card>
-        <upload-button block item-content (fileDrop)="fileDrop($event)" fileResult="Text" style="width: 100%"></upload-button>
-    </ion-card>
+    <div *ngIf="!items" class="file-drop no-file" [ngClass]="{'file-over': fileIsOver}" fileDrop (fileOver)="onFileOver($event)" (onFileDrop)="onFileDrop($event)">
+    </div>
     <ion-searchbar [(ngModel)]="filter" [placeholder]="'ITEMS_IMPORTER_PAGE.FILTER' | translate" *ngIf="items"></ion-searchbar>
-    <ion-list [virtualScroll]="items | itemsfilter:filter" approxItemHeight="25px" [headerFn]="headerFn">
+    <ion-list class="file-drop" [ngClass]="{'file-over': fileIsOver, 'has-file': items}" [virtualScroll]="items | itemsfilter:filter" approxItemHeight="25px" [headerFn]="headerFn">
         <div *virtualHeader="let header" style="width: 100%">
             <item-card view="listHeader" [extended]="true" [editable]="true" [saveDirect]="true"></item-card>
         </div>

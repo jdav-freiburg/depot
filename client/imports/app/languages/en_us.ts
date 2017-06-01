@@ -278,7 +278,7 @@ export const en_us = {
     }
   },
   "ITEM_STATE": {
-    "TEXT": (data) => (data.comment?data.comment + "<br>\n":"") + _.join(data.texts, ", <br>\n"),
+    "TEXT": (data) => (data.comment?data.comment + "<br>\n":"") + (_.join(data.texts, ", <br>\n") || ""),
     "LAST_SERVICE": (data) => `Service at ${moment(data.lastService).toLocaleString()}`,
     "CONDITION_CONDITION_COMMENT": (data) => `Condition: ${data.conditionOption.text} (${data.conditionComment})`,
     "CONDITION": (data) => `Condition: ${data.conditionOption.text}`,
@@ -287,7 +287,9 @@ export const en_us = {
     "DESCRIPTION": (data) => `New Description: ${data.description}`,
     "EXTERNAL_ID": (data) => `New External Id: ${data.externalId}`,
     "TAGS": (data) => `New Tags: ${_.join(data.tags, ', ')}`,
-    "STATUS": (data) => `New Status: ${data.statusOption.text}`
+    "PICTURE": (data) => `New Picture`,
+    "STATUS": (data) => `New Status: ${data.statusOption.text}`,
+    "RESERVATION_NAME": (data) => `${data.user.name} - ${data.type} - ${data.reservation.name}`
   },
   "USER": {
     "STATUS": {

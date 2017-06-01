@@ -1,0 +1,51 @@
+.image-drop-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.image-drop {
+  padding: 10px;
+  border-radius: 10px;
+  border: dashed medium cornflowerblue;
+  background-color: white;
+  transition: background-color 0.5s linear, border-color 0.5s linear, border-width 0.5s linear;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.image-drop.has-image {
+  border: none;
+}
+
+.image-drop.file-over, .image-drop.has-image.file-over {
+  background-color: lightgray;
+  border: dashed medium dodgerblue;
+}
+
+.img-output {
+  flex: auto;
+  overflow: hidden;
+  position: relative;
+
+  display: flex;
+  box-sizing: border-box;
+}
+
+.img-output img {
+  position: absolute;
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}

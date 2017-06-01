@@ -108,7 +108,6 @@ export class UserService {
             added: (data: User) => {
                 this.ngZone.run(() => {
                     this._users.push(data);
-                    console.log("user added", this._users);
                     this.usersChange.next(this._users);
                 });
             },
@@ -171,6 +170,10 @@ export class UserService {
 
     public get isManager(): boolean {
         return this._user && _.includes(this._user.roles, 'manager');
+    }
+
+    public tryGetUser(id: string): User {
+        return _.find(this.users, user => user._id = id);
     }
 
 

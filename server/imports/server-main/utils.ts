@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import {UserCollection} from "../../../both/collections/user.collection";
 import {User} from "../../../both/models/user.model";
 
-
+export const Future = Npm.require('fibers/future');
 
 export class Roles {
     public static userHasRole(userId: string|User, roles: string|string[]) {

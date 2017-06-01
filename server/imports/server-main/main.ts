@@ -3,14 +3,14 @@
 import './user.ts';
 import './item.ts';
 import './reservation.ts';
-import './globalMessages.ts';
-import {CreateUser, User} from "../../../both/models/user.model";
+import './global-messages.ts';
+import './picture-store.ts';
+import {CreateUser} from "../../../both/models/user.model";
 import {ItemStateCollection} from "../../../both/collections/item-state.collection";
 import {ReservationCollection} from "../../../both/collections/reservation.collection";
 import {TokenCollection} from "../../../both/collections/token.collection";
 import {GlobalMessageCollection} from "../../../both/collections/global-message.collection";
 import * as util from "util";
-import {UserCollection} from "../../../both/collections/user.collection";
 import {ItemCollection} from "../../../both/collections/item.collection";
 
 export class Main {

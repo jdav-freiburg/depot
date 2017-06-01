@@ -279,7 +279,7 @@ export const de_de = {
     }
   },
   "ITEM_STATE": {
-    "TEXT": (data) => (data.comment?data.comment + "<br>\n":"") + _.join(data.texts, ", <br>\n"),
+    "TEXT": (data) => (data.comment?data.comment + "<br>\n":"") + (_.join(data.texts, ", <br>\n") || ""),
     "LAST_SERVICE": (data) => `Wartung am ${moment(data.lastService).format('L')}`,
     "CONDITION_CONDITION_COMMENT": (data) => `Zustand: ${data.conditionOption.text} (${data.conditionComment})`,
     "CONDITION": (data) => `Zustand: ${data.conditionOption.text}`,
@@ -288,7 +288,9 @@ export const de_de = {
     "DESCRIPTION": (data) => `Neue Beschreibung: ${data.description}`,
     "EXTERNAL_ID": (data) => `Neue Externe Id: ${data.externalId}`,
     "TAGS": (data) => `Neue Tags: ${_.join(data.tags, ', ')}`,
-    "STATUS": (data) => `Neuer Status: ${data.statusOption.text}`
+    "PICTURE": (data) => `Neues Bild`,
+    "STATUS": (data) => `Neuer Status: ${data.statusOption.text}`,
+    "RESERVATION_NAME": (data) => `${data.user.name} - ${data.type} - ${data.reservation.name}`
   },
   "USER": {
     "STATUS": {

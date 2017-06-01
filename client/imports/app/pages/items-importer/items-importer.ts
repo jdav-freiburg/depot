@@ -1,5 +1,4 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
-import { Observable } from "rxjs";
+import {Component} from "@angular/core";
 import template from "./items-importer.html";
 import style from "./items-importer.scss";
 import * as _ from "lodash";
@@ -13,22 +12,25 @@ import {ItemsDataService} from "../../services/items-data";
 import {FormGroup, FormBuilder, Validators} from "@angular/forms";
 
 import * as Baby from 'babyparse';
+import {UploadFS} from "meteor/jalik:ufs";
+import 'fileapi';
+declare const FileAPI: any;
+
 
 @Component({
     selector: "items-importer-page",
     template,
     styles: [ style ]
 })
-export class ItemsImporterPage implements OnInit, OnDestroy {
+export class ItemsImporterPage {
     items: Item[] = null;
 
     filter: string = "";
 
-    editItemId: string = null;
-
     uploadForm: FormGroup;
 
     isWorking: boolean = false;
+    fileIsOver: boolean = false;
 
     constructor(private fb: FormBuilder,
                 private itemsDataService: ItemsDataService, private userService: UserService,
@@ -39,11 +41,32 @@ export class ItemsImporterPage implements OnInit, OnDestroy {
         });
     }
 
-    ngOnInit() {
+
+    onFileOver(isOver: boolean) {
+        this.fileIsOver = isOver;
     }
 
-    ngOnDestroy() {
+    onFileDrop(data: any) {
+        this.openFile(data);
     }
+
+    openFile(file: File) {
+        FileAPI.readAsText(file, (event) => {
+            if (event.type === 'load') {
+                this.fileDrop(event.result);
+            } else if (event.type === 'error') {
+                throw new Error(`Couldn't read file '${file.name}'`);
+            }
+        });
+    }
+
+    public upload(): void {
+        UploadFS.selectFiles((file) => {
+            this.openFile(file);
+        });
+    }
+
+
 
     momentFormat(date: Date) {
         let m = moment(date);
@@ -79,7 +102,7 @@ export class ItemsImporterPage implements OnInit, OnDestroy {
         document.body.removeChild(temporaryDownloadLink);
     }
 
-    fileDrop(data) {
+    fileDrop(data: string) {
         console.log("Drop:", data);
         let result = Baby.parse(data).data;
         let isFirst = true;

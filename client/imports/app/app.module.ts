@@ -39,13 +39,16 @@ import {MarkdownModule} from "angular2-markdown";
 import {ReservationCardComponent} from "./components/reservation-card/reservation-card";
 import {ItemsImporterPage} from "./pages/items-importer/items-importer";
 import {FileDropModule} from "angular2-file-drop";
-import {UploadButton} from "./components/upload-button/upload-button";
 import {ItemCardComponent} from "./components/item-card/item-card";
 import {ItemListPage} from "./pages/items-list/item-list";
 import {VerifyEmailPage} from "./pages/verify-email/verify-email";
 import {LocationStrategy, PathLocationStrategy} from "@angular/common";
 import {ResetPasswordPage} from "./pages/reset-password/reset-password";
 import {FilterFilterPipe} from "./pipes/filter-filter";
+import {ImageUploaderModal} from "./pages/image-uploader-modal/image-uploader-modal";
+import {PictureService} from "./services/picture";
+import {ImageGalleryModal} from "./pages/image-gallery-modal/image-gallery-modal";
+import {ImagePreviewModal} from "./pages/image-preview-modal/image-preview-modal";
 
 @NgModule({
     // Components, Pipes, Directive
@@ -76,11 +79,13 @@ import {FilterFilterPipe} from "./pipes/filter-filter";
         AdvancedEmailValidatorDirective,
         ReservationCardComponent,
         ItemsImporterPage,
-        UploadButton,
         ItemCardComponent,
         ItemListPage,
         VerifyEmailPage,
-        ResetPasswordPage
+        ResetPasswordPage,
+        ImageUploaderModal,
+        ImageGalleryModal,
+        ImagePreviewModal
     ],
     // Entry Components
     entryComponents: [
@@ -101,7 +106,10 @@ import {FilterFilterPipe} from "./pipes/filter-filter";
         UsersPage,
         ItemsImporterPage,
         VerifyEmailPage,
-        ResetPasswordPage
+        ResetPasswordPage,
+        ImageUploaderModal,
+        ImageGalleryModal,
+        ImagePreviewModal
     ],
     // Providers
     providers: [
@@ -114,7 +122,8 @@ import {FilterFilterPipe} from "./pipes/filter-filter";
         DebugService,
         TranslateService,
         TranslateHelperService,
-        GlobalMessagesDataService
+        GlobalMessagesDataService,
+        PictureService
     ],
     // Modules
     imports: [

@@ -19,6 +19,16 @@ import {TranslateService} from "../../services/translate";
 import {TranslateHelperService} from "../../services/translate-helper";
 import {ChangeableDataTransform, QueryObserverTransform} from "../../util/query-observer";
 import {SelectableItemSingle, SelectableItemGroup, SelectedProvider, SelectableItem} from "../../util/item";
+import {PictureService} from "../../services/picture";
+import {ImagePreviewModal} from "../image-preview-modal/image-preview-modal";
+
+class SelectableItemSingleImage extends SelectableItemSingle {
+    public pictureUrl: string;
+
+    public constructor(item: Item, translate: TranslateService, selectedProvider: SelectedProvider) {
+        super(item, translate, selectedProvider);
+    }
+}
 
 @Component({
     selector: "reservation-page",
@@ -113,7 +123,7 @@ export class ReservationPage implements OnInit, OnDestroy, AfterViewInit {
                 private modalCtrl: ModalController, private toast: ToastController,
                 private alertCtrl: AlertController, private platform: Platform,
                 private translate: TranslateService, private translateHelper: TranslateHelperService,
-                private ngZone: NgZone) {
+                private ngZone: NgZone, private pictureService: PictureService) {
         this.reservationForm = fb.group({
             type: ["", Validators.required],
             name: ["", Validators.required],
@@ -244,12 +254,87 @@ export class ReservationPage implements OnInit, OnDestroy, AfterViewInit {
 
     ngOnInit() {
         let self = this;
-        this.items = new QueryObserverTransform<Item, SelectableItemSingle>(this.itemsDataService.getPublicItems(), this.ngZone, (item) => {
-            let transformed: SelectableItemSingle = (<ChangeableDataTransform<Item, SelectableItemSingle>>item)._transformed;
-            if (transformed) {
-                if (item.itemGroup !== transformed.itemGroup) {
+        this.items = new QueryObserverTransform<Item, SelectableItemSingleImage>({
+            query: this.itemsDataService.getPublicItems(),
+            zone: this.ngZone,
+            transformer: (item) => {
+                let transformed: SelectableItemSingleImage = (<ChangeableDataTransform<Item, SelectableItemSingleImage>>item)._transformed;
+                if (transformed) {
+                    if (item.itemGroup !== transformed.itemGroup) {
+                        if (transformed.itemGroup) {
+                            let itemGroup = transformed.itemGroupRef;
+                            if (!itemGroup) {
+                                console.log("ERROR: Data inconsistent");
+                            } else {
+                                let removed = _.remove(itemGroup.subItems, item);
+                                if (removed.length !== 1) {
+                                    console.log("ERROR: Data inconsistent");
+                                }
+                                if (itemGroup.subItems.length === 0) {
+                                    let removed = _.remove(this.itemGroups, (itemGroupRef) => itemGroupRef === itemGroup);
+                                    delete this.itemGroupsIndex[transformed.itemGroup];
+                                    if (removed.length !== 1) {
+                                        console.log("ERROR: Data inconsistent");
+                                    }
+                                } else {
+                                    itemGroup.update();
+                                }
+                            }
+                        } else {
+                            let removed = _.remove(this.itemGroups, (itemGroupRef) => itemGroupRef === transformed);
+                            if (removed.length !== 1) {
+                                console.log("ERROR: Data inconsistent");
+                            }
+                        }
+                        transformed.itemGroupRef = null;
+                    }
+                    transformed.updateFrom(item, this.translate);
+                } else {
+                    transformed = new SelectableItemSingleImage(item, this.translate, this._selectedProvider);
+                }
+                if (transformed.picture) {
+                    this.pictureService.getPictureThumbnailUrl(transformed.picture).then((url) => {
+                        transformed.pictureUrl = url;
+                    });
+                }
+                if (!transformed.itemGroupRef) {
                     if (transformed.itemGroup) {
-                        let itemGroup = transformed.itemGroupRef;
+                        let itemGroup: SelectableItemGroup;
+                        if (this.itemGroupsIndex.hasOwnProperty(transformed.itemGroup)) {
+                            itemGroup = this.itemGroupsIndex[transformed.itemGroup];
+                        } else {
+                            itemGroup = new SelectableItemGroup();
+                            this.itemGroupsIndex[transformed.itemGroup] = itemGroup;
+                            this.itemGroups.push(itemGroup);
+                        }
+                        transformed.itemGroupRef = itemGroup;
+                        itemGroup.subItems.push(transformed);
+                        if (!itemGroup.update()) {
+                            console.log("Removed item:", this.reservation, transformed);
+                            this.toast.create({
+                                message: this.translate.get("RESERVATION_PAGE.ITEMS_REMOVED", {'items': [transformed.name]}),
+                                duration: 2500
+                            }).present();
+                        }
+                    } else {
+                        transformed.itemGroupRef = transformed;
+                        this.itemGroups.push(transformed);
+                        if (!transformed.update()) {
+                            console.log("Removed item:", this.reservation, transformed);
+                            this.toast.create({
+                                message: this.translate.get("RESERVATION_PAGE.ITEMS_REMOVED", {'items': [transformed.name]}),
+                                duration: 2500
+                            }).present();
+                        }
+                    }
+                }
+                return transformed;
+            },
+            removed: (item, index) => {
+                let transformed: SelectableItem = (<any>item)._transformed;
+                if (transformed) {
+                    if (transformed.itemGroup) {
+                        let itemGroup = this.itemGroupsIndex[transformed.itemGroup];
                         if (!itemGroup) {
                             console.log("ERROR: Data inconsistent");
                         } else {
@@ -258,7 +343,7 @@ export class ReservationPage implements OnInit, OnDestroy, AfterViewInit {
                                 console.log("ERROR: Data inconsistent");
                             }
                             if (itemGroup.subItems.length === 0) {
-                                let removed = _.remove(this.itemGroups, (itemGroupRef) => itemGroupRef === itemGroup);
+                                let removed = _.remove(this.itemGroups, (itemGroupDel) => itemGroupDel === itemGroup);
                                 delete this.itemGroupsIndex[transformed.itemGroup];
                                 if (removed.length !== 1) {
                                     console.log("ERROR: Data inconsistent");
@@ -267,82 +352,17 @@ export class ReservationPage implements OnInit, OnDestroy, AfterViewInit {
                                 itemGroup.update();
                             }
                         }
+                        transformed.itemGroupRef = null;
                     } else {
-                        let removed = _.remove(this.itemGroups, (itemGroupRef) => itemGroupRef === transformed);
-                        if (removed.length !== 1) {
-                            console.log("ERROR: Data inconsistent");
-                        }
-                    }
-                    transformed.itemGroupRef = null;
-                }
-                transformed.updateFrom(item, this.translate);
-            } else {
-                transformed = new SelectableItemSingle(item, this.translate, this._selectedProvider);
-            }
-            if (!transformed.itemGroupRef) {
-                if (transformed.itemGroup) {
-                    let itemGroup: SelectableItemGroup;
-                    if (this.itemGroupsIndex.hasOwnProperty(transformed.itemGroup)) {
-                        itemGroup = this.itemGroupsIndex[transformed.itemGroup];
-                    } else {
-                        itemGroup = new SelectableItemGroup();
-                        this.itemGroupsIndex[transformed.itemGroup] = itemGroup;
-                        this.itemGroups.push(itemGroup);
-                    }
-                    transformed.itemGroupRef = itemGroup;
-                    itemGroup.subItems.push(transformed);
-                    if (!itemGroup.update()) {
-                        console.log("Removed item:", this.reservation, transformed);
-                        this.toast.create({
-                            message: this.translate.get("RESERVATION_PAGE.ITEMS_REMOVED", {'items': [transformed.name]}),
-                            duration: 2500
-                        }).present();
-                    }
-                } else {
-                    transformed.itemGroupRef = transformed;
-                    this.itemGroups.push(transformed);
-                    if (!transformed.update()) {
-                        console.log("Removed item:", this.reservation, transformed);
-                        this.toast.create({
-                            message: this.translate.get("RESERVATION_PAGE.ITEMS_REMOVED", {'items': [transformed.name]}),
-                            duration: 2500
-                        }).present();
-                    }
-                }
-            }
-            return transformed;
-        }, false, (item, index) => {
-            let transformed: SelectableItem = (<any>item)._transformed;
-            if (transformed) {
-                if (transformed.itemGroup) {
-                    let itemGroup = this.itemGroupsIndex[transformed.itemGroup];
-                    if (!itemGroup) {
                         console.log("ERROR: Data inconsistent");
-                    } else {
-                        let removed = _.remove(itemGroup.subItems, item);
-                        if (removed.length !== 1) {
-                            console.log("ERROR: Data inconsistent");
-                        }
-                        if (itemGroup.subItems.length === 0) {
-                            let removed = _.remove(this.itemGroups, (itemGroupDel) => itemGroupDel === itemGroup);
-                            delete this.itemGroupsIndex[transformed.itemGroup];
-                            if (removed.length !== 1) {
-                                console.log("ERROR: Data inconsistent");
-                            }
-                        } else {
-                            itemGroup.update();
-                        }
                     }
-                    transformed.itemGroupRef = null;
-                } else {
-                    console.log("ERROR: Data inconsistent");
-                }
-                if (transformed.selected) {
-                    console.log("Removed item:", this.reservation, transformed);
-                    this.toast.create({
-                        message: this.translate.get("RESERVATION_PAGE.ITEMS_REMOVED", {'items': [transformed.name]}),
-                        duration: 2500
-                    }).present();
+                    if (transformed.selected) {
+                        console.log("Removed item:", this.reservation, transformed);
+                        this.toast.create({
+                            message: this.translate.get("RESERVATION_PAGE.ITEMS_REMOVED", {'items': [transformed.name]}),
+                            duration: 2500
+                        }).present();
+                    }
                 }
             }
         });
@@ -493,6 +513,16 @@ export class ReservationPage implements OnInit, OnDestroy, AfterViewInit {
             skipReservationId: this.editId,
             rangeStart: this.startDate,
             rangeEnd: this.endDate,
+        }).then(() => {
+            this.forceClose = false;
+        });
+    }
+
+    openItemPicture(item: Item) {
+        this.forceClose = true;
+        this.navCtrl.push(ImagePreviewModal, {
+            picture: item.picture,
+            title: item.name
         }).then(() => {
             this.forceClose = false;
         });

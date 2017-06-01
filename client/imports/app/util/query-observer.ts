@@ -173,6 +173,15 @@ export interface ChangeableDataTransform<T, U> extends ChangeableData<T> {
     _transformed?: U;
 }
 
+export interface QueryObserverTransformOptions<T extends ChangeableDataTransform<T, U>, U> {
+    query: ObservableCursor<T>;
+    zone: NgZone;
+    transformer: (item: T) => U;
+    addFirstEmpty?: boolean;
+    removed?: (item: T, index: number) => void;
+    suppressNull?: boolean;
+}
+
 export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> {
     private _transformedData: U[] = [];
     private _data: T[] = [];
@@ -180,35 +189,23 @@ export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> 
     public readonly dataChanged: Subject<U[]> = new BehaviorSubject<U[]>([]);
     private handle: Meteor.LiveQueryHandle;
 
-    public constructor(private query: ObservableCursor<T>, private zone: NgZone, private transformer: (item: T) => U, private addFirstEmpty?: boolean, private removed?: (item: T, index: number) => void) {
+    public constructor(private options: QueryObserverTransformOptions<T, U>) {
         let initialObservation = true;
-        if (addFirstEmpty) {
-            this._transformedData.push(transformer(null));
+        if (options.addFirstEmpty) {
+            let transformed = options.transformer(null);
+            if (!options.suppressNull || transformed !== null) {
+                this._transformedData.push(transformed);
+            }
         }
-        this.handle = query.observeChanges({
+        this.handle = options.query.observeChanges({
             addedBefore: (id: string, fields: T, before: string) => {
                 fields._id = id;
                 fields._changed = new BehaviorSubject<T>(fields);
                 if (initialObservation) {
                     this._index[id] = fields;
-                    let transformed = transformer(fields);
-                    fields._transformed = transformed;
-                    if (!before) {
-                        this._data.push(fields);
-                        this._transformedData.push(transformed);
-                    } else {
-                        for (let i = 0; i < this._data.length; i++) {
-                            if (this._data[i]._id === before) {
-                                this._data.splice(i, 0, fields);
-                                this._transformedData.splice((addFirstEmpty?i+1:i), 0, transformed);
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    zone.run(() => {
-                        this._index[id] = fields;
-                        let transformed = transformer(fields);
+                    let transformed = options.transformer(fields);
+                    if (!options.suppressNull || transformed !== null) {
+                        fields._transformed = transformed;
                         if (!before) {
                             this._data.push(fields);
                             this._transformedData.push(transformed);
@@ -216,34 +213,67 @@ export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> 
                             for (let i = 0; i < this._data.length; i++) {
                                 if (this._data[i]._id === before) {
                                     this._data.splice(i, 0, fields);
-                                    this._transformedData.splice((addFirstEmpty?i+1:i), 0, transformed);
+                                    this._transformedData.splice((options.addFirstEmpty?i+1:i), 0, transformed);
                                     break;
                                 }
                             }
                         }
-                        this.dataChanged.next(this._transformedData);
+                    }
+                } else {
+                    options.zone.run(() => {
+                        this._index[id] = fields;
+                        let transformed = options.transformer(fields);
+                        if (!options.suppressNull || transformed !== null) {
+                            if (!before) {
+                                this._data.push(fields);
+                                this._transformedData.push(transformed);
+                            } else {
+                                for (let i = 0; i < this._data.length; i++) {
+                                    if (this._data[i]._id === before) {
+                                        this._data.splice(i, 0, fields);
+                                        this._transformedData.splice((options.addFirstEmpty ? i + 1 : i), 0, transformed);
+                                        break;
+                                    }
+                                }
+                            }
+                            this.dataChanged.next(this._transformedData);
+                        }
                     });
                 }
             },
             changed: (id: string, fields: any) => {
-                zone.run(() => {
+                options.zone.run(() => {
                     let doc = this._index[id];
                     if (!doc) {
                         throw new Error('Invalid id:' + id);
                     }
                     _.assign(doc, fields);
-                    let transformed = transformer(doc);
-                    for (let i = 0; i < this._data.length; i++) {
-                        if (this._data[i]._id === id) {
-                            this._transformedData[(addFirstEmpty?i+1:i)] = transformed;
-                            break;
+                    let transformed = options.transformer(doc);
+                    if (!options.suppressNull || transformed !== null) {
+                        for (let i = 0; i < this._data.length; i++) {
+                            if (this._data[i]._id === id) {
+                                this._transformedData[(options.addFirstEmpty ? i + 1 : i)] = transformed;
+                                break;
+                            }
                         }
+                        this.dataChanged.next(this._transformedData);
+                    } else {
+                        delete this._index[id];
+                        for (let i = 0; i < this._data.length; i++) {
+                            if (this._data[i]._id === id) {
+                                let removedItem = this._data.splice(i, 1)[0];
+                                this._transformedData.splice((i?i+1:i), 1);
+                                if (options.removed) {
+                                    options.removed(removedItem, i);
+                                }
+                            }
+                        }
+                        this.dataChanged.next(this._transformedData);
                     }
-                    this.dataChanged.next(this._transformedData);
                 });
             },
             movedBefore: (id: string, before: string) => {
-                zone.run(() => {
+                options.zone.run(() => {
                     let pickedData: T = null;
                     let pickedTransformed: U = null;
                     let destinationIndex = (before?null:this._data.length);
@@ -251,7 +281,7 @@ export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> 
                         let refId = this._data[i]._id;
                         if (refId === id) {
                             pickedData = this._data.splice(i, 1)[0];
-                            pickedTransformed = this._transformedData.splice((addFirstEmpty?i+1:i), 1)[0];
+                            pickedTransformed = this._transformedData.splice((options.addFirstEmpty?i+1:i), 1)[0];
                             if (destinationIndex === null) {
                                 i--;
                             } else {
@@ -273,14 +303,14 @@ export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> 
                 });
             },
             removed: (id: string) => {
-                zone.run(() => {
+                options.zone.run(() => {
                     delete this._index[id];
                     for (let i = 0; i < this._data.length; i++) {
                         if (this._data[i]._id === id) {
                             let removedItem = this._data.splice(i, 1)[0];
                             this._transformedData.splice((i?i+1:i), 1);
-                            if (removed) {
-                                removed(removedItem, i);
+                            if (options.removed) {
+                                options.removed(removedItem, i);
                             }
                         }
                     }
@@ -293,8 +323,8 @@ export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> 
     }
 
     public resetFirst() {
-        if (this.addFirstEmpty) {
-            this._transformedData[0] = this.transformer(null);
+        if (this.options.addFirstEmpty) {
+            this._transformedData[0] = this.options.transformer(null);
         }
     }
 

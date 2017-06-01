@@ -46,6 +46,7 @@
     "color": "^1.0.3",
     "ionic-angular": "^3.2.0",
     "ionicons": "^3.0.0",
+    "jimp": "^0.2.28",
     "lodash": "^4.17.4",
     "meteor-rxjs": "0.4.7",
     "moment": "^2.18.1",

@@ -1,0 +1,78 @@
+.gallery {
+  width: 100%;
+  height: 100%;
+
+  padding: 10px;
+  border-radius: 10px;
+  border: 0 dashed cornflowerblue;
+
+  transition: background-color 0.5s linear, border-color 0.5s linear, border-width 0.5s linear;
+
+  display: block;
+}
+
+.gallery.file-over {
+  background-color: lightgray;
+  border-width: medium;
+}
+
+.image-editor {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.open-button {
+  flex: content;
+}
+
+.img-output {
+  flex: auto;
+  overflow: hidden;
+  position: relative;
+
+  display: flex;
+  box-sizing: border-box;
+}
+
+.img-output img {
+  position: absolute;
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
+
+
+
+.image {
+  display: inline-block;
+  background-color: white;
+}
+
+.image .image-container {
+  border-radius: 8px;
+  display: block;
+
+  border: 0px solid lightgray;
+  background-color: lightgray;
+
+  width: 128px;
+  height: 128px;
+
+  transition: border-width 0.2s linear;
+}
+
+.image.selected .image-container {
+  border-width: 8px;
+}
+
+.image .image-container img {
+  border-radius: 8px;
+  display: block;
+}

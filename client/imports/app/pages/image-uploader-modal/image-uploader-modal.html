@@ -1,0 +1,28 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>
+            {{title}}
+        </ion-title>
+        <ion-buttons end>
+            <button ion-button icon-only (click)="upload()">
+                <ion-icon name="cloud-upload"></ion-icon>
+            </button>
+            <button ion-button icon-only (click)="cancel()">
+                <ion-icon name="close"></ion-icon>
+            </button>
+            <button ion-button icon-only (click)="save()">
+                <ion-icon name="checkmark"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <div class="image-drop-container">
+        <div class="image-drop" [ngClass]="{'file-over': fileIsOver, 'has-image': hasImage}" fileDrop (fileOver)="onFileOver($event)" (onFileDrop)="onFileDrop($event)">
+            <div class="img-output">
+                <img #preview></img>
+            </div>
+        </div>
+    </div>
+</ion-content>

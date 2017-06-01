@@ -9,6 +9,7 @@ import {MongoObservable} from "meteor-rxjs";
 import {Item} from "../../../../both/models/item.model";
 import {ItemState} from "../../../../both/models/item-state.model";
 import {Reservation} from "../../../../both/models/reservation.model";
+import {FileCollection} from "../../../../both/collections/file.collection";
 
 
 @Injectable()
@@ -19,6 +20,7 @@ export class DebugService {
             ItemStateCollection,
             ReservationCollection,
             GroupCollection,
+            FileCollection,
             dump<T>(collection: MongoObservable.Collection<T>): T[] {
                 return collection.find({}).fetch();
             },
@@ -33,6 +35,9 @@ export class DebugService {
             },
             dumpGroups(): Group[] {
                 return this.dump(this.GroupCollection);
+            },
+            dumpFiles(): Group[] {
+                return this.dump(this.FileCollection);
             }
         };
     }

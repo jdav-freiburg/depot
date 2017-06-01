@@ -156,6 +156,11 @@
             </button>
         </ion-col>
         <ion-col col-auto>
+            <button ion-button clear icon-only (click)="selectPicture()" [disabled]="itemForm.controls['picture'].disabled" small no-padding>
+                <ion-icon name="image"></ion-icon>
+            </button>
+        </ion-col>
+        <ion-col col-auto>
             <button ion-button clear icon-only type="submit" [disabled]="!itemForm.valid || !itemForm.dirty" small no-padding>
                 <ion-icon name="checkmark"></ion-icon>
             </button>
@@ -199,6 +204,11 @@
     <ion-col col-auto *ngIf="editable">
         <button ion-button [disabled]="true" clear icon-only small no-padding>
             <ion-icon name="eye"></ion-icon>
+        </button>
+    </ion-col>
+    <ion-col col-auto *ngIf="editable">
+        <button ion-button [disabled]="true" clear icon-only small no-padding>
+            <ion-icon name="image"></ion-icon>
         </button>
     </ion-col>
     <ion-col col-auto *ngIf="editable">

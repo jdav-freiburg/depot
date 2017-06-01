@@ -31,18 +31,22 @@ export class ItemListPage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.items = new QueryObserverTransform<Item, FilterItem>(this.itemsService.getItems(), this.ngZone, (item) => {
-            if (!item) {
-                return null;
+        this.items = new QueryObserverTransform<Item, FilterItem>({
+            query: this.itemsService.getItems(),
+            zone: this.ngZone,
+            transformer: (item) => {
+                if (!item) {
+                    return null;
+                }
+                let transformed: FilterItem = (<ChangeableDataTransform<Item, FilterItem>>item)._transformed;
+                if (transformed) {
+                    transformed.updateFrom(item, this.translate);
+                } else {
+                    transformed = new ExtendedItem(item, this.translate);
+                }
+                return transformed;
             }
-            let transformed: FilterItem = (<ChangeableDataTransform<Item, FilterItem>>item)._transformed;
-            if (transformed) {
-                transformed.updateFrom(item, this.translate);
-            } else {
-                transformed = new ExtendedItem(item, this.translate);
-            }
-            return transformed;
-        }, false);
+        });
     }
 
     ngOnDestroy() {

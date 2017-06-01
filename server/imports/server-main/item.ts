@@ -71,7 +71,7 @@ Meteor.publish('item.states', function(params: {itemId: string, start?: Date, en
 
 const Future = Npm.require('fibers/future');
 
-function insertItem(item: Item, updateComment: string) {
+function insertItem(userId: string, item: Item, updateComment: string) {
     item._id = Random.id();
     console.log("Insert item:", item);
     ItemCollection.insert(item);
@@ -91,20 +91,20 @@ function insertItem(item: Item, updateComment: string) {
             tags: item.tags,
             status: item.status},
 
-        userId: this.userId,
+        userId: userId,
 
         comment: updateComment
     });
     return item._id;
 }
 
-function updateItem(item: Item, itemRef: Item, updateComment: string) {
+function updateItem(userId: string, item: Item, itemRef: Item, updateComment: string) {
     let updateState = {
         timestamp: new Date(),
         itemId: itemRef._id,
         fields: {},
 
-        userId: this.userId,
+        userId: userId,
 
         comment: updateComment
     };
@@ -150,6 +150,7 @@ function updateItem(item: Item, itemRef: Item, updateComment: string) {
     }
     if (item.picture !== itemRef.picture) {
         updateData.picture = item.picture;
+        updateState.fields['picture'] = item.picture;
         hadChange = true;
     }
     if (_.xor(item.tags, itemRef.tags).length !== 0) {
@@ -190,7 +191,7 @@ Meteor.methods({
             updateComment: String
         }).validate({item, updateComment});
 
-        return insertItem(item, updateComment);
+        return insertItem(this.userId, item, updateComment);
     },
     'items.addAll'({items, updateComment}: {items: Item[], updateComment?: string}): void {
         if (!this.userId) {
@@ -211,12 +212,12 @@ Meteor.methods({
             if (item._id) {
                 let itemRef = ItemCollection.findOne({_id: item._id});
                 if (itemRef) {
-                    updateItem(item, itemRef, updateComment);
+                    updateItem(this.userId, item, itemRef, updateComment);
                 } else {
-                    insertItem(item, updateComment);
+                    insertItem(this.userId, item, updateComment);
                 }
             } else {
-                insertItem(item, updateComment);
+                insertItem(this.userId, item, updateComment);
             }
         });
     },
@@ -239,7 +240,7 @@ Meteor.methods({
             throw new Meteor.Error('id', 'Invalid id');
         }
 
-        updateItem(item, itemRef, updateComment);
+        updateItem(this.userId, item, itemRef, updateComment);
     },
     'items.remove'({itemId}: {itemId: string}): void {
         if (!this.userId) {

@@ -156,7 +156,7 @@ export class SelectableItemSingle extends ExtendedItem implements SelectableItem
 
     public updateText(translate: TranslateService) {
         super.updateText(translate);
-        this._filterSelected = translate.get('RESERVATION_PAGE.FILTER_TAG.SELECTED');
+        this._filterSelected = translate.get('ITEM.FILTER_TAG.SELECTED');
     }
 
     public constructor(item: Item, translate: TranslateService, selectedProvider: SelectedProvider) {

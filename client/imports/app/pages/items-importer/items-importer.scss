@@ -1,19 +1,26 @@
-:host .edit-table {
-  display: table;
-  border: 0;
+.file-drop {
+  display: none;
+  border-radius: 10px;
+  border: 0 dashed cornflowerblue;
+  background-color: white;
+  transition: background-color 0.5s linear, border-color 0.5s linear, border-width 0.5s linear;
+}
+
+.file-drop.has-file {
+  display: block;
+}
+
+.file-drop.no-file {
+  display: block;
+  padding: 10px;
+
+  border: medium dashed cornflowerblue;
+
   width: 100%;
-  border-spacing: 2px;
+  height: 100%;
 }
 
-:host .edit-tr {
-  display: table-row;
-}
-
-:host .edit-td {
-  display: table-cell;
-}
-
-:host .edit-th {
-  display: table-cell;
-  font-weight: bold;
+.file-drop.file-over {
+  background-color: lightgray;
+  border: medium dashed dodgerblue;
 }

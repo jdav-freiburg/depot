@@ -1,19 +1,12 @@
-:host .edit-table {
-  display: table;
-  border: 0;
-  width: 100%;
-  border-spacing: 2px;
+.clickable-thumbnail {
+  cursor: pointer;
+  position: relative;
 }
 
-:host .edit-tr {
-  display: table-row;
+.clickable-thumbnail img {
+  border-radius: 8px;
 }
 
-:host .edit-td {
-  display: table-cell;
-}
-
-:host .edit-th {
-  display: table-cell;
-  font-weight: bold;
+.clickable-thumbnail:hover {
+  opacity: 0.8;
 }

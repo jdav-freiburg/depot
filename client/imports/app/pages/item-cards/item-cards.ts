@@ -31,38 +31,43 @@ export class ItemCardsPage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.items = new QueryObserverTransform<Item, FilterItem>(this.itemsService.getItems(), this.ngZone, (item) => {
-            if (!item) {
-                item = {
-                    _id: null,
-                    externalId: "",
-                    name: "",
+        this.items = new QueryObserverTransform<Item, FilterItem>({
+            query: this.itemsService.getItems(),
+            zone: this.ngZone,
+            transformer: (item) => {
+                if (!item) {
+                    item = {
+                        _id: null,
+                        externalId: "",
+                        name: "",
 
-                    description: "",
+                        description: "",
 
-                    condition: "good",
-                    conditionComment: "",
+                        condition: "good",
+                        conditionComment: "",
 
-                    purchaseDate: new Date(),
-                    lastService: new Date(),
+                        purchaseDate: new Date(),
+                        lastService: new Date(),
 
-                    picture: null,
+                        picture: null,
 
-                    tags: [],
+                        tags: [],
 
-                    itemGroup: null,
+                        itemGroup: null,
 
-                    status: "public"
-                };
-            }
-            let transformed: FilterItem = (<ChangeableDataTransform<Item, FilterItem>>item)._transformed;
-            if (transformed) {
-                transformed.updateFrom(item, this.translate);
-            } else {
-                transformed = new ExtendedItem(item, this.translate);
-            }
-            return transformed;
-        }, true);
+                        status: "public"
+                    };
+                }
+                let transformed: FilterItem = (<ChangeableDataTransform<Item, FilterItem>>item)._transformed;
+                if (transformed) {
+                    transformed.updateFrom(item, this.translate);
+                } else {
+                    transformed = new ExtendedItem(item, this.translate);
+                }
+                return transformed;
+            },
+            addFirstEmpty: true
+        });
     }
 
     ngOnDestroy() {

@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
+import {Component, NgZone, OnDestroy, OnInit} from "@angular/core";
 import template from "./item-state-modal.html";
 import style from "./item-state-modal.scss";
 import * as _ from "lodash";
@@ -16,6 +16,8 @@ import {ItemStateCollection} from "../../../../../both/collections/item-state.co
 import {Subscription} from "rxjs/Subscription";
 import {colors} from "../../colors";
 import {TranslateService} from "../../services/translate";
+import {QueryObserverTransform} from "../../util/query-observer";
+import {UserService} from "../../services/user";
 
 
 @Component({
@@ -34,8 +36,6 @@ export class ItemStateModal implements OnInit, OnDestroy {
     viewDate: moment.Moment;
 
     events: CalendarEvent[] = [];
-    itemEvents: CalendarEvent[] = [];
-    reservationEvents: CalendarEvent[] = [];
 
     refresh: Subject<any> = new Subject();
 
@@ -54,8 +54,8 @@ export class ItemStateModal implements OnInit, OnDestroy {
     };
 
     subscriptionHandle: Meteor.SubscriptionHandle;
-    private itemStateSubscription: Subscription;
-    private reservationsSubscription: Subscription;
+    private itemStateSubscription: QueryObserverTransform<ItemState, CalendarEvent>;
+    private reservationsSubscription: QueryObserverTransform<Reservation, CalendarEvent>;
     private itemSubscription: Subscription;
 
     get _titleText(): string {
@@ -63,7 +63,8 @@ export class ItemStateModal implements OnInit, OnDestroy {
     }
 
     constructor(private viewCtrl: ViewController, private params: NavParams, private itemDataService: ItemsDataService,
-                private reservationsDataService: ReservationsDataService, private translate: TranslateService) {
+                private reservationsDataService: ReservationsDataService, private translate: TranslateService,
+                private ngZone: NgZone, private users: UserService) {
         this.viewDate = moment().startOf('day');
         this.itemId = this.params.get('itemId');
         if (this.params.get('rangeEnd')) {
@@ -114,23 +115,32 @@ export class ItemStateModal implements OnInit, OnDestroy {
                 }
             });
             if (this.params.get('showReservations')) {
-                this.reservationsSubscription = this.reservationsDataService.getReservationsForItem(this.itemId).zone().subscribe((reservations) => {
-                    this.reservationEvents = reservations
-                        .filter((reservation: Reservation) => reservation._id !== skipReservationId)
-                        .map((reservation: Reservation) => {
-                            return {
-                                start: reservation.start,
-                                end: reservation.end,
-                                title: reservation.name,
-                                color: {
-                                    primary: '#ff3333',
-                                    secondary: '#cc6666'
-                                },
-                                allDay: true,
-                            };
-                        });
-                    this.events = _.concat(this.itemEvents, this.reservationEvents);
-                    console.log("events:", this.events);
+                this.reservationsSubscription = new QueryObserverTransform<Reservation, CalendarEvent>({
+                    query: this.reservationsDataService.getReservationsForItem(this.itemId),
+                    zone: this.ngZone,
+                    transformer: (reservation) => {
+                        if (reservation._id === skipReservationId) {
+                            return null;
+                        }
+                        return {
+                            start: reservation.start,
+                            end: reservation.end,
+                            title: this.translate.get('ITEM_STATE.RESERVATION_NAME', {
+                                user: this.users.tryGetUser(reservation.userId),
+                                type: _.find(this.reservationsDataService.reservationTypeOptions, option => option.value === reservation.type),
+                                reservation: reservation
+                            }),
+                            color: {
+                                primary: '#ff3333',
+                                secondary: '#cc6666'
+                            },
+                            allDay: true,
+                        };
+                    },
+                    suppressNull: true
+                });
+                this.reservationsSubscription.dataChanged.subscribe((data) => {
+                    this.events = _.concat((this.itemStateSubscription?this.itemStateSubscription.data:[]), data);
                 });
             }
         }
@@ -178,64 +188,71 @@ export class ItemStateModal implements OnInit, OnDestroy {
 
     subscribeItemState() {
         this.subscriptionHandle = Meteor.subscribe('item.states', {itemId: this.itemId});
-        this.itemStateSubscription = ItemStateCollection.find({itemId: this.itemId}, {sort: {timestamp: -1}}).zone().subscribe((states) => {
-            this.itemEvents = states
-                .map((state: ItemState) => {
-                    let primaryColor = '#000000';
+        this.itemStateSubscription = new QueryObserverTransform<ItemState, CalendarEvent>({
+            query: ItemStateCollection.find({itemId: this.itemId}, {sort: {timestamp: -1}}),
+            zone: this.ngZone,
+            transformer: (state) => {
+                let primaryColor = '#000000';
 
-                    let textParts = [];
+                let textParts = [];
 
-                    if (_.has(state.fields, 'lastService')) {
-                        primaryColor = colors.good;
-                        textParts.push(this.translate.get('ITEM_STATE.LAST_SERVICE', {lastService: state.fields.lastService}));
-                    }
+                if (_.has(state.fields, 'lastService')) {
+                    primaryColor = colors.good;
+                    textParts.push(this.translate.get('ITEM_STATE.LAST_SERVICE', {lastService: state.fields.lastService}));
+                }
 
-                    if (_.has(state.fields, 'condition')) {
-                        let option = _.find(this.itemDataService.itemConditionOptions, option => option.value == state.fields.condition);
-                        primaryColor = option.color;
-                        if (_.has(state.fields, 'conditionComment')) {
-                            textParts.push(this.translate.get('ITEM_STATE.CONDITION_CONDITION_COMMENT', {conditionOption: option, conditionComment: state.fields.conditionComment}));
-                        } else {
-                            textParts.push(this.translate.get('ITEM_STATE.CONDITION', {condition: state.fields.condition}));
-                        }
+                if (_.has(state.fields, 'condition')) {
+                    let option = _.find(this.itemDataService.itemConditionOptions, option => option.value == state.fields.condition);
+                    primaryColor = option.colorCss;
+                    if (_.has(state.fields, 'conditionComment')) {
+                        textParts.push(this.translate.get('ITEM_STATE.CONDITION_CONDITION_COMMENT', {conditionOption: option, conditionComment: state.fields.conditionComment}));
                     } else {
-                        textParts.push(this.translate.get('ITEM_STATE.CONDITION_COMMENT', {conditionComment: state.fields.conditionComment}));
+                        textParts.push(this.translate.get('ITEM_STATE.CONDITION', {conditionOption: option}));
                     }
+                } else {
+                    textParts.push(this.translate.get('ITEM_STATE.CONDITION_COMMENT', {conditionComment: state.fields.conditionComment}));
+                }
 
-                    if (_.has(state.fields, 'name')) {
-                        textParts.push(this.translate.get('ITEM_STATE.NAME', {name: state.fields.name}));
-                    }
+                if (_.has(state.fields, 'name')) {
+                    textParts.push(this.translate.get('ITEM_STATE.NAME', {name: state.fields.name}));
+                }
 
-                    if (_.has(state.fields, 'description')) {
-                        textParts.push(this.translate.get('ITEM_STATE.DESCRIPTION', {description: state.fields.description}));
-                    }
+                if (_.has(state.fields, 'description')) {
+                    textParts.push(this.translate.get('ITEM_STATE.DESCRIPTION', {description: state.fields.description}));
+                }
 
-                    if (_.has(state.fields, 'externalId')) {
-                        textParts.push(this.translate.get('ITEM_STATE.EXTERNAL_ID', {externalId: state.fields.externalId}));
-                    }
+                if (_.has(state.fields, 'externalId')) {
+                    textParts.push(this.translate.get('ITEM_STATE.EXTERNAL_ID', {externalId: state.fields.externalId}));
+                }
 
-                    if (_.has(state.fields, 'tags')) {
-                        textParts.push(this.translate.get('ITEM_STATE.TAGS', {tags: state.fields.tags}));
-                    }
+                if (_.has(state.fields, 'tags')) {
+                    textParts.push(this.translate.get('ITEM_STATE.TAGS', {tags: state.fields.tags}));
+                }
 
-                    if (_.has(state.fields, 'status')) {
-                        let option = _.find(this.itemDataService.itemStatusOptions, option => option.value == state.fields.status);
-                        textParts.push(this.translate.get('ITEM_STATE.STATUS', {statusOption: option}));
-                    }
+                if (_.has(state.fields, 'picture')) {
+                    textParts.push(this.translate.get('ITEM_STATE.PICTURE', {tags: state.fields.picture}));
+                }
 
-                    let secondaryColor = Color(primaryColor).lighten(0.15).hex();
-                    return {
-                        start: state.timestamp,
-                        title: this.translate.get('ITEM_STATE.TEXT', {texts: textParts, comment: state.comment, timestamp: state.timestamp}),
-                        color: {
-                            primary: primaryColor,
-                            secondary: secondaryColor
-                        },
-                        allDay: false,
-                    };
-                });
-            this.events = _.concat(this.itemEvents, this.reservationEvents);
-            console.log("events:", this.events);
+                if (_.has(state.fields, 'status')) {
+                    let option = _.find(this.itemDataService.itemStatusOptions, option => option.value == state.fields.status);
+                    textParts.push(this.translate.get('ITEM_STATE.STATUS', {statusOption: option}));
+                }
+
+                let secondaryColor = Color(primaryColor).lighten(0.15).hex();
+                console.log(state);
+                return {
+                    start: state.timestamp,
+                    title: this.translate.get('ITEM_STATE.TEXT', {texts: textParts, comment: state.comment, timestamp: state.timestamp}),
+                    color: {
+                        primary: primaryColor,
+                        secondary: secondaryColor
+                    },
+                    allDay: false,
+                };
+            }
+        });
+        this.itemStateSubscription.dataChanged.subscribe((newData: CalendarEvent[]) => {
+            this.events = _.concat(newData, (this.reservationsSubscription?this.reservationsSubscription.data:[]));
         });
     }
 

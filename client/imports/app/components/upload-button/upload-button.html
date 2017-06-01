@@ -1,4 +1,0 @@
-<button ion-button block clear (click)="clickSelect($event)" [ngClass]="{'file-over': fileIsOver}" fileDrop [options]="{readAs: fileResult}" (fileOver)="onFileOver($event)" (onFileDrop)="onFileDrop($event)">
-    <ion-icon name="list-box"></ion-icon>
-</button>
-<input type="file" (change)="openFiles($event)" style="display: none" #input />

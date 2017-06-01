@@ -26,22 +26,22 @@ export const ItemSchema = new SimpleSchema({
 
 export interface Item {
     _id?: string;
-    externalId: string;
-    name: string;
+    externalId?: string;
+    name?: string;
 
-    description: string;
+    description?: string;
 
-    condition: string,
-    conditionComment: string,
+    condition?: string,
+    conditionComment?: string,
 
-    purchaseDate: Date;
-    lastService: Date;
+    purchaseDate?: Date;
+    lastService?: Date;
 
-    picture: string;
+    picture?: string;
 
-    tags: string[];
+    tags?: string[];
 
-    itemGroup: string;
+    itemGroup?: string;
 
-    status: string;
+    status?: string;
 }

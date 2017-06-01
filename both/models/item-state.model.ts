@@ -1,5 +1,5 @@
 import SimpleSchema from 'simpl-schema';
-import {ItemSchema} from "./item.model";
+import {Item, ItemSchema} from "./item.model";
 
 export const ItemStateSchema = new SimpleSchema({
     timestamp: { type: Date, optional: true },
@@ -16,7 +16,7 @@ export interface ItemState {
     _id?: string;
     timestamp: Date;
     itemId: string;
-    fields: {[key: string]: any};
+    fields: Item;
 
     userId: string;
 
