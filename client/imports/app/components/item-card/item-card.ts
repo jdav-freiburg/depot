@@ -163,7 +163,6 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
                 this.updateForm();
             }
         } else {
-            console.log("Reset form");
             this.itemForm.reset();
             this.itemForm.markAsPristine();
             this.itemForm.markAsUntouched();

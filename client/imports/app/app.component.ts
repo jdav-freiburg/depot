@@ -11,6 +11,8 @@ import {UserModal} from "./pages/user-modal/user-modal";
 import {TranslateHelperService} from "./services/translate-helper";
 import {ItemsImporterPage} from "./pages/items-importer/items-importer";
 import {ItemListPage} from "./pages/items-list/item-list";
+import {ItemsDataService} from "./services/items-data";
+import {ReservationsDataService} from "./services/reservations-data";
 
 @Component({
     selector: "app",
@@ -44,7 +46,8 @@ export class AppComponent {
     }
 
     constructor(private userService: UserService, private debugService: DebugService,
-        private translateHelper: TranslateHelperService) {
+        private translateHelper: TranslateHelperService, private itemService: ItemsDataService,
+        private reservations: ReservationsDataService) {
     }
 
     editSelf() {

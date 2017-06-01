@@ -3,6 +3,7 @@ import {TranslateService} from "../services/translate";
 import * as _ from 'lodash';
 
 export interface FilterItem extends Item {
+    visible: boolean;
     readonly filter: string;
     updateText(translate: TranslateService): void;
     updateFrom(item: Item, translate: TranslateService): void;
@@ -21,6 +22,8 @@ export class ExtendedItem implements FilterItem {
     public tags: string[];
     public itemGroup: string;
     public status: string;
+
+    public visible: boolean = true;
 
     protected _filter: string;
 
@@ -208,6 +211,8 @@ export class SelectableItemGroup implements SelectableItem {
     _selected: number;
     _deselected: number;
     _available: number;
+
+    public visible: boolean = true;
 
     update(): boolean {
         let result = true;

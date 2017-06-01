@@ -11,6 +11,7 @@ import {TranslateService} from "../../services/translate";
 import {ChangeableDataTransform, QueryObserverTransform} from "../../util/query-observer";
 import {ItemCardsPage} from "../item-cards/item-cards";
 import {ExtendedItem, FilterItem, SelectableItemSingle} from "../../util/item";
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
     selector: "item-list-page",
@@ -18,9 +19,39 @@ import {ExtendedItem, FilterItem, SelectableItemSingle} from "../../util/item";
     styles: [ style ]
 })
 export class ItemListPage implements OnInit, OnDestroy {
-    private filter: string = "";
+    private _filter: string = "";
+    private itemsChangedSubscription: Subscription;
+
+    private get filter(): string {
+        return this._filter;
+    }
+
+    private set filter(value: string) {
+        this._filter = value;
+        this.updateFilter();
+    }
+
+    private updateFilter() {
+        if (!this.items || !this.items.data) {
+            this.filteredItems = [];
+        } else if (!this._filter || this._filter.length < 3) {
+            this.filteredItems = this.items.data;
+            _.forEach(this.items.data, (item) => {
+                item.visible = true;
+            });
+        } else {
+            let filter = this._filter.toLowerCase();
+            _.forEach(this.items.data, (item) => {
+                item.visible = item.filter.indexOf(filter) !== -1;
+            });
+            this.filteredItems = _.filter(this.items.data, item => item.visible);
+        }
+        console.log("Update filter " + this._filter + " --> " + this.filteredItems.length + " items");
+    }
 
     private items: QueryObserverTransform<Item, FilterItem>;
+
+    private filteredItems: FilterItem[];
 
     headerFn(rec, idx) {
         return idx === 0 ? true : null;
@@ -47,12 +78,19 @@ export class ItemListPage implements OnInit, OnDestroy {
                 return transformed;
             }
         });
+        this.itemsChangedSubscription = this.items.dataChanged.subscribe(() => {
+            this.updateFilter();
+        });
     }
 
     ngOnDestroy() {
         if (this.items) {
             this.items.unsubscribe();
             this.items = null;
+        }
+        if (this.itemsChangedSubscription) {
+            this.itemsChangedSubscription.unsubscribe();
+            this.itemsChangedSubscription = null;
         }
     }
 

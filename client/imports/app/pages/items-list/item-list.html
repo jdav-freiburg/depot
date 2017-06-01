@@ -16,7 +16,15 @@
 
 <ion-content>
     <ion-searchbar [(ngModel)]="filter" [placeholder]="'ITEM_LIST_PAGE.FILTER' | translate"></ion-searchbar>
-    <ion-list [virtualScroll]="items.data | filterfilter:filter" approxItemHeight="25px" [headerFn]="headerFn">
+    <!--<ion-list>
+        <div style="width: 100%">
+            <item-card view="listHeader" [editable]="true"></item-card>
+        </div>
+        <div *ngFor="let item of filteredItems" style="width: 100%">
+            <item-card [item]="item" view="list" [editable]="true"></item-card>
+        </div>
+    </ion-list>-->
+    <ion-list [virtualScroll]="filteredItems" approxItemHeight="25px" [headerFn]="headerFn">
         <div *virtualHeader="let header" style="width: 100%">
             <item-card view="listHeader" [editable]="true"></item-card>
         </div>
