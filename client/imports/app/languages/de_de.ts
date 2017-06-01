@@ -6,7 +6,7 @@ export const de_de = {
   "TITLE_LONG": "Deutsch",
   "TITLE_SHORT": "de-de",
   "HOME_PAGE": {
-    "TITLE": "Home",
+    "TITLE": "Meine Übersicht",
     "NEW_USER": {
       "HEADER": "Neuer Benutzer registriert",
       "HELP": "Ein neuer Benutzer hat sich angemeldet. Wenn du den Benutzer authentisieren kannst, schalte ihn frei damit er sich anmelden kann. Hinweis: Du wirst als Authentisierer gespeichert.",
@@ -116,7 +116,7 @@ export const de_de = {
   },
   "RESERVATION_PAGE": {
     "TITLE": (data) => `Reservierung - ${data.name}`,
-    "TYPE": "Typ",
+    "TYPE": "Art der Ausfahrt",
     "NAME": "Name",
     "START": "Start",
     "END": "Ende",
@@ -248,8 +248,7 @@ export const de_de = {
     "ITEMS_LIST": "Materialien"
   },
   "TABS": {
-    "HOME": "Home",
-    "ITEMS": "Material",
+    "HOME": "Meine Übersicht",
     "RESERVATIONS": "Reservierungen",
     "LOGIN": "Login",
     "SIGNUP": "Anmelden"

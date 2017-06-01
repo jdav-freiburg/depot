@@ -5,7 +5,7 @@ export const en_us = {
   "TITLE_LONG": "English",
   "TITLE_SHORT": "en-us",
   "HOME_PAGE": {
-    "TITLE": "Home",
+    "TITLE": "Quick View",
     "NEW_USER": {
       "HEADER": "New User Registered",
       "HELP": "A new user has registered. If you can authenticate the user, press unlock, so the user is allowed to use the system. Hint: You will be stored as the authenticator.",
@@ -115,7 +115,7 @@ export const en_us = {
   },
   "RESERVATION_PAGE": {
     "TITLE": (data) => `Reservation - ${data.name}`,
-    "TYPE": "Type",
+    "TYPE": "Type of Journey",
     "NAME": "Name",
     "START": "Start",
     "END": "End",
@@ -247,8 +247,7 @@ export const en_us = {
     "ITEMS_LIST": "Items"
   },
   "TABS": {
-    "HOME": "Home",
-    "ITEMS": "Items",
+    "HOME": "Quick View",
     "RESERVATIONS": "Reservations",
     "LOGIN": "Login",
     "SIGNUP": "Sign Up"

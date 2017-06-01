@@ -61,7 +61,7 @@ export class ItemsDataService {
     }
 
     public getItems(): ObservableCursor<Item> {
-        return ItemCollection.find({});
+        return ItemCollection.find({}, {sort: {name: 1, description: 1, condition: -1}});
     }
 
     public getPublicItems(): ObservableCursor<Item> {

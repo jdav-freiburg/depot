@@ -23,6 +23,11 @@
                     </button>
                 </ion-col>
                 <ion-col col-auto>
+                    <button ion-button clear icon-only (click)="selectPicture()" [disabled]="itemForm.controls['picture'].disabled" clear>
+                        <ion-icon name="image"></ion-icon>
+                    </button>
+                </ion-col>
+                <ion-col col-auto>
                     <button ion-button clear icon-only type="submit" [disabled]="!itemForm.valid || !itemForm.dirty || !editable">
                         <ion-icon name="checkmark"></ion-icon>
                     </button>

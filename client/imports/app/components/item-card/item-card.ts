@@ -361,7 +361,9 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
                 console.log("New Picture:", data);
                 if (data.image !== this.itemForm.controls['picture'].value) {
                     this.itemForm.controls['picture'].setValue(data.image);
+                    this.itemForm.controls['picture'].markAsTouched();
                     this.itemForm.controls['picture'].markAsDirty();
+                    this.itemForm.controls['picture'].updateValueAndValidity();
                 }
             }
         });
