@@ -7,6 +7,12 @@
             <ion-icon name="menu"></ion-icon>
         </button>
         <ion-buttons right>
+            <button ion-button icon-only (click)="showColumnOptions($event)">
+                <ion-icon name="more"></ion-icon>
+            </button>
+            <button ion-button icon-only (click)="save()">
+                <ion-icon name="checkmark"></ion-icon>
+            </button>
             <button ion-button clear icon-only (click)="showCards()">
                 <ion-icon name="card"></ion-icon>
             </button>
@@ -26,10 +32,105 @@
     </ion-list>-->
     <ion-list [virtualScroll]="filteredItems" approxItemHeight="25px" [headerFn]="headerFn">
         <div *virtualHeader="let header" style="width: 100%">
-            <item-card view="listHeader" [editable]="true"></item-card>
+            <ion-row class="item-card-row">
+                <ion-col col-1 *ngIf="columns.externalId.visible">
+                    {{'ITEM_CARD.EXTERNAL_ID' | translate}}
+                </ion-col>
+                <ion-col col-2 *ngIf="columns.name.visible">
+                    {{'ITEM_CARD.NAME' | translate}}
+                </ion-col>
+                <ion-col *ngIf="columns.description.visible">
+                    {{'ITEM_CARD.DESCRIPTION' | translate}}
+                </ion-col>
+                <ion-col col-1 *ngIf="columns.condition.visible">
+                    {{'ITEM_CARD.CONDITION' | translate}}
+                </ion-col>
+                <ion-col *ngIf="columns.conditionComment.visible">
+                    {{'ITEM_CARD.CONDITION_COMMENT' | translate}}
+                </ion-col>
+                <ion-col col-1 *ngIf="columns.lastService.visible">
+                    {{'ITEM_CARD.LAST_SERVICE' | translate}}
+                </ion-col>
+                <ion-col col-1 *ngIf="columns.purchaseDate.visible">
+                    {{'ITEM_CARD.PURCHASE_DATE' | translate}}
+                </ion-col>
+                <ion-col *ngIf="columns.itemGroup.visible">
+                    {{'ITEM_CARD.ITEM_GROUP' | translate}}
+                </ion-col>
+                <ion-col *ngIf="columns.tags.visible">
+                    {{'ITEM_CARD.TAGS' | translate}}
+                </ion-col>
+                <ion-col col-auto *ngIf="columns.status.visible">
+                    <button ion-button [disabled]="true" clear icon-only small no-padding>
+                        <ion-icon name="eye"></ion-icon>
+                    </button>
+                </ion-col>
+                <ion-col col-auto *ngIf="columns.picture.visible">
+                    <button ion-button [disabled]="true" clear icon-only small no-padding>
+                        <ion-icon name="image"></ion-icon>
+                    </button>
+                </ion-col>
+                <ion-col col-auto>
+                    <button ion-button type="button" clear icon-only [disabled]="true" small no-padding>
+                        <ion-icon name="trash"></ion-icon>
+                    </button>
+                </ion-col>
+            </ion-row>
         </div>
         <div *virtualItem="let item" style="width: 100%">
-            <item-card [item]="item" view="list" [editable]="true"></item-card>
+
+            <form *ngIf="item && item.form" [formGroup]="item.form">
+                <ion-row class="item-card-row">
+                    <ion-col col-1 *ngIf="columns.externalId.visible">
+                        <ion-input type="text" formControlName="externalId"></ion-input>
+                    </ion-col>
+                    <ion-col col-2 *ngIf="columns.name.visible">
+                        <ion-input type="text" formControlName="name"></ion-input>
+                    </ion-col>
+                    <ion-col *ngIf="columns.description.visible">
+                        <ion-input type="text" formControlName="description"></ion-input>
+                    </ion-col>
+                    <ion-col col-1 *ngIf="columns.condition.visible">
+                        <ion-select formControlName="condition">
+                            <ion-option *ngFor="let option of itemsService.itemConditionOptions" [value]="option.value">{{option.text}}</ion-option>
+                        </ion-select>
+                    </ion-col>
+                    <ion-col *ngIf="columns.conditionComment.visible">
+                        <ion-input type="text" formControlName="conditionComment"></ion-input>
+                    </ion-col>
+                    <ion-col col-1 *ngIf="columns.lastService.visible">
+                        <item-date-picker formControlName="lastService" [label]="'ITEM_CARD.LAST_SERVICE' | translate" [compact]="true"></item-date-picker>
+                    </ion-col>
+                    <ion-col col-1 *ngIf="columns.purchaseDate.visible">
+                        <item-date-picker formControlName="purchaseDate" [label]="'ITEM_CARD.PURCHASE_DATE' | translate" [compact]="true"></item-date-picker>
+                    </ion-col>
+                    <ion-col *ngIf="columns.itemGroup.visible">
+                        <ion-input type="text" formControlName="itemGroup"></ion-input>
+                    </ion-col>
+                    <ion-col *ngIf="columns.tags.visible">
+                        <ion-input type="text" formControlName="tags"></ion-input>
+                    </ion-col>
+                    <ion-col col-auto *ngIf="columns.status.visible">
+                        <button *ngIf="item.form.controls['status'].value=='public'" ion-button (click)="item.form.controls['status'].setValue('hidden');item.form.controls['status'].markAsDirty()" [disabled]="item.form.controls['status'].disabled" clear icon-only small no-padding>
+                            <ion-icon name="eye"></ion-icon>
+                        </button>
+                        <button *ngIf="item.form.controls['status'].value!='public'" ion-button (click)="item.form.controls['status'].setValue('public');item.form.controls['status'].markAsDirty()" [disabled]="item.form.controls['status'].disabled" clear icon-only small no-padding>
+                            <ion-icon name="eye-off"></ion-icon>
+                        </button>
+                    </ion-col>
+                    <ion-col col-auto *ngIf="columns.picture.visible">
+                        <button ion-button clear icon-only (click)="selectPicture()" [disabled]="item.form.controls['picture'].disabled" small no-padding>
+                            <ion-icon name="images" *ngIf="item.form.controls['picture'].value"></ion-icon>
+                            <ion-icon name="image" *ngIf="!item.form.controls['picture'].value"></ion-icon>
+                        </button>
+                    </ion-col>
+                    <ion-col col-auto>
+                        <button ion-button (click)="deleteItem(item)" type="button" clear icon-only small no-padding>
+                            <ion-icon name="trash"></ion-icon>
+                        </button>
+                    </ion-col>
+                </ion-row>
+            </form>
         </div>
     </ion-list>
 </ion-content>

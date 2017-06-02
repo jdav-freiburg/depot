@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import {FileCollection} from "../../../../both/collections/file.collection";
 import {User} from "../../../../both/models/user.model";
 import {ObservableCursor} from "meteor-rxjs";
+import {Picture} from "../../../../both/models/picture.model";
 
 /*export const ItemPictureStore = new UploadFS.store.GridFS({
     collection: FileCollection.collection,
@@ -48,6 +49,8 @@ export const ProfilePictureStore = new UploadFS.store.GridFS({
         }
     })
 });*/
+
+const UPLOAD_FS_STORE_PATH = 'images';
 
 @Injectable()
 export class PictureService {
@@ -166,7 +169,11 @@ export class PictureService {
         return new Blob([data], {type: mime});
     }
 
-    upload(blob: Blob|File, store: string, filename: string): Promise<any> {
+    getPictures(store: string): ObservableCursor<Picture> {
+        return FileCollection.find({store: store, complete: true}, {sort: {uploadedAt: -1}});
+    }
+
+    upload(blob: Blob|File, store: string, filename: string): Promise<string> {
         return new Promise((resolve, reject) => {
             const metadata: UploadFS.File = {
                 name: filename,
@@ -178,7 +185,9 @@ export class PictureService {
                 data: blob,
                 file: metadata,
                 store: store,
-                onComplete: resolve,
+                onComplete: (file: Picture) => {
+                    resolve(`${file.store}/${file._id}/${file.name};${file.thumbnailStore}/${file.thumbnailId}/${file.name}`);
+                },
                 onError: reject
             });
 
@@ -186,51 +195,44 @@ export class PictureService {
         });
     }
 
-    getPictures(store: string): ObservableCursor<UploadFS.File> {
-        return FileCollection.find({store: store, complete: true}, {sort: {uploadedAt: -1}});
+    getPictureId(picture: string): string {
+        let idx = picture.indexOf(';');
+        if (idx === -1) {
+            return null;
+        }
+        let re = /\/([^\/\?]+)\/([^\/\?]+)\/([^\/\?]+)$/;
+        let match = re.exec(picture.substring(0, idx));
+        if (match === null) {
+            return null;
+        }
+        return match[2];
     }
 
-    getPictureUrl(id: string): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            let hadOne = false;
-            let observationHandle = FileCollection.find(id).observe({
-                added: (file: UploadFS.File) => {
-                    if (observationHandle) {
-                        observationHandle.stop();
-                        observationHandle = null;
-                    }
-                    if (!hadOne) {
-                        hadOne = true;
-                        resolve(file.url);
-                    }
-                }
-            });
-            if (hadOne) {
-                observationHandle.stop();
-                observationHandle = null;
-            }
-        });
+    getFilePicture(file: Picture): string {
+        return `${this.getFilePictureUrl(file)};${this.getFilePictureThumbnailUrl(file)}`;
     }
 
-    getPictureThumbnailUrl(id: string): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            let hadOne = false;
-            let observationHandle = FileCollection.find(id).observe({
-                added: (file: UploadFS.File) => {
-                    if (observationHandle) {
-                        observationHandle.stop();
-                        observationHandle = null;
-                    }
-                    if (!hadOne) {
-                        hadOne = true;
-                        resolve((<any>file).thumbnailUrl);
-                    }
-                }
-            });
-            if (hadOne) {
-                observationHandle.stop();
-                observationHandle = null;
-            }
-        });
+    getFilePictureUrl(file: Picture): string {
+        return `/${UPLOAD_FS_STORE_PATH}/${file.store}/${file._id}/${file.name}`;
+    }
+
+    getFilePictureThumbnailUrl(file: Picture): string {
+        return `/${UPLOAD_FS_STORE_PATH}/${file.thumbnailStore}/${file.thumbnailId}/${file.name}`;
+    }
+
+    getPictureUrl(picture: string): string {
+        let idx = picture.indexOf(';');
+        if (idx === -1) {
+            return null;
+        }
+        return `/${UPLOAD_FS_STORE_PATH}/${picture.substring(0, idx)}`;
+    }
+
+    getPictureThumbnailUrl(picture: string): string {
+        let idx = picture.indexOf(';');
+        if (idx === -1) {
+            return null;
+        }
+        return `/${UPLOAD_FS_STORE_PATH}/${picture.substring(idx + 1)}`;
     }
 }

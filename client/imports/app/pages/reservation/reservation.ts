@@ -293,9 +293,7 @@ export class ReservationPage implements OnInit, OnDestroy, AfterViewInit {
                     transformed = new SelectableItemSingleImage(item, this.translate, this._selectedProvider);
                 }
                 if (transformed.picture) {
-                    this.pictureService.getPictureThumbnailUrl(transformed.picture).then((url) => {
-                        transformed.pictureUrl = url;
-                    });
+                    transformed.pictureUrl = this.pictureService.getPictureThumbnailUrl(transformed.picture);
                 }
                 if (!transformed.itemGroupRef) {
                     if (transformed.itemGroup) {

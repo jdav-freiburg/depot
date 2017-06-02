@@ -3,7 +3,7 @@ import SimpleSchema from 'simpl-schema';
 export const FileSchema = new SimpleSchema({
     _id: { type: String, optional: true },
 
-    name: { type: String, optional: true },
+    name: { type: /[^\/?]+\.(jpg|png)/i, optional: true },
     store: { type: String, optional: true },
     extension: { type: String, optional: true },
     userId: { type: String, optional: true },

@@ -94,6 +94,7 @@ export const de_de = {
     "STATUS": "Status",
     "ITEM_GROUP": "Gruppe",
     "TAGS": "Tags",
+    "PICTURE": "Bild",
     "SAVE": {
       "TITLE": "Speichern",
       "SUBTITLE": "Eintrag Speichern",

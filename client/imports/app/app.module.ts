@@ -49,6 +49,7 @@ import {ImageUploaderModal} from "./pages/image-uploader-modal/image-uploader-mo
 import {PictureService} from "./services/picture";
 import {ImageGalleryModal} from "./pages/image-gallery-modal/image-gallery-modal";
 import {ImagePreviewModal} from "./pages/image-preview-modal/image-preview-modal";
+import {ItemListColumnsPage} from "./pages/items-list/item-list-columns";
 
 @NgModule({
     // Components, Pipes, Directive
@@ -85,7 +86,8 @@ import {ImagePreviewModal} from "./pages/image-preview-modal/image-preview-modal
         ResetPasswordPage,
         ImageUploaderModal,
         ImageGalleryModal,
-        ImagePreviewModal
+        ImagePreviewModal,
+        ItemListColumnsPage
     ],
     // Entry Components
     entryComponents: [
@@ -109,7 +111,8 @@ import {ImagePreviewModal} from "./pages/image-preview-modal/image-preview-modal
         ResetPasswordPage,
         ImageUploaderModal,
         ImageGalleryModal,
-        ImagePreviewModal
+        ImagePreviewModal,
+        ItemListColumnsPage
     ],
     // Providers
     providers: [

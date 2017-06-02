@@ -46,7 +46,12 @@ export class ItemDatePickerComponent implements ControlValueAccessor {
     }
 
     writeValue(obj: any): void {
-        this.date = moment(obj).toDate();
+        let value = moment(obj);
+        if (value.isValid()) {
+            this.dateValue = value.toDate();
+        } else {
+            this.dateValue = null;
+        }
     }
 
     dateValue: Date = new Date();
@@ -70,7 +75,9 @@ export class ItemDatePickerComponent implements ControlValueAccessor {
         } else {
             this.dateValue = null;
         }
-        this.onChangeCallback(this.dateValue);
+        if (this.onChangeCallback) {
+            this.onChangeCallback(this.dateValue);
+        }
     }
 
     constructor(private modalCtrl: ModalController) {

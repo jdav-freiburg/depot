@@ -5,6 +5,7 @@ import {Roles, Future} from "./utils";
 import {UserCollection} from "../../../both/collections/user.collection";
 import * as Jimp from "jimp";
 import {ReadStream, WriteStream} from "fs";
+import {PictureSchema} from "../../../both/models/picture.model";
 
 UploadFS.config.tmpDir = process.env.UPLOAD_TMP || (process.cwd() + "/upload-tmp");
 UploadFS.config.tmpDirPermissions = "0777";
@@ -63,46 +64,21 @@ const transformWriteThumbnail = function(from: ReadStream, to: WriteStream, file
     });
 };
 
-Meteor.publish('pictures-profiles', function() {
-    if (this.userId) {
-        console.log("register pictures profiles");
-        return FileCollection.find({store: 'pictures-profiles'}, {
-            fields: {
-                _id: 1,
-                userId: 1,
-                url: 1
-            }
-        });
-    }
-    this.ready();
-});
-
-Meteor.publish('pictures-items', function() {
-    if (this.userId) {
-        console.log("register pictures items");
-        return FileCollection.find({store: 'pictures-items'}, {
-            fields: {
-                _id: 1,
-                url: 1
-            }
-        });
-    }
-    this.ready();
-});
-
 Meteor.publish('pictures', function() {
     if (this.userId) {
         console.log("register pictures");
-        return FileCollection.find({});
-        /*return FileCollection.find({}, {
+        return FileCollection.find({complete: true}, {
             fields: {
                 _id: 1,
                 name: 1,
+                store: 1,
                 userId: 1,
-                thumbnailUrl: 1,
-                url: 1
+                thumbnailId: 1,
+                thumbnailStore: 1,
+                uploadedAt: 1,
+                complete: 1
             }
-        });*/
+        });
     }
     this.ready();
 });
@@ -113,7 +89,7 @@ const storeFilter = new UploadFS.Filter({
     contentTypes: ['image/*'],
     extensions: ['jpg', 'png'],
     onCheck: function(file: UploadFS.File) {
-        FileSchema.validate(file);
+        PictureSchema.validate(file);
         return true;
     }
 });
@@ -124,7 +100,7 @@ const ItemPictureThumbnailStore = new UploadFS.store.GridFS({
     transformWrite: transformWriteThumbnail,
     filter: storeFilter,
     onFinishUpload: (file: UploadFS.File) => {
-        FileCollection.update(file.originalId, {$set: {thumbnailUrl: file.url}});
+        FileCollection.update(file.originalId, {$set: {thumbnailUrl: file.url, thumbnailId: file._id, thumbnailStore: file.store}});
     },
     permissions: new UploadFS.StorePermissions({
         insert(userId, doc: UploadFS.File) {
@@ -165,7 +141,7 @@ const ProfilePictureThumbnailStore = new UploadFS.store.GridFS({
     transformWrite: transformWriteThumbnail,
     filter: storeFilter,
     onFinishUpload: (file: UploadFS.File) => {
-        FileCollection.update(file.originalId, {$set: {thumbnailUrl: file.url}});
+        FileCollection.update(file.originalId, {$set: {thumbnailUrl: file.url, thumbnailId: file._id, thumbnailStore: file.store}});
     },
     permissions: new UploadFS.StorePermissions({
         insert(userId, doc: UploadFS.File) {

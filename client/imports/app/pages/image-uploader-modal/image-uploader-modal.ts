@@ -78,8 +78,8 @@ export class ImageUploaderModal implements AfterViewInit {
         this.pictureService.resize(this.previewElement.nativeElement, 1920, "image/jpeg").then((imageBlob: Blob) => {
             console.log("Saving", imageBlob.type, imageBlob.size, this.previewName);
             this.pictureService.upload(imageBlob, this.store, this.previewName).then(
-                (file: UploadFS.File) => {
-                    this.viewCtrl.dismiss({image: file._id});
+                (picture: string) => {
+                    this.viewCtrl.dismiss({image: picture});
                 },
                 (err) => {
                     console.log(err);

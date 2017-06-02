@@ -93,6 +93,7 @@ export const en_us = {
     "STATUS": "Status",
     "ITEM_GROUP": "Group",
     "TAGS": "Tags",
+    "PICTURE": "Picture",
     "SAVE": {
       "TITLE": "Save",
       "SUBTITLE": "Save Entry",

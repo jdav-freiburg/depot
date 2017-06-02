@@ -11,7 +11,13 @@ import {ReservationCollection} from "../../../both/collections/reservation.colle
 import {TokenCollection} from "../../../both/collections/token.collection";
 import {GlobalMessageCollection} from "../../../both/collections/global-message.collection";
 import * as util from "util";
+import * as _ from "lodash";
 import {ItemCollection} from "../../../both/collections/item.collection";
+import {MongoObservable} from "meteor-rxjs";
+import {FileCollection} from "../../../both/collections/file.collection";
+import {UploadFS} from "meteor/jalik:ufs";
+import {Picture} from "../../../both/models/picture.model";
+import {Item} from "../../../both/models/item.model";
 
 export class Main {
     start(): void {
@@ -40,15 +46,85 @@ export class Main {
     }
 }
 
+function migrate(name: string, migration: () => void) {
+    if (!Migrations.findOne({name: name})) {
+        migration();
+        Migrations.insert({name: name});
+    }
+}
+
+interface Migration {
+    name: string;
+}
+
+export const Migrations = new MongoObservable.Collection<Migration>("migrations");
+
 Meteor.startup(function () {
     Meteor.users._ensureIndex({username: 1});
     Meteor.users._ensureIndex({email: 1});
     ItemStateCollection.rawCollection().createIndex({itemId: 1});
-    ItemCollection.rawCollection().createIndex({status: 1, name: 1, description: 1, condition: -1});
+    ItemCollection.rawCollection().createIndex({status: 1, name: 1, description: 1, condition: -1, externalId: 1});
     ReservationCollection.rawCollection().createIndex({start: -1, end: 1});
     ReservationCollection.rawCollection().createIndex({userId: 1, start: -1, end: 1});
     ReservationCollection.rawCollection().createIndex({itemIds: 1, start: -1, end: 1});
     TokenCollection.rawCollection().createIndex({token: 1});
     TokenCollection.rawCollection().createIndex({expiresAt: 1}, {expireAfterSeconds: 0});
-    GlobalMessageCollection.rawCollection().createIndex({timestamp: 1})
+    GlobalMessageCollection.rawCollection().createIndex({timestamp: 1});
+    FileCollection.rawCollection().createIndex({token: 1});
+    FileCollection.rawCollection().createIndex({complete: 1});
+    UploadFS.tokens.rawCollection().createIndex({value: 1});
+    UploadFS.tokens.rawCollection().createIndex({fileId: 1});
+    Migrations.rawCollection().createIndex({name: 1});
+
+    migrate('update-image-thumbnail', () => {
+        let pictures = FileCollection.find({store: 'pictures-items'}).fetch();
+        let re = /\/([^\/\?]+)\/([^\/\?]+)\/([^\/\?]+)$/;
+        let update = Meteor.wrapAsync(FileCollection.rawCollection().update, FileCollection.rawCollection());
+        _.forEach(pictures, (picture: Picture) => {
+            // ${rootPath}/${UploadFS.config.storesPath}/${storeName}/${path}/${name}
+            if (!picture.thumbnailUrl) {
+                return;
+            }
+            let match = re.exec(picture.thumbnailUrl);
+            if (match === null) {
+                console.log("No match for", picture._id, picture.thumbnailUrl);
+                return;
+            }
+            let store = match[1];
+            let fileId = match[2];
+            let fileName = match[3];
+            console.log("Updating", picture._id, picture.url, picture.thumbnailUrl, "=>", {thumbnailId: fileId, thumbnailStore: store});
+            update({_id: picture._id}, {$set: {thumbnailId: fileId, thumbnailStore: store}});
+        });
+    });
+
+    migrate('update-item-picture', () => {
+        let items = ItemCollection.find().fetch();
+        let re = /([^\/\?]+)\/([^\/\?]+)\/([^\/\?]+);/;
+        let update = Meteor.wrapAsync(ItemCollection.rawCollection().update, ItemCollection.rawCollection());
+        _.forEach(items, (item: Item) => {
+            // ${rootPath}/${UploadFS.config.storesPath}/${storeName}/${path}/${name}
+            if (!item.picture) {
+                return;
+            }
+            let match = re.exec(item.picture);
+            let file: Picture;
+            if (match !== null) {
+                file = FileCollection.findOne({_id: match[2]});
+                if (!file) {
+                    console.log("No file for", match[2]);
+                    return;
+                }
+            } else {
+                file = FileCollection.findOne({_id: item.picture});
+                if (!file) {
+                    console.log("No file for", item.picture);
+                    return;
+                }
+            }
+            let picture = `${file.store}/${file._id}/${file.name};${file.thumbnailStore}/${file.thumbnailId}/${file.name}`;
+            console.log("Updating", item._id, item.picture, "=>", picture);
+            update({_id: item._id}, {$set: {picture: picture}})
+        });
+    });
 });

@@ -19,7 +19,7 @@
 
 <ion-content>
     <div class="gallery" [ngClass]="{'file-over': fileIsOver}" fileDrop (fileOver)="onFileOver($event)" (onFileDrop)="onFileDrop($event)">
-        <a href="#" class="image" *ngFor="let image of images.data" [ngClass]="{'selected': image._id === selectedImageId}" (click)="select(image); $event.stopPropagation(); $event.preventDefault()">
+        <a href="#" class="image" *ngFor="let image of images.data" [ngClass]="{'selected': image.picture === selectedPicture}" (click)="select(image); $event.stopPropagation(); $event.preventDefault()">
             <div class="image-container">
                 <img [src]="image.thumbnailUrl" />
             </div>
