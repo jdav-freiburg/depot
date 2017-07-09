@@ -55,5 +55,31 @@ Meteor.methods({
             timestamp: new Date(),
             data: {message}
         });
-    }
+    },
+    'globalMessages.save'({id, message}: {id: string, message: string}): void {
+        if (!Roles.userHasRole(this.userId, 'admin')) {
+            throw new Meteor.Error('unauthorized', 'User is not admin');
+        }
+        new SimpleSchema({
+            id: String,
+            message: String
+        }).validate({id, message});
+        if (!GlobalMessageCollection.findOne({_id: id, type: 'message'})) {
+            throw new Meteor.Error('invalid-id', 'Invalid id');
+        }
+        GlobalMessageCollection.update({
+            _id: id,
+        }, {$set: {data: {message}}});
+    },
+    'globalMessages.delete'({id}: {id: string}): void {
+        if (!Roles.userHasRole(this.userId, 'admin')) {
+            throw new Meteor.Error('unauthorized', 'User is not admin');
+        }
+        new SimpleSchema({
+            id: String
+        }).validate({id});
+        GlobalMessageCollection.remove({
+            _id: id
+        });
+    },
 });

@@ -15,7 +15,7 @@ export class GlobalMessagesDataService {
         Tracker.autorun(() => {
             Meteor.subscribe('globalMessages');
         });
-        this.messages = GlobalMessageCollection.find({});
+        this.messages = GlobalMessageCollection.find({}, {sort: {timestamp: -1}});
     }
 
     get messageTypeOptions(): TranslateOption[] {
@@ -43,6 +43,22 @@ export class GlobalMessagesDataService {
 
     public createMessage(message: string, callback?: Function) {
         Meteor.call('globalMessages.create', {message: message}, (err, result) => {
+            this.ngZone.run(() => {
+                callback(err, result);
+            })
+        });
+    }
+
+    public saveMessage(_id: string, message: string, callback?: Function) {
+        Meteor.call('globalMessages.save', {id: _id, message: message}, (err, result) => {
+            this.ngZone.run(() => {
+                callback(err, result);
+            })
+        });
+    }
+
+    public deleteMessage(_id: string, callback?: Function) {
+        Meteor.call('globalMessages.delete', {id: _id}, (err, result) => {
             this.ngZone.run(() => {
                 callback(err, result);
             })

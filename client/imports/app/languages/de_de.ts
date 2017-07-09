@@ -25,6 +25,12 @@ export const de_de = {
         "NEW_TITLE": "Neue Globale Nachricht",
         "TITLE": "Globale Nachricht"
       }
+    },
+    "DELETE": {
+      "TITLE": "Löschen?",
+      "SUB_TITLE": "Globale Nachricht wirklich löschen?",
+      "YES": "Ja",
+      "NO": "Nein"
     }
   },
   "LOGIN_PAGE": {

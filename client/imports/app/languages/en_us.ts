@@ -24,6 +24,12 @@ export const en_us = {
         "NEW_TITLE": "New Global Message",
         "TITLE": "Global Message"
       }
+    },
+    "DELETE": {
+      "TITLE": "Delete?",
+      "SUB_TITLE": "Do you really want to delete the global message?",
+      "YES": "Yes",
+      "NO": "No"
     }
   },
   "LOGIN_PAGE": {

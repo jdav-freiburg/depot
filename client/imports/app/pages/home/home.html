@@ -82,13 +82,38 @@
 
     <reservation-card *ngFor="let reservation of reservations" [reservation]="reservation" view="cards"></reservation-card>
 
-    <ion-card *ngFor="let message of messages">
+    <ion-card *ngFor="let message of messages.data">
         <ion-toolbar>
             <ion-title [ngSwitch]="message.type">
                 <span *ngSwitchCase="'new-user'">{{'HOME_PAGE.MESSAGE.NEW_USER.TITLE' | translate}}</span>
                 <span *ngSwitchCase="'message'">{{'HOME_PAGE.MESSAGE.MESSAGE.TITLE' | translate}}</span>
             </ion-title>
             <ion-buttons right>
+                <p class="timestamp">{{message.timestamp | moment:'LLL'}}</p>
+                <ng-container *ngIf="message.type == 'message'" >
+                    <ng-container *ngIf="editMessageId !== message._id">
+                        <button ion-button icon-only clear (click)="deleteMessage(message)">
+                            <ion-icon name="trash"></ion-icon>
+                        </button>
+                        <button ion-button icon-only clear (click)="editMessage(message)">
+                            <ion-icon name="create"></ion-icon>
+                        </button>
+                    </ng-container>
+                    <ng-container *ngIf="editMessageId === message._id && isAdmin">
+                        <button ion-button icon-only clear *ngIf="!editMessagePreview" (click)="editMessagePreview=true">
+                            <ion-icon name="eye"></ion-icon>
+                        </button>
+                        <button ion-button icon-only clear *ngIf="editMessagePreview" (click)="editMessagePreview=false">
+                            <ion-icon name="eye-off"></ion-icon>
+                        </button>
+                        <button ion-button icon-only clear (click)="saveMessage(message)">
+                            <ion-icon name="checkmark"></ion-icon>
+                        </button>
+                        <button ion-button icon-only clear (click)="cancelEditMessage()">
+                            <ion-icon name="close"></ion-icon>
+                        </button>
+                    </ng-container>
+                </ng-container>
                 <!--<button ion-button icon-only clear (click)="markRead(message)">
                     <ion-icon name="eye-off"></ion-icon>
                 </button>-->
@@ -111,7 +136,11 @@
                     </ion-item>
                 </ng-container>
                 <ng-container *ngSwitchCase="'message'">
-                    <markdown [data]="message.data.message"></markdown>
+                    <markdown *ngIf="editMessageId !== message._id" [data]="message.data.message"></markdown>
+                    <form *ngIf="editMessageId === message._id" [formGroup]="editMessageForm" (submit)="saveMessage(message)">
+                        <ion-textarea formControlName="message" *ngIf="!editMessagePreview"></ion-textarea>
+                        <markdown *ngIf="editMessagePreview" [data]="editMessageForm.controls['message'].value"></markdown>
+                    </form>
                 </ng-container>
             </ng-container>
         </ion-card-content>
