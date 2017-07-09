@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 export interface FilterItem extends Item {
     visible: boolean;
     readonly filter: string;
+    readonly filters: string[];
     updateText(translate: TranslateService): void;
     updateFrom(item: Item, translate: TranslateService): void;
 }
@@ -26,9 +27,14 @@ export class ExtendedItem implements FilterItem {
     public visible: boolean = true;
 
     protected _filter: string;
+    protected _filters: string[];
 
     public get filter(): string {
         return this._filter;
+    }
+
+    public get filters(): string[] {
+        return this._filters;
     }
 
     public updateText(translate: TranslateService) {
@@ -36,6 +42,8 @@ export class ExtendedItem implements FilterItem {
         translate.get('ITEM.FILTER_TAG.DESCRIPTION') + ":" + this.description + "\0" +
         translate.get('ITEM.FILTER_TAG.TAG') + ":" + _.join(this.tags, "\0" + translate.get('ITEM.FILTER_TAG.TAG') + ":") + "\0" +
         translate.get('ITEM.FILTER_TAG.EXTERNAL_ID') + ":" + this.externalId).toLowerCase();
+        this._filters = [this.name.toLowerCase(), this.description.toLowerCase(), this.externalId.toLowerCase()]
+            .concat(_.map(this.tags, (tag) => tag.toLowerCase()));
     }
 
     public updateFrom(item: Item, translate: TranslateService) {
@@ -86,11 +94,12 @@ export class SelectableItemSingle extends ExtendedItem implements SelectableItem
 
     private _selectedProvider: SelectedProvider;
 
-    private _selected: boolean;
+    private _selected: boolean = false;
     private _available: boolean;
     private _deselected: boolean;
 
     private _filterSelected: string;
+    private _filtersSelected: string[];
 
     get filter(): string {
         if (this.selected) {
@@ -100,10 +109,17 @@ export class SelectableItemSingle extends ExtendedItem implements SelectableItem
     }
 
     public update(): boolean {
-        let newAvailable = this._selectedProvider.isAvailable(this._id);
-        this._selected = this._selectedProvider.isSelected(this._id);
+        let newSelected = this._selectedProvider.isSelected(this._id);
+        if (newSelected !== this._selected) {
+            this._selected = newSelected;
+            if (this._selected) {
+                Array.prototype.push.apply(this._filters, this._filtersSelected);
+            } else {
+                this._filters.splice(this._filters.length - this._filtersSelected.length, this._filtersSelected.length);
+            }
+        }
         this._available = this._selectedProvider.isAvailable(this._id);
-        if (!newAvailable && this._selected) {
+        if (!this._available && this._selected) {
             this.selected = false;
             this._deselected = true;
             return false;
@@ -128,6 +144,12 @@ export class SelectableItemSingle extends ExtendedItem implements SelectableItem
                 this._selectedProvider.deselect(this._id);
             }
             this._selected = this._selectedProvider.isSelected(this._id);
+
+            if (this._selected) {
+                Array.prototype.push.apply(this._filters, this._filtersSelected);
+            } else {
+                this._filters.splice(this._filters.length - this._filtersSelected.length, this._filtersSelected.length);
+            }
         }
         this._deselected = false;
     }
@@ -159,7 +181,14 @@ export class SelectableItemSingle extends ExtendedItem implements SelectableItem
 
     public updateText(translate: TranslateService) {
         super.updateText(translate);
+        if (this._selected) {
+            this._filters.splice(this._filters.length - this._filterSelected.length, this._filterSelected.length);
+        }
         this._filterSelected = translate.get('ITEM.FILTER_TAG.SELECTED');
+        this._filtersSelected = translate.get('ITEM.FILTER_TAG.SELECTED').split('\0');
+        if (this._selected) {
+            Array.prototype.push.apply(this._filters, this._filtersSelected);
+        }
     }
 
     public constructor(item: Item, translate: TranslateService, selectedProvider: SelectedProvider) {
@@ -205,6 +234,10 @@ export class SelectableItemGroup implements SelectableItem {
     }
     get filter(): string {
         return this.subItems[Math.max(this._selected - 1, 0)].filter;
+    }
+
+    get filters(): string[] {
+        return this.subItems[Math.max(this._selected - 1, 0)].filters;
     }
 
     subItems: SelectableItemSingle[] = [];

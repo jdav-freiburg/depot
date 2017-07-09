@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, NgZone, OnDestroy, OnInit, ViewChild} from "@angular/core";
+import {Component, NgZone, OnDestroy, OnInit} from "@angular/core";
 import template from "./reservation.html";
 import style from "./reservation.scss";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
@@ -7,7 +7,7 @@ import {UserService} from "../../services/user";
 import {Reservation} from "../../../../../both/models/reservation.model";
 import {ReservationsDataService} from "../../services/reservations-data";
 import {
-    AlertController, Loading, LoadingController, ModalController, NavController, NavParams, Platform,
+    AlertController, ItemGroup, Loading, LoadingController, ModalController, NavController, NavParams, Platform,
     ToastController, VirtualScroll
 } from "ionic-angular";
 import * as moment from 'moment';
@@ -35,7 +35,7 @@ class SelectableItemSingleImage extends SelectableItemSingle {
     template,
     styles: [ style ]
 })
-export class ReservationPage implements OnInit, OnDestroy, AfterViewInit {
+export class ReservationPage implements OnInit, OnDestroy {
     reservation: Reservation;
 
     private siblingReservationsHandle: Subscription;
@@ -47,6 +47,7 @@ export class ReservationPage implements OnInit, OnDestroy, AfterViewInit {
     isLoaded: boolean = false;
 
     editId: string;
+
     get readonly(): boolean {
         return this.editId && (!this.reservation || !this.users.user || (this.reservation.userId !== this.users.user._id && !this.users.isAdmin));
     }
@@ -61,6 +62,7 @@ export class ReservationPage implements OnInit, OnDestroy, AfterViewInit {
     private items: QueryObserverTransform<Item, SelectableItemSingle>;
 
     filter: string = "";
+    filterLower: string[] = [];
 
     forceClose: boolean = false;
 
@@ -526,17 +528,26 @@ export class ReservationPage implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
-
-    @ViewChild(VirtualScroll) _virtualScroll: VirtualScroll;
-
-    ngAfterViewInit() {
-        setTimeout(() => {
-            this.ngZone.run(() => {
-                if (this._virtualScroll) {
-                    this._virtualScroll.resize();
-                    console.log("Resize after 1 sec");
+    checkVisible(item: SelectableItemGroup) {
+        if (this.filter.length < 3) {
+            return true;
+        }
+        for (let i = 0; i < this.filterLower.length; i++) {
+            let any = false;
+            for (let j = 0; j < item.filters.length; j++) {
+                if (item.filters[j].indexOf(this.filterLower[i]) !== -1) {
+                    any = true;
+                    break;
                 }
-            });
-        }, 1000);
+            }
+            if (!any) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    filterChange() {
+        this.filterLower = this.filter.toLowerCase().split(/\s+/);
     }
 }

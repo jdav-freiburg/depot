@@ -41,27 +41,29 @@
     <ion-card>
         <ion-card-header>{{'RESERVATION_PAGE.ITEMS' | translate}}</ion-card-header>
         <ion-card-content>
-            <ion-searchbar [(ngModel)]="filter" [placeholder]="'RESERVATION_PAGE.FILTER' | translate"></ion-searchbar>
+            <ion-searchbar [(ngModel)]="filter" (ngModelChange)="filterChange()" [placeholder]="'RESERVATION_PAGE.FILTER' | translate"></ion-searchbar>
             <ion-list>
-                <ion-item *ngFor="let item of itemGroups | filterfilter:filter">
-                    <ion-checkbox item-left [(ngModel)]="item.selected" [disabled]="!item.available || readonly"></ion-checkbox>
-                    <ion-label>
-                        <h2>{{item.name}}</h2>
-                        <h3>{{item.description}}</h3>
-                        <p>{{item.tags}}<ng-container *ngIf="item.conditionComment">; {{item.conditionComment}}</ng-container></p>
-                    </ion-label>
-                    <ion-badge item-right *ngIf="item.condition=='bad'" color="warning">{{'RESERVATION_PAGE.ITEM_CONDITION_BAD' | translate}}</ion-badge>
-                    <ion-badge item-right *ngIf="item.condition=='broken'" color="danger">{{'RESERVATION_PAGE.ITEM_CONDITION_BROKEN' | translate}}</ion-badge>
-                    <ion-badge item-right *ngIf="item.isSingle && !item.available">{{'RESERVATION_PAGE.NOT_AVAILABLE' | translate}}</ion-badge>
-                    <ion-badge item-right *ngIf="item.isSingle && item.deselected" color="danger">{{'RESERVATION_PAGE.REMOVED' | translate}}</ion-badge>
-                    <ion-badge item-right *ngIf="!item.isSingle && item.availableCount < item.count">{{'RESERVATION_PAGE.SOME_NOT_AVAILABLE' | translate:{total: item.count, available: item.availableCount} }}</ion-badge>
-                    <ion-badge item-right *ngIf="!item.isSingle && item.deselectedCount > 0" color="danger">{{'RESERVATION_PAGE.SOME_REMOVED' | translate:{total: item.selected, removed: item.deselectedCount} }}</ion-badge>
-                    <ion-badge item-right *ngIf="!item.isSingle && item.selectedCount > 0">{{item.selectedCount}}/{{item.count}}</ion-badge>
-                    <button ion-button icon-only clear item-end *ngIf="!item.isSingle" (click)="item.selectedCount=item.selectedCount-1" [disabled]="readonly || item.selectedCount==0"><ion-icon name="remove"></ion-icon></button>
-                    <button ion-button icon-only clear item-end *ngIf="!item.isSingle" (click)="item.selectedCount=item.selectedCount+1" [disabled]="readonly || item.selectedCount >= item.availableCount"><ion-icon name="add"></ion-icon></button>
-                    <button ion-button icon-only clear item-end (click)="openItem(item)"><ion-icon name="search"></ion-icon></button>
-                    <ion-thumbnail class="clickable-thumbnail" item-right *ngIf="item.pictureUrl" (click)="openItemPicture(item); $event.preventDefault(); $event.stopPropagation()"><img [src]="item.pictureUrl"></ion-thumbnail>
-                </ion-item>
+                <ng-container *ngFor="let item of itemGroups">
+                    <ion-item *ngIf="checkVisible(item)">
+                        <ion-checkbox item-left [(ngModel)]="item.selected" [disabled]="!item.available || readonly"></ion-checkbox>
+                        <ion-label>
+                            <h2>{{item.name}}</h2>
+                            <h3>{{item.description}}</h3>
+                            <p>{{item.tags}}<ng-container *ngIf="item.conditionComment">; {{item.conditionComment}}</ng-container></p>
+                        </ion-label>
+                        <ion-badge item-right *ngIf="item.condition=='bad'" color="warning">{{'RESERVATION_PAGE.ITEM_CONDITION_BAD' | translate}}</ion-badge>
+                        <ion-badge item-right *ngIf="item.condition=='broken'" color="danger">{{'RESERVATION_PAGE.ITEM_CONDITION_BROKEN' | translate}}</ion-badge>
+                        <ion-badge item-right *ngIf="item.isSingle && !item.available">{{'RESERVATION_PAGE.NOT_AVAILABLE' | translate}}</ion-badge>
+                        <ion-badge item-right *ngIf="item.isSingle && item.deselected" color="danger">{{'RESERVATION_PAGE.REMOVED' | translate}}</ion-badge>
+                        <ion-badge item-right *ngIf="!item.isSingle && item.availableCount < item.count">{{'RESERVATION_PAGE.SOME_NOT_AVAILABLE' | translate:{total: item.count, available: item.availableCount} }}</ion-badge>
+                        <ion-badge item-right *ngIf="!item.isSingle && item.deselectedCount > 0" color="danger">{{'RESERVATION_PAGE.SOME_REMOVED' | translate:{total: item.selected, removed: item.deselectedCount} }}</ion-badge>
+                        <ion-badge item-right *ngIf="!item.isSingle && item.selectedCount > 0">{{item.selectedCount}}/{{item.count}}</ion-badge>
+                        <button ion-button icon-only clear item-end *ngIf="!item.isSingle" (click)="item.selectedCount=item.selectedCount-1" [disabled]="readonly || item.selectedCount==0"><ion-icon name="remove"></ion-icon></button>
+                        <button ion-button icon-only clear item-end *ngIf="!item.isSingle" (click)="item.selectedCount=item.selectedCount+1" [disabled]="readonly || item.selectedCount >= item.availableCount"><ion-icon name="add"></ion-icon></button>
+                        <button ion-button icon-only clear item-end (click)="openItem(item)"><ion-icon name="search"></ion-icon></button>
+                        <ion-thumbnail class="clickable-thumbnail" item-right *ngIf="item.pictureUrl" (click)="openItemPicture(item); $event.preventDefault(); $event.stopPropagation()"><img [src]="item.pictureUrl"></ion-thumbnail>
+                    </ion-item>
+                </ng-container>
             </ion-list>
             <!--<ion-list no-padding [virtualScroll]="items.data | itemsfilter:filter" approxItemHeight="85px" bufferRatio="5">
                 <ion-item *virtualItem="let item">

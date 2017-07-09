@@ -202,7 +202,8 @@ export class ItemStateModal implements OnInit, OnDestroy {
                 }
 
                 if (_.has(state.fields, 'condition')) {
-                    let option = _.find(this.itemDataService.itemConditionOptions, option => option.value == state.fields.condition);
+                    let option = _.find(this.itemDataService.itemConditionOptions, option => option.value == state.fields.condition)
+                      || this.itemDataService.itemConditionOptions[0];
                     primaryColor = option.colorCss;
                     if (_.has(state.fields, 'conditionComment')) {
                         textParts.push(this.translate.get('ITEM_STATE.CONDITION_CONDITION_COMMENT', {conditionOption: option, conditionComment: state.fields.conditionComment}));
@@ -234,7 +235,8 @@ export class ItemStateModal implements OnInit, OnDestroy {
                 }
 
                 if (_.has(state.fields, 'status')) {
-                    let option = _.find(this.itemDataService.itemStatusOptions, option => option.value == state.fields.status);
+                    let option = _.find(this.itemDataService.itemStatusOptions, option => option.value == state.fields.status)
+                      || this.itemDataService.itemStatusOptions[0];
                     textParts.push(this.translate.get('ITEM_STATE.STATUS', {statusOption: option}));
                 }
 

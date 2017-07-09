@@ -295,7 +295,7 @@ export const en_us = {
     "TAGS": (data) => `New Tags: ${_.join(data.tags, ', ')}`,
     "PICTURE": (data) => `New Picture`,
     "STATUS": (data) => `New Status: ${data.statusOption.text}`,
-    "RESERVATION_NAME": (data) => `${data.user?data.user.fullName:""} - ${data.type.text} - ${data.reservation.name}`
+    "RESERVATION_NAME": (data) => `Reservation ${data.user?data.user.fullName:""} - ${data.type.text} - ${data.reservation.name}`
   },
   "USER": {
     "STATUS": {

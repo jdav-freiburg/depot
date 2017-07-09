@@ -256,7 +256,6 @@ export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> 
                                 break;
                             }
                         }
-                        this.dataChanged.next(this._transformedData);
                     } else {
                         delete this._index[id];
                         for (let i = 0; i < this._data.length; i++) {
@@ -268,8 +267,8 @@ export class QueryObserverTransform<T extends ChangeableDataTransform<T, U>, U> 
                                 }
                             }
                         }
-                        this.dataChanged.next(this._transformedData);
                     }
+                    this.dataChanged.next(this._transformedData);
                 });
             },
             movedBefore: (id: string, before: string) => {
