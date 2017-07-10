@@ -3,7 +3,7 @@ import template from "./items-importer.html";
 import style from "./items-importer.scss";
 import * as _ from "lodash";
 import {UserService} from "../../services/user";
-import {AlertController, NavController, ToastController} from "ionic-angular";
+import {AlertController, ModalController, NavController, PopoverController, ToastController} from "ionic-angular";
 import * as moment from 'moment';
 import {TranslateService} from "../../services/translate";
 import {TranslateHelperService} from "../../services/translate-helper";
@@ -14,6 +14,10 @@ import {FormGroup, FormBuilder, Validators} from "@angular/forms";
 import * as Baby from 'babyparse';
 import {UploadFS} from "meteor/jalik:ufs";
 import 'fileapi';
+import {ExtendedItem} from "../../util/item";
+import {ExtendedFormItem} from "../../util/item-form";
+import {ItemListColumnsPage} from "../items-list/item-list-columns";
+import {ImageGalleryModal} from "../image-gallery-modal/image-gallery-modal";
 declare const FileAPI: any;
 
 
@@ -23,20 +27,58 @@ declare const FileAPI: any;
     styles: [ style ]
 })
 export class ItemsImporterPage {
-    items: Item[] = null;
+    items: ExtendedFormItem[] = null;
 
-    filter: string = "";
+    private filteredItems: ExtendedFormItem[] = [];
+
+    _filter: string = "";
 
     uploadForm: FormGroup;
 
     isWorking: boolean = false;
     fileIsOver: boolean = false;
 
-    constructor(private fb: FormBuilder,
-                private itemsDataService: ItemsDataService, private userService: UserService,
+    private columns = {
+        name: {visible: true},
+        description: {visible: true},
+        externalId: {visible: true},
+        purchaseDate: {visible: false},
+        lastService: {visible: true},
+        condition: {visible: true},
+        conditionComment: {visible: true},
+        itemGroup: {visible: false},
+        status: {visible: true},
+        tags: {visible: true},
+        picture: {visible: true},
+    };
+
+    private get filter(): string {
+        return this._filter;
+    }
+
+    private set filter(value: string) {
+        this._filter = value;
+        this.updateFilter();
+    }
+
+    private updateFilter() {
+        if (!this.items) {
+            this.filteredItems = [];
+        } else if (!this._filter || this._filter.length < 3) {
+            this.filteredItems = this.items;
+        } else {
+            let filterQuery = this._filter.toLowerCase().split(/\s+/);
+            this.filteredItems = _.filter(this.items, item => item.checkFilters(filterQuery));
+        }
+        console.log("Update filter " + this._filter + " --> " + this.filteredItems.length + " items");
+    }
+
+    constructor(private formBuilder: FormBuilder,
+                private itemsService: ItemsDataService, private userService: UserService,
                 private navCtrl: NavController, private translate: TranslateService, private toast: ToastController,
-                private translateHelper: TranslateHelperService, private alert: AlertController) {
-        this.uploadForm = fb.group({
+                private translateHelper: TranslateHelperService, private alert: AlertController,
+                private popoverCtrl: PopoverController, private modalCtrl: ModalController) {
+        this.uploadForm = formBuilder.group({
             file: ["", Validators.required],
         });
     }
@@ -81,12 +123,12 @@ export class ItemsImporterPage {
     }
 
     exportItems() {
-        let itemsData = this.itemsDataService.getItems().fetch();
+        let itemsData = this.itemsService.getItems().fetch();
         let header = ['_id', 'externalId', 'name', 'description', 'condition', 'conditionComment', 'purchaseDate',
-            'lastService', 'tags', 'status', 'itemGroup'];
+            'lastService', 'tags', 'status', 'itemGroup', 'picture'];
         let data = _.map(itemsData, (item) => [item._id, item.externalId, item.name, item.description, item.condition,
             item.conditionComment, this.momentFormat(item.purchaseDate), this.momentFormat(item.lastService),
-            _.join(item.tags, ','), item.status, item.itemGroup]);
+            _.join(item.tags, ','), item.status, item.itemGroup, item.picture]);
         let exportData = Baby.unparse({fields: header, data: data}, {delimiter: ';'});
         let blob = new Blob([exportData], { type: 'text/csv' });
         let url= URL.createObjectURL(blob);
@@ -104,7 +146,9 @@ export class ItemsImporterPage {
 
     fileDrop(data: string) {
         console.log("Drop:", data);
-        let result = Baby.parse(data).data;
+        let result = Baby.parse(data, {
+            delimiter: ";"
+        }).data;
         let isFirst = true;
         let first = result.splice(0, 1)[0];
         while (_.every(result[result.length - 1], (field) => !field)) {
@@ -122,7 +166,7 @@ export class ItemsImporterPage {
                 purchaseDate = moment(entry[6], "DD.MM.YYYY");
             }
             let lastService = moment(entry[7], "DD.MM.YYYY");
-            return {
+            return new ExtendedFormItem({
                 _id: <string>entry[0],
                 externalId: <string>entry[1],
                 name: <string>entry[2],
@@ -135,15 +179,16 @@ export class ItemsImporterPage {
                 purchaseDate: purchaseDate.isValid()?purchaseDate.toDate():null,
                 lastService: lastService.isValid()?lastService.toDate():null,
 
-                picture: null,
+                picture: <string>entry[11] || null,
 
                 tags: (!(<string>entry[8]).trim()?[]:_.map(_.split(<string>entry[8], ","), str => str.trim())),
 
                 status: <string>entry[9],
 
                 itemGroup: <string>entry[10] || null
-            };
+            }, this.translate, this.formBuilder);
         });
+        this.updateFilter();
         console.log("Imported entries", this.items);
     }
 
@@ -158,9 +203,18 @@ export class ItemsImporterPage {
         return this.userService.isManager;
     }
 
+    deleteItem(item: ExtendedFormItem) {
+        _.remove(this.items, (checkItem) => checkItem == item);
+        this.updateFilter();
+    }
+
     saveActually(updateComment: string) {
+        let updateItems: Item[] = _.map(this.items, (item) => {
+            return _.extend(item.getItemValues(), { _id: item._id });
+        });
+
         this.isWorking = true;
-        this.itemsDataService.addAll(this.items, updateComment, (err, res) => {
+        this.itemsService.addAll(updateItems, updateComment, (err, res) => {
             this.isWorking = false;
             if (err) {
                 console.log("Error:", err);
@@ -196,5 +250,34 @@ export class ItemsImporterPage {
                 },
             ]
         }).present();
+    }
+
+    selectPicture(item) {
+        let modalView = this.modalCtrl.create(ImageGalleryModal, {
+            picture: item.form.controls['picture'].value,
+            store: 'pictures-items',
+            title: item.form.controls['name'].value
+        });
+        modalView.onDidDismiss((data) => {
+            if (data) {
+                console.log("New Picture:", data);
+                if (data.image !== item.form.controls['picture'].value) {
+                    item.form.controls['picture'].setValue(data.image);
+                    item.form.controls['picture'].markAsTouched();
+                    item.form.controls['picture'].markAsDirty();
+                    item.form.controls['picture'].updateValueAndValidity();
+                }
+            }
+        });
+        modalView.present();
+    }
+
+    showColumnOptions(ev) {
+        let popover = this.popoverCtrl.create(ItemListColumnsPage, {
+            columns: this.columns
+        });
+        popover.present({
+            ev: ev
+        });
     }
 }

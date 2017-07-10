@@ -60,9 +60,9 @@ export class ItemListPage implements OnInit, OnDestroy {
                 item.visible = true;
             });
         } else {
-            let filter = this._filter.toLowerCase();
+            let filterQuery = this._filter.toLowerCase().split(/\s+/);
             _.forEach(this.items.data, (item) => {
-                item.visible = item.filter.indexOf(filter) !== -1;
+                item.visible = item.checkFilters(filterQuery);
             });
             this.filteredItems = _.filter(this.items.data, item => item.visible);
         }

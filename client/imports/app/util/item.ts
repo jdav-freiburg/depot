@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 export interface FilterItem extends Item {
     visible: boolean;
     readonly filter: string;
-    readonly filters: string[];
+    checkFilters(query: string[]): boolean;
     updateText(translate: TranslateService): void;
     updateFrom(item: Item, translate: TranslateService): void;
 }
@@ -33,8 +33,20 @@ export class ExtendedItem implements FilterItem {
         return this._filter;
     }
 
-    public get filters(): string[] {
-        return this._filters;
+    public checkFilters(query: string[]): boolean {
+        for (let i = 0; i < query.length; i++) {
+            let any = false;
+            for (let j = 0; j < this._filters.length; j++) {
+                if (this._filters[j].indexOf(query[i]) !== -1) {
+                    any = true;
+                    break;
+                }
+            }
+            if (!any) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public updateText(translate: TranslateService) {
@@ -236,8 +248,8 @@ export class SelectableItemGroup implements SelectableItem {
         return this.subItems[Math.max(this._selected - 1, 0)].filter;
     }
 
-    get filters(): string[] {
-        return this.subItems[Math.max(this._selected - 1, 0)].filters;
+    checkFilters(query: string[]): boolean {
+        return this.subItems[Math.max(this._selected - 1, 0)].checkFilters(query);
     }
 
     subItems: SelectableItemSingle[] = [];

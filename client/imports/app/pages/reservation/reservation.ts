@@ -62,7 +62,7 @@ export class ReservationPage implements OnInit, OnDestroy {
     private items: QueryObserverTransform<Item, SelectableItemSingle>;
 
     filter: string = "";
-    filterLower: string[] = [];
+    filterQuery: string[] = [];
 
     forceClose: boolean = false;
 
@@ -528,26 +528,7 @@ export class ReservationPage implements OnInit, OnDestroy {
         });
     }
 
-    checkVisible(item: SelectableItemGroup) {
-        if (this.filter.length < 3) {
-            return true;
-        }
-        for (let i = 0; i < this.filterLower.length; i++) {
-            let any = false;
-            for (let j = 0; j < item.filters.length; j++) {
-                if (item.filters[j].indexOf(this.filterLower[i]) !== -1) {
-                    any = true;
-                    break;
-                }
-            }
-            if (!any) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     filterChange() {
-        this.filterLower = this.filter.toLowerCase().split(/\s+/);
+        this.filterQuery = this.filter.toLowerCase().split(/\s+/);
     }
 }

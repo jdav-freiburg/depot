@@ -119,7 +119,7 @@
                         </button>
                     </ion-col>
                     <ion-col col-auto *ngIf="columns.picture.visible">
-                        <button ion-button clear icon-only (click)="selectPicture()" [disabled]="item.form.controls['picture'].disabled" small no-padding>
+                        <button ion-button clear icon-only (click)="selectPicture(item)" [disabled]="item.form.controls['picture'].disabled" small no-padding>
                             <ion-icon name="images" *ngIf="item.form.controls['picture'].value"></ion-icon>
                             <ion-icon name="image" *ngIf="!item.form.controls['picture'].value"></ion-icon>
                         </button>
