@@ -105,13 +105,15 @@ export const en_us = {
       "SUBTITLE": "Save Entry",
       "COMMENT_LABEL": "Change Comment",
       "SAVE": "Save",
-      "CANCEL": "Cancel"
+      "CANCEL": "Cancel",
+      "SUCCESS": "Everything saved"
     },
     "DELETE": {
       "TITLE": (item) => `Delete ${item.name}?`,
       "SUBTITLE": (item) => `Really delete ${item.name}?`,
       "YES": "Delete",
-      "NO": "Cancel"
+      "NO": "Cancel",
+      "SUCCESS": "Item deleted"
     },
     "CHANGE": {
       "TITLE": "Foreign Changes",

@@ -1,0 +1,24 @@
+.header-row {
+  font-weight: bold;
+  background-color: #f8f8f8;
+}
+
+:host {
+  height: 100%;
+  display: block;
+}
+
+.header-row .item {
+  font-weight: bold;
+  background-color: #f8f8f8;
+}
+
+.item-card-row .col {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.item-card-row .col, .item-card-row .col /deep/ input, .item-card-row .col /deep/ .select, .item-card-row .col /deep/ .button {
+  padding: 0;
+  margin: 0;
+}

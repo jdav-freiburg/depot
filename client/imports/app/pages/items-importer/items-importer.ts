@@ -1,9 +1,9 @@
-import {Component} from "@angular/core";
+import {AfterViewInit, Component, ViewChild} from "@angular/core";
 import template from "./items-importer.html";
 import style from "./items-importer.scss";
 import * as _ from "lodash";
 import {UserService} from "../../services/user";
-import {AlertController, ModalController, NavController, PopoverController, ToastController} from "ionic-angular";
+import {ToastController} from "ionic-angular";
 import * as moment from 'moment';
 import {TranslateService} from "../../services/translate";
 import {TranslateHelperService} from "../../services/translate-helper";
@@ -14,10 +14,8 @@ import {FormGroup, FormBuilder, Validators} from "@angular/forms";
 import * as Baby from 'babyparse';
 import {UploadFS} from "meteor/jalik:ufs";
 import 'fileapi';
-import {ExtendedItem} from "../../util/item";
 import {ExtendedFormItem} from "../../util/item-form";
-import {ItemListColumnsPage} from "../items-list/item-list-columns";
-import {ImageGalleryModal} from "../image-gallery-modal/image-gallery-modal";
+import {ItemListComponent} from "../../components/item-list-editor/item-list";
 declare const FileAPI: any;
 
 
@@ -26,73 +24,54 @@ declare const FileAPI: any;
     template,
     styles: [ style ]
 })
-export class ItemsImporterPage {
+export class ItemsImporterPage implements AfterViewInit {
     items: ExtendedFormItem[] = null;
-
-    private filteredItems: ExtendedFormItem[] = [];
-
-    _filter: string = "";
 
     uploadForm: FormGroup;
 
     isWorking: boolean = false;
     fileIsOver: boolean = false;
 
-    private columns = {
-        name: {visible: true},
-        description: {visible: true},
-        externalId: {visible: true},
-        purchaseDate: {visible: false},
-        lastService: {visible: true},
-        condition: {visible: true},
-        conditionComment: {visible: true},
-        itemGroup: {visible: false},
-        status: {visible: true},
-        tags: {visible: true},
-        picture: {visible: true},
-    };
+    @ViewChild(ItemListComponent)
+    private itemList: ItemListComponent;
 
-    private get filter(): string {
-        return this._filter;
-    }
-
-    private set filter(value: string) {
-        this._filter = value;
-        this.updateFilter();
-    }
-
-    private updateFilter() {
-        if (!this.items) {
-            this.filteredItems = [];
-        } else if (!this._filter || this._filter.length < 3) {
-            this.filteredItems = this.items;
-        } else {
-            let filterQuery = this._filter.toLowerCase().split(/\s+/);
-            this.filteredItems = _.filter(this.items, item => item.checkFilters(filterQuery));
-        }
-        console.log("Update filter " + this._filter + " --> " + this.filteredItems.length + " items");
+    ngAfterViewInit() {
+        this.itemList.onDelete = (item: ExtendedFormItem, callback?: Function) => {
+            _.remove(this.items, (checkItem) => checkItem == item);
+            this.itemList.updateFilter();
+            if (callback) {
+                callback();
+            }
+        };
+        this.itemList.onSaveAll = (updateComment: string, updateItems: Item[], callback?: Function) => {
+            this.isWorking = true;
+            this.itemsService.addAll(updateItems, updateComment, (err, res) => {
+                this.isWorking = false;
+                if (callback) {
+                    callback(err);
+                }
+            });
+        };
     }
 
     constructor(private formBuilder: FormBuilder,
                 private itemsService: ItemsDataService, private userService: UserService,
-                private navCtrl: NavController, private translate: TranslateService, private toast: ToastController,
-                private translateHelper: TranslateHelperService, private alert: AlertController,
-                private popoverCtrl: PopoverController, private modalCtrl: ModalController) {
+                private translate: TranslateService, private toast: ToastController,
+                private translateHelper: TranslateHelperService) {
         this.uploadForm = formBuilder.group({
             file: ["", Validators.required],
         });
     }
 
-
-    onFileOver(isOver: boolean) {
+    private onFileOver(isOver: boolean) {
         this.fileIsOver = isOver;
     }
 
-    onFileDrop(data: any) {
+    private onFileDrop(data: any) {
         this.openFile(data);
     }
 
-    openFile(file: File) {
+    private openFile(file: File) {
         FileAPI.readAsText(file, (event) => {
             if (event.type === 'load') {
                 this.fileDrop(event.result);
@@ -108,9 +87,7 @@ export class ItemsImporterPage {
         });
     }
 
-
-
-    momentFormat(date: Date) {
+    private momentFormat(date: Date) {
         let m = moment(date);
         if (m.isValid()) {
             return m.format('L');
@@ -118,11 +95,7 @@ export class ItemsImporterPage {
         return "";
     }
 
-    headerFn(rec, idx) {
-        return idx === 0 ? true : null;
-    }
-
-    exportItems() {
+    private exportItems() {
         let itemsData = this.itemsService.getItems().fetch();
         let header = ['_id', 'externalId', 'name', 'description', 'condition', 'conditionComment', 'purchaseDate',
             'lastService', 'tags', 'status', 'itemGroup', 'picture'];
@@ -144,7 +117,7 @@ export class ItemsImporterPage {
         document.body.removeChild(temporaryDownloadLink);
     }
 
-    fileDrop(data: string) {
+    private fileDrop(data: string) {
         console.log("Drop:", data);
         let result = Baby.parse(data, {
             delimiter: ";"
@@ -188,96 +161,6 @@ export class ItemsImporterPage {
                 itemGroup: <string>entry[10] || null
             }, this.translate, this.formBuilder);
         });
-        this.updateFilter();
         console.log("Imported entries", this.items);
-    }
-
-    getTags(tags: string): string[] {
-        if (_.trim(tags) === "") {
-            return [];
-        }
-        return _.map(_.split(tags, ','), (tag) => _.trim(tag));
-    }
-
-    get isManager(): boolean {
-        return this.userService.isManager;
-    }
-
-    deleteItem(item: ExtendedFormItem) {
-        _.remove(this.items, (checkItem) => checkItem == item);
-        this.updateFilter();
-    }
-
-    saveActually(updateComment: string) {
-        let updateItems: Item[] = _.map(this.items, (item) => {
-            return _.extend(item.getItemValues(), { _id: item._id });
-        });
-
-        this.isWorking = true;
-        this.itemsService.addAll(updateItems, updateComment, (err, res) => {
-            this.isWorking = false;
-            if (err) {
-                console.log("Error:", err);
-                this.toast.create({
-                    message: this.translateHelper.getError(err),
-                    duration: 2500
-                }).present();
-            }
-        });
-    }
-
-    save() {
-        this.alert.create({
-            title: this.translate.get('ITEM_CARD.SAVE.TITLE'),
-            subTitle: this.translate.get('ITEM_CARD.SAVE.SUBTITLE'),
-            inputs: [
-                {
-                    placeholder: this.translate.get('ITEM_CARD.SAVE.COMMENT_LABEL'),
-                    type: 'text',
-                    name: 'updateComment'
-                }
-            ],
-            buttons: [
-                {
-                    text: this.translate.get('ITEM_CARD.SAVE.CANCEL'),
-                    role: 'cancel'
-                },
-                {
-                    text: this.translate.get('ITEM_CARD.SAVE.SAVE'),
-                    handler: (data) => {
-                        this.saveActually(data.updateComment);
-                    }
-                },
-            ]
-        }).present();
-    }
-
-    selectPicture(item) {
-        let modalView = this.modalCtrl.create(ImageGalleryModal, {
-            picture: item.form.controls['picture'].value,
-            store: 'pictures-items',
-            title: item.form.controls['name'].value
-        });
-        modalView.onDidDismiss((data) => {
-            if (data) {
-                console.log("New Picture:", data);
-                if (data.image !== item.form.controls['picture'].value) {
-                    item.form.controls['picture'].setValue(data.image);
-                    item.form.controls['picture'].markAsTouched();
-                    item.form.controls['picture'].markAsDirty();
-                    item.form.controls['picture'].updateValueAndValidity();
-                }
-            }
-        });
-        modalView.present();
-    }
-
-    showColumnOptions(ev) {
-        let popover = this.popoverCtrl.create(ItemListColumnsPage, {
-            columns: this.columns
-        });
-        popover.present({
-            ev: ev
-        });
     }
 }

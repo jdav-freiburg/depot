@@ -106,13 +106,15 @@ export const de_de = {
       "SUBTITLE": "Eintrag Speichern",
       "COMMENT_LABEL": "Änderungskommentar",
       "SAVE": "Speichern",
-      "CANCEL": "Abbrechen"
+      "CANCEL": "Abbrechen",
+      "SUCCESS": "Alles gespeichert"
     },
     "DELETE": {
       "TITLE": (item) => `${item.name} Löschen?`,
       "SUBTITLE": (item) => `${item.name} Löschen?`,
       "YES": "Löschen",
-      "NO": "Abbrechen"
+      "NO": "Abbrechen",
+      "SUCCESS": "Material gelöscht"
     },
     "CHANGE": {
       "TITLE": "Fremde Änderungen",

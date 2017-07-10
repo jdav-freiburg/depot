@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 
 export interface FilterItem extends Item {
     visible: boolean;
-    readonly filter: string;
     checkFilters(query: string[]): boolean;
     updateText(translate: TranslateService): void;
     updateFrom(item: Item, translate: TranslateService): void;
@@ -26,12 +25,7 @@ export class ExtendedItem implements FilterItem {
 
     public visible: boolean = true;
 
-    protected _filter: string;
     protected _filters: string[];
-
-    public get filter(): string {
-        return this._filter;
-    }
 
     public checkFilters(query: string[]): boolean {
         for (let i = 0; i < query.length; i++) {
@@ -50,10 +44,6 @@ export class ExtendedItem implements FilterItem {
     }
 
     public updateText(translate: TranslateService) {
-        this._filter = (translate.get('ITEM.FILTER_TAG.NAME') + ":" + this.name + "\0" +
-        translate.get('ITEM.FILTER_TAG.DESCRIPTION') + ":" + this.description + "\0" +
-        translate.get('ITEM.FILTER_TAG.TAG') + ":" + _.join(this.tags, "\0" + translate.get('ITEM.FILTER_TAG.TAG') + ":") + "\0" +
-        translate.get('ITEM.FILTER_TAG.EXTERNAL_ID') + ":" + this.externalId).toLowerCase();
         this._filters = [this.name.toLowerCase(), this.description.toLowerCase(), this.externalId.toLowerCase()]
             .concat(_.map(this.tags, (tag) => tag.toLowerCase()));
     }
@@ -112,13 +102,6 @@ export class SelectableItemSingle extends ExtendedItem implements SelectableItem
 
     private _filterSelected: string;
     private _filtersSelected: string[];
-
-    get filter(): string {
-        if (this.selected) {
-            return this._filter + "\0" + this._filterSelected;
-        }
-        return this._filter;
-    }
 
     public update(): boolean {
         let newSelected = this._selectedProvider.isSelected(this._id);
@@ -243,9 +226,6 @@ export class SelectableItemGroup implements SelectableItem {
     }
     get status(): string {
         return this.subItems[Math.max(this._selected - 1, 0)].status;
-    }
-    get filter(): string {
-        return this.subItems[Math.max(this._selected - 1, 0)].filter;
     }
 
     checkFilters(query: string[]): boolean {
