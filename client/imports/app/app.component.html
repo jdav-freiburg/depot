@@ -5,6 +5,7 @@
             <button ion-item (click)="showUsers()" menuClose icon-right *ngIf="isAdmin">{{'SIDEMENU.USERS' | translate}}<ion-icon name="people"></ion-icon></button>
             <button ion-item (click)="showItems()" menuClose icon-right *ngIf="isManager">{{'SIDEMENU.ITEMS_LIST' | translate}}<ion-icon name="list"></ion-icon></button>
             <button ion-item (click)="importItems()" menuClose icon-right *ngIf="isManager">{{'SIDEMENU.IMPORT_ITEMS' | translate}}<ion-icon name="list"></ion-icon></button>
+            <button ion-item (click)="showCalendarItems()" menuClose icon-right>{{'SIDEMENU.ITEMS_CALENDAR' | translate}}<ion-icon name="list"></ion-icon></button>
             <button ion-item (click)="logout()" menuClose icon-right>{{'SIDEMENU.LOGOUT' | translate}}<ion-icon name="log-out"></ion-icon></button>
         </ion-list>
         <ion-footer>

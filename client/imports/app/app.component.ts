@@ -13,6 +13,7 @@ import {ItemsImporterPage} from "./pages/items-importer/items-importer";
 import {ItemListPage} from "./pages/items-list/item-list";
 import {ItemsDataService} from "./services/items-data";
 import {ReservationsDataService} from "./services/reservations-data";
+import {CalendarItemsPage} from "./pages/calendar-items/calendar-items";
 
 @Component({
     selector: "app",
@@ -60,6 +61,10 @@ export class AppComponent {
 
     showItems() {
         this.nav.push(ItemListPage);
+    }
+
+    showCalendarItems() {
+        this.nav.push(CalendarItemsPage);
     }
 
     importItems() {

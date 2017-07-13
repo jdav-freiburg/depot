@@ -314,3 +314,76 @@ export class SelectableItemGroup implements SelectableItem {
     public constructor() {
     }
 }
+
+export class ItemGroup<InnerType extends FilterItem> implements FilterItem {
+    get externalId(): string {
+        return this.subItems[this.activeIndex].externalId;
+    }
+    get name(): string {
+        return this.subItems[this.activeIndex].description;
+    }
+    get description(): string {
+        return this.subItems[this.activeIndex].description;
+    }
+    get condition(): string {
+        return this.subItems[this.activeIndex].condition;
+    }
+    get conditionComment(): string {
+        return this.subItems[this.activeIndex].conditionComment;
+    }
+    get purchaseDate(): Date {
+        return this.subItems[this.activeIndex].purchaseDate;
+    }
+    get lastService(): Date {
+        return this.subItems[this.activeIndex].lastService;
+    }
+    get picture(): string {
+        return this.subItems[this.activeIndex].picture;
+    }
+    get tags(): string[] {
+        return this.subItems[this.activeIndex].tags;
+    }
+
+    get itemGroup(): string {
+        return this.subItems[this.activeIndex].itemGroup;
+    }
+    get status(): string {
+        return this.subItems[this.activeIndex].status;
+    }
+
+    checkFilters(query: string[]): boolean {
+        return this.subItems[this.activeIndex].checkFilters(query);
+    }
+
+    subItems: InnerType[] = [];
+    public activeIndex: number = 0;
+
+    public visible: boolean = true;
+
+    update(): void {
+        this.subItems = _.sortBy(this.subItems, (subItem) => (subItem.condition==='good'?10:(subItem.condition==='bad'?20:30)));
+    }
+
+    public updateText(translate: TranslateService): void {
+        _.forEach(this.subItems, subItem => subItem.updateText(translate));
+    }
+
+    public updateFrom(item: Item, translate: TranslateService): void {
+        throw new Error("Can't update item");
+    }
+
+    get isSingle(): boolean {
+        return this.count === 1;
+    }
+
+    get count(): number {
+        return this.subItems.length;
+    }
+
+    get itemGroupRef(): FilterItem {
+        return this;
+    }
+
+    public constructor() {
+    }
+}

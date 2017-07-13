@@ -1,0 +1,124 @@
+
+.content-container {
+  height: 100%;
+  width: 100%;
+
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: column nowrap;
+  flex-flow: column nowrap;
+}
+
+.content-container > * {
+  flex: none;
+}
+
+.container {
+  overflow: hidden;
+  width: 100%;
+  padding-left: 5px;
+  padding-right: 5px;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row nowrap;
+  flex-flow: row nowrap;
+}
+
+.container.content {
+  flex: 1 !important;
+  overflow: hidden;
+}
+
+.description {
+  position: relative;
+  display: block;
+  width: 150px;
+}
+
+.timetable-container {
+  flex: 1;
+  display: inline-block;
+  overflow: hidden;
+  position: relative;
+}
+
+.timetable-container.scroll {
+  overflow: scroll;
+}
+
+.timetable {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.item-row {
+  position: absolute;
+  height: 30px;
+  border-bottom: 1px solid lightgray;
+}
+
+.item-row.title {
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border-right: 1px solid lightgray;
+  width: 100%;
+}
+
+.item-row.entry {
+  display: block;
+  clear: both;
+  white-space: nowrap;
+}
+
+.item-row.header {
+  border-bottom: none;
+}
+
+.item-row.entry.header {
+  background-color: lightblue;
+}
+
+.item-row.header.day {
+  border-bottom: 1px solid dodgerblue;
+}
+
+.item-row.entry.header .cell {
+  border-right: 1px solid dodgerblue;
+  text-align: center;
+}
+
+.item-row.entry.header.month .cell {
+  border-right: none;
+  overflow: visible;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.item-row.entry.header.month .cell.last {
+  border-right: 1px solid dodgerblue;
+}
+
+.cell {
+  position: absolute;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  clear: none;
+  border-right: 1px solid lightgray;
+}
+
+.cell.reserved {
+  background-color: orange;
+}
+
+.noscroll /deep/ .scroll-content {
+  overflow: hidden;
+}

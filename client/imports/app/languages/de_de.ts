@@ -220,6 +220,10 @@ export const de_de = {
       "NO": "Nein"
     }
   },
+  "CALENDAR_ITEMS_PAGE": {
+    "FILTER": "Filter",
+    "TITLE": "Kalenderansicht"
+  },
   "VERIFY_EMAIL_PAGE": {
     "TITLE": "E-Mail Verifizieren",
     "VERIFY": "E-Mail Verifizieren",
@@ -254,7 +258,8 @@ export const de_de = {
     "LOGOUT": "Abmelden",
     "LANGUAGE": "Sprache",
     "IMPORT_ITEMS": "Material Importieren",
-    "ITEMS_LIST": "Materialien"
+    "ITEMS_LIST": "Materialien",
+    "ITEMS_CALENDAR": "Kalenderansicht"
   },
   "TABS": {
     "HOME": "Meine Übersicht",

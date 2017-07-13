@@ -219,6 +219,10 @@ export const en_us = {
       "NO": "No"
     }
   },
+  "CALENDAR_ITEMS_PAGE": {
+    "FILTER": "Filter",
+    "TITLE": "Calendar"
+  },
   "VERIFY_EMAIL_PAGE": {
     "TITLE": "Verify E-Mail",
     "VERIFY": "Verify E-Mail",
@@ -253,7 +257,8 @@ export const en_us = {
     "LOGOUT": "Log Out",
     "LANGUAGE": "Language",
     "IMPORT_ITEMS": "Import Items",
-    "ITEMS_LIST": "Items"
+    "ITEMS_LIST": "Items",
+    "ITEMS_CALENDAR": "Calendar"
   },
   "TABS": {
     "HOME": "Quick View",

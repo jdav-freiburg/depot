@@ -51,6 +51,7 @@ import {ImageGalleryModal} from "./pages/image-gallery-modal/image-gallery-modal
 import {ImagePreviewModal} from "./pages/image-preview-modal/image-preview-modal";
 import {ItemListColumnsPage} from "./components/item-list-editor/item-list-columns";
 import {ItemListComponent} from "./components/item-list-editor/item-list";
+import {CalendarItemsPage} from "./pages/calendar-items/calendar-items";
 
 @NgModule({
     // Components, Pipes, Directive
@@ -89,7 +90,8 @@ import {ItemListComponent} from "./components/item-list-editor/item-list";
         ImageGalleryModal,
         ImagePreviewModal,
         ItemListColumnsPage,
-        ItemListComponent
+        ItemListComponent,
+        CalendarItemsPage
     ],
     // Entry Components
     entryComponents: [
@@ -114,7 +116,8 @@ import {ItemListComponent} from "./components/item-list-editor/item-list";
         ImageUploaderModal,
         ImageGalleryModal,
         ImagePreviewModal,
-        ItemListColumnsPage
+        ItemListColumnsPage,
+        CalendarItemsPage
     ],
     // Providers
     providers: [
