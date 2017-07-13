@@ -1,0 +1,49 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>
+            {{'CALENDAR_ITEMS_PAGE.TITLE' | translate}}
+        </ion-title>
+        <button ion-button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+    </ion-navbar>
+</ion-header>
+
+<ion-content class="noscroll">
+    <div class="content-container">
+        <ion-searchbar [(ngModel)]="filter" [placeholder]="'CALENDAR_ITEMS_PAGE.FILTER' | translate"></ion-searchbar>
+        <div class="container" [style.height.px]="2*elementHeight">
+            <div class="description">
+                <div class="item-row title header month" [style.left.px]="0" [style.top.px]="0"></div>
+                <div class="item-row title header day" [style.left.px]="0" [style.top.px]="elementHeight"></div>
+            </div>
+            <div #timetableContainerHeader class="timetable-container">
+                <div class="timetable" [style.left.px]="offsetLeft" [style.height.px]="filteredItems.length * elementHeight" [style.width.px]="days.length * elementWidth">
+                    <div class="item-row entry header month" [style.left.px]="0" [style.top.px]="0" [style.width.px]="days.length * elementWidth">
+                        <div *ngFor="let day of dayCache" class="cell" [ngClass]="{'last': day.day?.isLast}"
+                             [style.left.px]="day.x" [style.top.px]="0" [style.display]="day.visible?'block':'none'">{{day.day?.monthName}}</div>
+                    </div>
+                    <div class="item-row entry header day" [style.left.px]="0" [style.top.px]="elementHeight" [style.width.px]="days.length * elementWidth">
+                        <div *ngFor="let day of dayCache" class="cell" [style.left.px]="day.x" [style.top.px]="0" [style.display]="day.visible?'block':'none'">{{day.day?.monthDay}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container content">
+            <div #description class="description" [style.top.px]="offsetTop">
+                <div *ngFor="let item of itemCache" class="item-row title" [style.top.px]="item.y" [style.display]="item.visible?'block':'none'">{{item.item?.name}}</div>
+            </div>
+            <div #timetableContainer class="timetable-container scroll" (scroll)="onScroll($event)">
+                <div #timetable class="timetable" [style.height.px]="filteredItems.length * elementHeight" [style.width.px]="days.length * elementWidth">
+                    <div *ngFor="let item of itemCache" class="item-row entry"
+                         [style.left.px]="0" [style.top.px]="item.y" [style.width.px]="days.length * elementWidth" [style.display]="item.visible?'block':'none'">
+                        <div *ngFor="let day of dayCache" class="cell" [ngClass]="{'reserved': item.item?.isReserved(day.day), 'service': item.item?.hasService(day.day)}"
+                             [style.top.px]="0" [style.left.px]="day.x" [style.display]="day.visible?'block':'none'">
+                            <a href="#" *ngIf="item.item?.isReserved(day.day)" (click)="openReservation(item.item?.reservation(day.day))">{{item.item?.reservationName(day.day)}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ion-content>
