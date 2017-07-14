@@ -9,7 +9,7 @@ import {AlertController, NavController, ScrollEvent, ToastController} from "ioni
 import {TranslateService} from "../../services/translate";
 import {ChangeableDataTransform, QueryObserver, QueryObserverTransform} from "../../util/query-observer";
 import {Subscription} from "rxjs/Subscription";
-import {ExtendedItem, FilterItem, ItemGroup, SelectableItemGroup} from "../../util/item";
+import {ExtendedItem, FilterItem, ItemGroup} from "../../util/item";
 import {PictureService} from "../../services/picture";
 import {Reservation} from "../../../../../both/models/reservation.model";
 import {ReservationsDataService} from "../../services/reservations-data";
@@ -28,7 +28,7 @@ class Day {
 
     public get monthName(): string {
         if (this.start.date() === 1) {
-            return this.start.format("MMMM");
+            return this.start.format("MMMM - YYYY");
         }
         return "";
     }
@@ -45,58 +45,18 @@ class Day {
 interface CalendarItem extends FilterItem {
     readonly pictureUrl: string;
 
-    index: number;
-    viewIndex: number;
-
-    reservations: Reservation[];
-
-    isReserved(day: Day): boolean;
-    hasService(day: Day): boolean;
-
-    reservation(day: Day): Reservation;
-    reservationName(day: Day): string;
+    reservations: CalendarReservation[];
 }
 
 class CalendarExtendedItem extends ExtendedItem implements CalendarItem {
     itemGroupRef: CalendarItemGroup;
 
-    index: number;
-    viewIndex: number;
-
-    reservations: Reservation[] = [];
+    reservations: CalendarReservation[] = [];
 
     pictureUrl: string;
 
     constructor(item: Item, translate: TranslateService) {
         super(item, translate);
-    }
-
-    isReserved(day: Day): boolean {
-        return day && _.some(this.reservations, (reservation) => {
-            return reservation.end.getTime() >= day.start.valueOf() && reservation.start.getTime() <= day.end.valueOf();
-        });
-    }
-
-    reservation(day: Day): Reservation {
-        if (!day) {
-            return null;
-        }
-        return _.find(this.reservations, (reservation) => reservation.end.getTime() >= day.start.valueOf() && reservation.start.getTime() <= day.end.valueOf());
-    }
-
-    reservationName(day: Day): string {
-        if (!day) {
-            return null;
-        }
-        let res = _.find(this.reservations, (reservation) => reservation.start.getTime() >= day.start.valueOf() && reservation.start.getTime() <= day.end.valueOf());
-        if (!res) {
-            return null;
-        }
-        return res.name;
-    }
-
-    hasService(day: Day): boolean {
-        return false;
     }
 }
 
@@ -105,29 +65,47 @@ class CalendarItemGroup extends ItemGroup<CalendarExtendedItem> implements Calen
         return this.subItems[this.activeIndex].pictureUrl;
     }
 
-    index: number;
-    viewIndex: number;
-
-    reservations: Reservation[] = [];
+    reservations: CalendarReservation[] = [];
 
     public constructor() {
         super();
     }
+}
 
-    isReserved(day: Day): boolean {
-        return day && _.some(this.subItems, (subItem) => subItem.isReserved(day));
+class CalendarReservation {
+    _id: string;
+
+    type: string;
+    name: string;
+    start: moment.Moment;
+    end: moment.Moment;
+
+    userId: string;
+
+    groupId: string;
+
+    contact: string;
+
+    itemIds: string[];
+
+    durationDays: number;
+
+    public updateFrom(reservation: Reservation) {
+        this._id = reservation._id;
+        this.type = reservation.type;
+        this.name = reservation.name;
+        this.start = moment(reservation.start);
+        this.end = moment(reservation.end);
+        this.userId = reservation.userId;
+        this.groupId = reservation.groupId;
+        this.contact = reservation.contact;
+        this.itemIds = _.clone(reservation.itemIds);
+
+        this.durationDays = this.end.diff(this.start, 'days');
     }
 
-    hasService(day: Day): boolean {
-        return false;
-    }
-
-    reservation(day: Day): Reservation {
-        return day && this.subItems[0].reservation(day);
-    }
-
-    reservationName(day: Day): string {
-        return day && this.subItems[0].reservationName(day);
+    public constructor(reservation: Reservation) {
+        this.updateFrom(reservation);
     }
 }
 
@@ -170,7 +148,7 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
 
     private filteredItems: CalendarItem[] = [];
 
-    private reservations: QueryObserver<Reservation>;
+    private reservations: QueryObserverTransform<Reservation, CalendarReservation>;
 
     private _filter: string = "";
     private _filterQuery: string[] = [];
@@ -206,6 +184,8 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
     private dayCache: DayCache[] = [];
     private dayCacheStart: number = 0;
     private dayCacheEnd: number = 0;
+
+    private canScroll: boolean = true;
 
     constructor(private itemsService: ItemsDataService,
                 private translate: TranslateService, private ngZone: NgZone,
@@ -310,18 +290,38 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
             this.updateFilter();
         });
 
-        this.reservations = new QueryObserver<Reservation>(this.reservationsService.getReservations(), this.ngZone, true);
-        this.reservations.dataChanged.subscribe((reservations) => {
-            this.itemGroups.forEach((itemGroup) => {
-                itemGroup.reservations = [];
-            });
-            reservations.forEach((reservation) => {
-                reservation.itemIds.forEach((itemId) => {
+        this.reservations = new QueryObserverTransform<Reservation, CalendarReservation>({
+            query: this.reservationsService.getReservations(),
+            zone: this.ngZone,
+            transformer: (reservation) => {
+                let transformed: CalendarReservation = (<ChangeableDataTransform<Reservation, CalendarReservation>>reservation)._transformed;
+                if (transformed) {
+                    transformed.itemIds.forEach((itemId) => {
+                        if (this.itemGroupsItemIndex.hasOwnProperty(itemId)) {
+                            _.remove(this.itemGroupsItemIndex[itemId].reservations, (itemRes) => itemRes == transformed);
+                        }
+                    });
+                    transformed.updateFrom(reservation);
+                } else {
+                    transformed = new CalendarReservation(reservation);
+                }
+                transformed.itemIds.forEach((itemId) => {
                     if (this.itemGroupsItemIndex.hasOwnProperty(itemId)) {
-                        this.itemGroupsItemIndex[itemId].reservations.push(reservation);
+                        this.itemGroupsItemIndex[itemId].reservations.push(transformed);
                     }
                 });
-            });
+                return transformed;
+            },
+            removed: (reservation, index) => {
+                let transformed: CalendarReservation = (<ChangeableDataTransform<Reservation, CalendarReservation>>reservation)._transformed;
+                if (transformed) {
+                    transformed.itemIds.forEach((itemId) => {
+                        if (this.itemGroupsItemIndex.hasOwnProperty(itemId)) {
+                            _.remove(this.itemGroupsItemIndex[itemId].reservations, (itemRes) => itemRes == transformed);
+                        }
+                    });
+                }
+            }
         });
     }
 
@@ -347,33 +347,22 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
             this.filteredItems = this.itemGroups;
             _.forEach(this.itemGroups, (item, i) => {
                 item.visible = true;
-                item.index = i;
-                item.viewIndex = i;
             });
         } else {
             _.forEach(this.itemGroups, (item) => {
                 item.visible = item.checkFilters(this._filterQuery);
             });
             this.filteredItems = _.filter(this.itemGroups, item => item.visible);
-            let idx = 0;
-            for (let i = 0; i < this.filteredItems.length; i++) {
-                this.filteredItems[i].index = idx;
-                this.filteredItems[i].viewIndex = idx;
-                idx++;
-            }
         }
         console.log("Update filter " + this._filter + " --> " + this.filteredItems.length + "/" + (this.itemGroups?this.itemGroups.length:0) + " items");
+        this.checkCacheSize();
+        this.scrollCache(true);
     }
 
-    ngAfterViewInit() {
-        this.updateDays();
-        this.timetableContainer.nativeElement.scrollLeft = this.timetableContainer.nativeElement.scrollWidth / 2 - this.timetableContainer.nativeElement.clientWidth / 2;
-        this.scrollCache();
-    }
-
-    ngDoCheck() {
-        let dayCacheSize = Math.ceil((Math.ceil(this.timetableContainer.nativeElement.clientWidth / this.elementWidth) + 1) * 1.5);
-        let itemCacheSize = Math.ceil((Math.ceil(this.timetableContainer.nativeElement.clientHeight / this.elementHeight) + 1) * 1.5);
+    private checkCacheSize(): boolean {
+        let natEl: HTMLDivElement = this.timetableContainer.nativeElement;
+        let dayCacheSize = Math.ceil((Math.ceil(natEl.clientWidth / this.elementWidth) + 1) * 1.5);
+        let itemCacheSize = Math.ceil((Math.ceil(natEl.clientHeight / this.elementHeight) + 1) * 1.5);
         let hadChange = false;
         while (this.dayCache.length < dayCacheSize) {
             this.dayCache.push(new DayCache(this.dayCache.length));
@@ -393,19 +382,29 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
             this.itemCache.splice(removeIdx, 1);
             hadChange = true;
         }
-        if (hadChange) {
+        return hadChange;
+    }
+
+    ngAfterViewInit() {
+        this.updateDays();
+        this.scrollCache();
+    }
+
+    ngDoCheck() {
+        if (this.checkCacheSize()) {
             this.scrollCache();
         }
     }
 
-    private scrollCache() {
+    private scrollCache(forceItemUpdate?: boolean) {
+        let natEl: HTMLDivElement = this.timetableContainer.nativeElement;
         {
-            let startIndex = Math.max(Math.floor(this.timetableContainer.nativeElement.scrollLeft / this.elementWidth), 0);
-            let endIndex = Math.min(Math.ceil((this.timetableContainer.nativeElement.scrollLeft + this.timetableContainer.nativeElement.clientWidth) / this.elementWidth) + 1, this.days.length);
+            let startIndex = Math.max(Math.floor(natEl.scrollLeft / this.elementWidth), 0);
+            let endIndex = Math.min(Math.ceil((natEl.scrollLeft + natEl.clientWidth) / this.elementWidth) + 1, this.days.length);
             if (this.dayCacheStart !== startIndex || this.dayCacheEnd !== endIndex) {
                 let startIdx = _.findIndex(this.dayCache, (cache) => cache.visible && cache.srcIndex === startIndex);
                 let endIdx = _.findIndex(this.dayCache, (cache) => cache.visible && cache.srcIndex === endIndex-1);
-                _.forEach(this.dayCache, (cache) => cache.visible = false);
+                _.forEach(this.dayCache, (cache) => { cache.visible = false });
                 if (startIdx !== -1 || endIdx === -1) {
                     let cacheIdx = 0;
                     if (startIdx !== -1) {
@@ -435,12 +434,12 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
             }
         }
         {
-            let startIndex = Math.max(Math.floor(this.timetableContainer.nativeElement.scrollTop / this.elementHeight), 0);
-            let endIndex = Math.min(Math.ceil((this.timetableContainer.nativeElement.scrollTop + this.timetableContainer.nativeElement.clientHeight) / this.elementHeight) + 1, this.filteredItems.length);
-            if (this.itemCacheStart !== startIndex || this.itemCacheEnd !== endIndex) {
+            let startIndex = Math.max(Math.floor(natEl.scrollTop / this.elementHeight), 0);
+            let endIndex = Math.min(Math.ceil((natEl.scrollTop + natEl.clientHeight) / this.elementHeight) + 1, this.filteredItems.length);
+            if (this.itemCacheStart !== startIndex || this.itemCacheEnd !== endIndex || forceItemUpdate) {
                 let startIdx = _.findIndex(this.itemCache, (cache) => cache.visible && cache.srcIndex === startIndex);
                 let endIdx = _.findIndex(this.itemCache, (cache) => cache.visible && cache.srcIndex === endIndex - 1);
-                _.forEach(this.itemCache, (cache) => cache.visible = false);
+                _.forEach(this.itemCache, (cache) => { cache.visible = false });
                 if (startIdx !== -1 || endIdx === -1) {
                     let cacheIdx = 0;
                     if (startIdx !== -1) {
@@ -472,8 +471,8 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
     }
 
     private updateDays() {
-        let parentWidth = this.timetableContainer.nativeElement.clientWidth;
-        let visibleElements = Math.ceil(parentWidth / this.elementWidth) * 3;
+        let natEl: HTMLDivElement = this.timetableContainer.nativeElement;
+        let visibleElements = Math.ceil(natEl.clientWidth / this.elementWidth) * 3;
 
         this.days = [];
         let day = moment(this.centerDay.start).subtract(Math.floor(visibleElements / 2), 'days');
@@ -481,15 +480,43 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
             this.days.push(new Day(day, i));
             day.add(1, 'days');
         }
+
+        natEl.scrollLeft = visibleElements * this.elementWidth / 2 - natEl.clientWidth / 2;
+    }
+
+    private isEventVisible(start: moment.Moment, end: moment.Moment): boolean {
+        return this.days.length && this.days[0].start.isBefore(end) && this.days[this.days.length - 1].end.isAfter(start);
+    }
+
+    private filterReservations(reservations: CalendarReservation[]) {
+        return _.filter(reservations, (reservation) => this.isEventVisible(reservation.start, reservation.end))
+    }
+
+    private getEventStartPosition(start: moment.Moment): number {
+        return Math.max(start.diff(this.days[0].start, 'days') * this.elementWidth, 0);
+    }
+
+    private getEventWidth(start: moment.Moment, end: moment.Moment): number {
+        let dayStart = Math.max(start.diff(this.days[0].start, 'days'), 0);
+        let dayEnd = Math.min(end.diff(this.days[0].start, 'days') + 1, this.days.length);
+        return (dayEnd - dayStart) * this.elementWidth;
     }
 
     private onScroll($event: ScrollEvent) {
-        this.offsetTop = -this.timetableContainer.nativeElement.scrollTop;
-        this.offsetLeft = -this.timetableContainer.nativeElement.scrollLeft;
-        let centerPos = (this.timetableContainer.nativeElement.scrollLeft + this.timetableContainer.nativeElement.clientWidth / 2);
+        let natEl: HTMLDivElement = this.timetableContainer.nativeElement;
+        this.offsetTop = -natEl.scrollTop;
+        this.offsetLeft = -natEl.scrollLeft;
+        let centerPos = (natEl.scrollLeft + natEl.clientWidth / 2);
         let centerIndex = Math.floor(centerPos / this.elementWidth);
         this.centerDay = this.days[centerIndex];
         this.centerDayOffset = centerPos - centerIndex * this.elementWidth;
+        if ($event.deltaX !== 0 && (natEl.scrollLeft === 0 || natEl.scrollLeft === (natEl.scrollWidth - natEl.clientWidth)) && this.canScroll) {
+            this.canScroll = false;
+            this.updateDays();
+            setTimeout(() => {
+                this.canScroll = true;
+            }, 100);
+        }
         this.scrollCache();
     }
 

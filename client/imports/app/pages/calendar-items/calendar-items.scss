@@ -108,15 +108,19 @@
 
 .cell {
   position: absolute;
-  display: inline-block;
+  display: block;
   width: 30px;
   height: 30px;
   clear: none;
   border-right: 1px solid lightgray;
 }
 
-.cell.reserved {
+.event {
+  position: absolute;
+  display: block;
+  height: 30px;
   background-color: orange;
+  border-right: 1px solid lightgray;
 }
 
 .noscroll /deep/ .scroll-content {

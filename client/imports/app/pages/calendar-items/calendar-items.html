@@ -31,15 +31,18 @@
         </div>
         <div class="container content">
             <div #description class="description" [style.top.px]="offsetTop">
-                <div *ngFor="let item of itemCache" class="item-row title" [style.top.px]="item.y" [style.display]="item.visible?'block':'none'">{{item.item?.name}}</div>
+                <div *ngFor="let item of itemCache" class="item-row title" [style.top.px]="item.y" [style.display]="item.visible?'block':'none'">{{item.item?.name}}, {{item.item?.description}}</div>
             </div>
             <div #timetableContainer class="timetable-container scroll" (scroll)="onScroll($event)">
                 <div #timetable class="timetable" [style.height.px]="filteredItems.length * elementHeight" [style.width.px]="days.length * elementWidth">
                     <div *ngFor="let item of itemCache" class="item-row entry"
                          [style.left.px]="0" [style.top.px]="item.y" [style.width.px]="days.length * elementWidth" [style.display]="item.visible?'block':'none'">
-                        <div *ngFor="let day of dayCache" class="cell" [ngClass]="{'reserved': item.item?.isReserved(day.day), 'service': item.item?.hasService(day.day)}"
-                             [style.top.px]="0" [style.left.px]="day.x" [style.display]="day.visible?'block':'none'">
-                            <a href="#" *ngIf="item.item?.isReserved(day.day)" (click)="openReservation(item.item?.reservation(day.day))">{{item.item?.reservationName(day.day)}}</a>
+                        <div *ngFor="let day of dayCache" class="cell" [style.top.px]="0" [style.left.px]="day.x" [style.display]="day.visible?'block':'none'">
+                        </div>
+                        <div class="event" *ngFor="let reservation of filterReservations(item.item?.reservations)"
+                             [style.left.px]="getEventStartPosition(reservation.start, reservation.end)" [style.top.px]="0"
+                             [style.width.px]="getEventWidth(reservation.start, reservation.end)">
+                            <a href="#" (click)="openReservation(reservation)">{{reservation.name}}</a>
                         </div>
                     </div>
                 </div>
