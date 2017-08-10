@@ -144,20 +144,22 @@ export class ItemStateModal implements OnInit, OnDestroy {
                 });
             }
         }
-        this.dayModifier = (day: CalendarMonthViewDay) => {
-            let dayDate = moment(day.date).startOf('day');
-            if (this.canSelect && this.selectedDate && this.selectedDate.isValid() && dayDate.isSame(this.selectedDate)) {
-                day.cssClass = 'cal-day-selected';
-                this.selectedDay = day;
-            } else if (this.range.disableOutside && this.range.start && dayDate.isBefore(this.range.start)) {
-                day.cssClass = 'cal-day-disabled';
-            } else if (this.range.disableOutside && this.range.end && dayDate.isAfter(this.range.end)) {
-                day.cssClass = 'cal-day-disabled';
-            } else if (this.range.start && (!this.range.start || dayDate.isSameOrAfter(this.range.start)) && (!this.range.end || dayDate.isSameOrBefore(this.range.end))) {
-                day.cssClass = 'cal-day-range';
-            } else {
-                day.cssClass = '';
-            }
+        this.beforeViewRender = (days: CalendarMonthViewDay[]) => {
+            days.forEach(day => {
+                let dayDate = moment(day.date).startOf('day');
+                if (this.canSelect && this.selectedDate && this.selectedDate.isValid() && dayDate.isSame(this.selectedDate)) {
+                    day.cssClass = 'cal-day-selected';
+                    this.selectedDay = day;
+                } else if (this.range.disableOutside && this.range.start && dayDate.isBefore(this.range.start)) {
+                    day.cssClass = 'cal-day-disabled';
+                } else if (this.range.disableOutside && this.range.end && dayDate.isAfter(this.range.end)) {
+                    day.cssClass = 'cal-day-disabled';
+                } else if (this.range.start && (!this.range.start || dayDate.isSameOrAfter(this.range.start)) && (!this.range.end || dayDate.isSameOrBefore(this.range.end))) {
+                    day.cssClass = 'cal-day-range';
+                } else {
+                    day.cssClass = '';
+                }
+            });
         }
     }
 
@@ -258,7 +260,7 @@ export class ItemStateModal implements OnInit, OnDestroy {
         });
     }
 
-    dayModifier: (day: CalendarMonthViewDay) => void;
+    beforeViewRender: (day: CalendarMonthViewDay[]) => void;
 
     select(day: CalendarMonthViewDay) {
         if (this.canSelect && day.cssClass !== 'cal-day-disabled') {

@@ -110,30 +110,32 @@ export class DatePickerModal implements OnDestroy {
         }
         console.log("initial:", this.viewDate);
         console.log("range:", this.range);
-        this.dayModifier = (day: CalendarMonthViewDay) => {
-            let dayDate = moment(day.date).startOf('day');
-            day.cssClass = '';
-            if (this.selectedDate.isValid() && dayDate.isSame(this.selectedDate)) {
-                day.cssClass = 'cal-day-selected';
-                this.selectedDay = day;
-            } else if (this.range.disableOutside && this.range.start && dayDate.isBefore(this.range.start)) {
-                day.cssClass = 'cal-day-disabled';
-            } else if (this.range.disableOutside && this.range.end && dayDate.isAfter(this.range.end)) {
-                day.cssClass = 'cal-day-disabled';
-            } else if (this.range.start && this.range.end) {
-                if (dayDate.isSameOrAfter(this.range.start) &&
-                    dayDate.isSameOrBefore(this.range.end)) {
-                    day.cssClass = 'cal-day-range';
+        this.beforeViewRender = (days: CalendarMonthViewDay[]) => {
+            days.forEach(day => {
+                let dayDate = moment(day.date).startOf('day');
+                day.cssClass = '';
+                if (this.selectedDate.isValid() && dayDate.isSame(this.selectedDate)) {
+                    day.cssClass = 'cal-day-selected';
+                    this.selectedDay = day;
+                } else if (this.range.disableOutside && this.range.start && dayDate.isBefore(this.range.start)) {
+                    day.cssClass = 'cal-day-disabled';
+                } else if (this.range.disableOutside && this.range.end && dayDate.isAfter(this.range.end)) {
+                    day.cssClass = 'cal-day-disabled';
+                } else if (this.range.start && this.range.end) {
+                    if (dayDate.isSameOrAfter(this.range.start) &&
+                        dayDate.isSameOrBefore(this.range.end)) {
+                        day.cssClass = 'cal-day-range';
+                    }
+                } else if (this.range.start) {
+                    if (this.selectedDate.isValid() && dayDate.isBefore(this.selectedDate) && dayDate.isSameOrAfter(this.range.start)) {
+                        day.cssClass = 'cal-day-range';
+                    }
+                } else if (this.range.end) {
+                    if (this.selectedDate.isValid() && dayDate.isAfter(this.selectedDate) && dayDate.isSameOrBefore(this.range.end)) {
+                        day.cssClass = 'cal-day-range';
+                    }
                 }
-            } else if (this.range.start) {
-                if (this.selectedDate.isValid() && dayDate.isBefore(this.selectedDate) && dayDate.isSameOrAfter(this.range.start)) {
-                    day.cssClass = 'cal-day-range';
-                }
-            } else if (this.range.end) {
-                if (this.selectedDate.isValid() && dayDate.isAfter(this.selectedDate) && dayDate.isSameOrBefore(this.range.end)) {
-                    day.cssClass = 'cal-day-range';
-                }
-            }
+            });
         }
     }
 
@@ -144,7 +146,7 @@ export class DatePickerModal implements OnDestroy {
         }
     }
 
-    dayModifier: (day: CalendarMonthViewDay) => void;
+    beforeViewRender: (day: CalendarMonthViewDay[]) => void;
 
     select(day: CalendarMonthViewDay) {
         if (this.canSelect && day.cssClass !== 'cal-day-disabled') {
