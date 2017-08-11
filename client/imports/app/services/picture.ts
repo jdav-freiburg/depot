@@ -209,7 +209,7 @@ export class PictureService {
     }
 
     getFilePicture(file: Picture): string {
-        return `${this.getFilePictureUrl(file)};${this.getFilePictureThumbnailUrl(file)}`;
+        return `${file.store}/${file._id}/${file.name};${file.thumbnailStore}/${file.thumbnailId}/${file.name}`;
     }
 
     getFilePictureUrl(file: Picture): string {
