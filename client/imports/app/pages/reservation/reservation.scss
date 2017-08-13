@@ -10,3 +10,71 @@
 .clickable-thumbnail:hover {
   opacity: 0.8;
 }
+
+.item-background-parent {
+  position: relative;
+  z-index: -99;
+}
+
+.item-background {
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  z-index: -100;
+
+  .item-background-container {
+    background-color: pink;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+
+    .item-background-item {
+      display: flex;
+      flex: 1;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      box-shadow: 0px 0px 2px 2px #fff inset;
+    }
+
+    .good {
+      background-color: lighten(#1de525, 20);
+    }
+
+    .good.selected {
+      background-color: lighten(#1de525, 30);
+    }
+
+    .good.unavailable {
+      background-color: lighten(mix(#1de525, #888, 0.5), 20);
+    }
+
+    .bad {
+      background-color: lighten(#f5aa38, 20);
+    }
+
+    .bad.selected {
+      background-color: lighten(#f5aa38, 30);
+    }
+
+    .bad.unavailable {
+      background-color: lighten(mix(#f5aa38, #888, 0.5), 20);
+    }
+
+    .broken {
+      background-color: lighten(#f53d3d, 20);
+    }
+
+    .broken.selected {
+      background-color: lighten(#f53d3d, 30);
+    }
+
+    .broken.unavailable {
+      background-color: lighten(mix(#f53d3d, #888, 0.5), 20);
+    }
+  }
+}
