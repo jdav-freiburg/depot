@@ -16,6 +16,21 @@
   z-index: -99;
 }
 
+.counter-badge {
+  margin: 0 5px 0 0;
+  padding: 0;
+  background-color: transparent;
+  color: inherit;
+
+  /deep/ button {
+    //color: white;
+    margin: 5px 0 5px 4px;
+  }
+  /deep/ ion-icon {
+    padding: 0 1px;
+  }
+}
+
 .item-background {
   display: block;
   position: absolute;
@@ -30,7 +45,9 @@
     height: 100%;
     width: 100%;
     display: flex;
-    flex-wrap: nowrap;
+    //flex-wrap: nowrap;
+    flex-wrap: wrap;
+    flex-direction: row;
 
     .item-background-item {
       display: flex;
@@ -39,42 +56,44 @@
       align-items: center;
       color: white;
       box-shadow: 0px 0px 2px 2px #fff inset;
+      min-width: 1em;
+      overflow: hidden;
     }
 
     .good {
-      background-color: lighten(#1de525, 20);
+      background-color: lighten(#1de525, 25);
     }
 
     .good.selected {
-      background-color: lighten(#1de525, 30);
+      background-color: lighten(#1de525, 35);
     }
 
     .good.unavailable {
-      background-color: lighten(mix(#1de525, #888, 0.5), 20);
+      background-color: lighten(mix(#1de525, #888, 75%), 25);
     }
 
     .bad {
-      background-color: lighten(#f5aa38, 20);
+      background-color: lighten(#f5aa38, 25);
     }
 
     .bad.selected {
-      background-color: lighten(#f5aa38, 30);
+      background-color: lighten(#f5aa38, 35);
     }
 
     .bad.unavailable {
-      background-color: lighten(mix(#f5aa38, #888, 0.5), 20);
+      background-color: lighten(mix(#f5aa38, #888, 75%), 25);
     }
 
     .broken {
-      background-color: lighten(#f53d3d, 20);
+      background-color: lighten(#f53d3d, 25);
     }
 
     .broken.selected {
-      background-color: lighten(#f53d3d, 30);
+      background-color: lighten(#f53d3d, 35);
     }
 
     .broken.unavailable {
-      background-color: lighten(mix(#f53d3d, #888, 0.5), 20);
+      background-color: lighten(mix(#f53d3d, #888, 75%), 25);
     }
   }
 }

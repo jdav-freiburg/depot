@@ -51,7 +51,9 @@
                                 <span class="item-background-container">
                                     <ng-container *ngFor="let subItem of item.subItems">
                                         <span class="item-background-item {{subItem.condition}}" [ngClass]="{'selected': subItem.selected, 'unavailable': !subItem.available}">
-                                            {{subItem.selected?'&#10004;':''}}{{subItem.available?'':'&#10008;'}}
+                                            <span *ngIf="subItem.selected">&#10004;</span>
+                                            <span *ngIf="!subItem.available">&#10008;</span>
+                                            <span *ngIf="!subItem.selected && subItem.available" style="visibility: hidden">&#10004;</span>
                                         </span>
                                     </ng-container>
                                 </span>
@@ -59,16 +61,30 @@
                             <h2>{{item.name}}</h2>
                             <h3>{{item.description}}</h3>
                             <p>{{item.tags}}<ng-container *ngIf="item.conditionComment">; {{item.conditionComment}}</ng-container></p>
+                            <!--<span class="item-button-overlay-container">
+                                <span class="item-button-overlay">
+                                    <button *ngIf="item.selectedCount > 0" ion-button icon-only clear (click)="item.selectedCount=item.selectedCount-1" [disabled]="readonly || item.selectedCount==0"><ion-icon name="remove"></ion-icon></button>
+                                    <button *ngIf="item.selectedCount > 0" ion-button icon-only clear (click)="item.selectedCount=item.selectedCount+1" [disabled]="readonly || item.selectedCount >= item.availableCount"><ion-icon name="add"></ion-icon></button>
+                                    <ion-badge *ngIf="item.selectedCount > 0">{{item.selectedCount}}/{{item.count}}</ion-badge>
+                                    <button ion-button icon-only clear item-end (click)="openItem(item)"><ion-icon name="search"></ion-icon></button>
+                                </span>
+                            </span>-->
                         </ion-label>
                         <!--<ion-badge item-right *ngIf="item.condition=='bad'" color="warning">{{'RESERVATION_PAGE.ITEM_CONDITION_BAD' | translate}}</ion-badge>
                         <ion-badge item-right *ngIf="item.condition=='broken'" color="danger">{{'RESERVATION_PAGE.ITEM_CONDITION_BROKEN' | translate}}</ion-badge>
                         <ion-badge item-right *ngIf="item.isSingle && !item.available">{{'RESERVATION_PAGE.NOT_AVAILABLE' | translate}}</ion-badge>
                         <ion-badge item-right *ngIf="item.isSingle && item.deselected" color="danger">{{'RESERVATION_PAGE.REMOVED' | translate}}</ion-badge>
                         <ion-badge item-right *ngIf="!item.isSingle && item.availableCount < item.count">{{'RESERVATION_PAGE.SOME_NOT_AVAILABLE' | translate:{total: item.count, available: item.availableCount} }}</ion-badge>
-                        <ion-badge item-right *ngIf="!item.isSingle && item.deselectedCount > 0" color="danger">{{'RESERVATION_PAGE.SOME_REMOVED' | translate:{total: item.selected, removed: item.deselectedCount} }}</ion-badge>-->
-                        <ion-badge item-right *ngIf="!item.isSingle && item.selectedCount > 0">{{item.selectedCount}}/{{item.count}}</ion-badge>
-                        <button ion-button icon-only clear item-end *ngIf="!item.isSingle" (click)="item.selectedCount=item.selectedCount-1" [disabled]="readonly || item.selectedCount==0"><ion-icon name="remove"></ion-icon></button>
-                        <button ion-button icon-only clear item-end *ngIf="!item.isSingle" (click)="item.selectedCount=item.selectedCount+1" [disabled]="readonly || item.selectedCount >= item.availableCount"><ion-icon name="add"></ion-icon></button>
+                        <ion-badge item-right *ngIf="!item.isSingle && item.deselectedCount > 0" color="danger">{{'RESERVATION_PAGE.SOME_REMOVED' | translate:{total: item.selected, removed: item.deselectedCount} }}</ion-badge>
+                        <ion-badge item-right *ngIf="item.selectedCount > 0">{{item.selectedCount}}/{{item.count}}</ion-badge>-->
+                        <!--<button *ngIf="item.selectedCount > 0" ion-button icon-only clear (click)="item.selectedCount=item.selectedCount-1" [disabled]="readonly || item.selectedCount==0"><ion-icon name="remove"></ion-icon></button>
+                        <button *ngIf="item.selectedCount > 0" ion-button icon-only clear (click)="item.selectedCount=item.selectedCount+1" [disabled]="readonly || item.selectedCount >= item.availableCount"><ion-icon name="add"></ion-icon></button>-->
+                        <ion-badge item-right *ngIf="item.availableCount > 1" class="counter-badge">
+                            <button ion-button icon-only clear (click)="item.selectedCount=item.selectedCount-1" [disabled]="readonly || item.selectedCount==0"><ion-icon name="remove"></ion-icon></button>
+                            <button ion-button icon-only clear (click)="item.selectedCount=item.selectedCount+1" [disabled]="readonly || item.selectedCount >= item.availableCount"><ion-icon name="add"></ion-icon></button>
+                            <br />
+                            {{item.selectedCount}}/{{item.count}}
+                        </ion-badge>
                         <button ion-button icon-only clear item-end (click)="openItem(item)"><ion-icon name="search"></ion-icon></button>
                         <ion-thumbnail class="clickable-thumbnail" item-right *ngIf="item.pictureUrl" (click)="openItemPicture(item); $event.preventDefault(); $event.stopPropagation()"><img [src]="item.pictureUrl"></ion-thumbnail>
                     </ion-item>
