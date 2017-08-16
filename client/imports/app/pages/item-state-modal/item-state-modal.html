@@ -42,7 +42,7 @@
                 [viewDate]="viewDate"
                 [events]="events"
                 [headerTemplate]="calHeaderTemplate"
-                (beforeViewRender)="beforeViewRender"
+                (beforeViewRender)="beforeViewRender($event)"
                 [refresh]="refresh"
                 (dayClicked)="select($event.day)">
         </mwl-calendar-month-view>

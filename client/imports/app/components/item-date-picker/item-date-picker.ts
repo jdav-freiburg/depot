@@ -4,7 +4,6 @@ import style from "./item-date-picker.scss";
 import * as _ from "lodash";
 import {ModalController} from "ionic-angular";
 import * as moment from 'moment';
-import {DatePickerModal} from "../../pages/date-picker-modal/date-picker-modal";
 import {ControlValueAccessor, Form, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {ItemStateModal} from "../../pages/item-state-modal/item-state-modal";
 

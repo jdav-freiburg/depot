@@ -33,7 +33,7 @@ export class ItemStateModal implements OnInit, OnDestroy {
     selectedDate: moment.Moment;
     selectedDay: CalendarMonthViewDay;
 
-    viewDate: moment.Moment;
+    viewDate: Date;
 
     events: CalendarEvent[] = [];
 
@@ -65,21 +65,21 @@ export class ItemStateModal implements OnInit, OnDestroy {
     constructor(private viewCtrl: ViewController, private params: NavParams, private itemDataService: ItemsDataService,
                 private reservationsDataService: ReservationsDataService, private translate: TranslateService,
                 private ngZone: NgZone, private users: UserService) {
-        this.viewDate = moment().startOf('day');
+        this.viewDate = moment().startOf('day').toDate();
         this.itemId = this.params.get('itemId');
         if (this.params.get('rangeEnd')) {
             this.range.end = moment(this.params.get('rangeEnd')).endOf('day');
             if (!this.range.end.isValid()) {
                 this.range.end = null;
             }
-            this.viewDate = this.range.end;
+            this.viewDate = this.range.end.toDate();
         }
         if (this.params.get('rangeStart')) {
             this.range.start = moment(this.params.get('rangeStart')).startOf('day');
             if (!this.range.start.isValid()) {
                 this.range.start = null;
             }
-            this.viewDate = this.range.start;
+            this.viewDate = this.range.start.toDate();
         }
         if (this.params.get('selectDate')) {
             this.canSelect = true;
@@ -99,9 +99,9 @@ export class ItemStateModal implements OnInit, OnDestroy {
                 }
             }
             if (this.selectedDate.isValid()) {
-                this.viewDate = this.selectedDate;
+                this.viewDate = this.selectedDate.toDate();
             } else {
-                this.viewDate = moment().startOf('day');
+                this.viewDate = moment().startOf('day').toDate();
             }
         }
         if (!_.isUndefined(this.params.get('rangeDisableOutside'))) {
@@ -144,23 +144,24 @@ export class ItemStateModal implements OnInit, OnDestroy {
                 });
             }
         }
-        this.beforeViewRender = (days: CalendarMonthViewDay[]) => {
-            days.forEach(day => {
-                let dayDate = moment(day.date).startOf('day');
-                if (this.canSelect && this.selectedDate && this.selectedDate.isValid() && dayDate.isSame(this.selectedDate)) {
-                    day.cssClass = 'cal-day-selected';
-                    this.selectedDay = day;
-                } else if (this.range.disableOutside && this.range.start && dayDate.isBefore(this.range.start)) {
-                    day.cssClass = 'cal-day-disabled';
-                } else if (this.range.disableOutside && this.range.end && dayDate.isAfter(this.range.end)) {
-                    day.cssClass = 'cal-day-disabled';
-                } else if (this.range.start && (!this.range.start || dayDate.isSameOrAfter(this.range.start)) && (!this.range.end || dayDate.isSameOrBefore(this.range.end))) {
-                    day.cssClass = 'cal-day-range';
-                } else {
-                    day.cssClass = '';
-                }
-            });
-        }
+    }
+
+    beforeViewRender({ body }: { body: CalendarMonthViewDay[] }): void {
+        body.forEach(day => {
+            let dayDate = moment(day.date).startOf('day');
+            if (this.canSelect && this.selectedDate && this.selectedDate.isValid() && dayDate.isSame(this.selectedDate)) {
+                day.cssClass = 'cal-day-selected';
+                this.selectedDay = day;
+            } else if (this.range.disableOutside && this.range.start && dayDate.isBefore(this.range.start)) {
+                day.cssClass = 'cal-day-disabled';
+            } else if (this.range.disableOutside && this.range.end && dayDate.isAfter(this.range.end)) {
+                day.cssClass = 'cal-day-disabled';
+            } else if (this.range.start && (!this.range.start || dayDate.isSameOrAfter(this.range.start)) && (!this.range.end || dayDate.isSameOrBefore(this.range.end))) {
+                day.cssClass = 'cal-day-range';
+            } else {
+                day.cssClass = '';
+            }
+        });
     }
 
     ngOnInit() {
@@ -259,8 +260,6 @@ export class ItemStateModal implements OnInit, OnDestroy {
             this.events = _.concat(newData, (this.reservationsSubscription?this.reservationsSubscription.data:[]));
         });
     }
-
-    beforeViewRender: (day: CalendarMonthViewDay[]) => void;
 
     select(day: CalendarMonthViewDay) {
         if (this.canSelect && day.cssClass !== 'cal-day-disabled') {

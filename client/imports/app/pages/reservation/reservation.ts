@@ -133,8 +133,18 @@ export class ReservationPage implements OnInit, OnDestroy {
             end: ["", Validators.required],
             contact: [users.user?users.user.phone + ", " + users.user.emails[0].address:"", Validators.required],
         });
-        this.reservationForm.controls['start'].valueChanges.subscribe(() => this.updateItemStates());
-        this.reservationForm.controls['end'].valueChanges.subscribe(() => this.updateItemStates());
+        this.reservationForm.controls['start'].valueChanges.subscribe(() => {
+            if (moment(this.reservationForm.controls['start'].value).isAfter(this.reservationForm.controls['end'].value)) {
+                this.reservationForm.controls['end'].setValue(null);
+            }
+            this.updateItemStates();
+        });
+        this.reservationForm.controls['end'].valueChanges.subscribe(() => {
+            if (moment(this.reservationForm.controls['end'].value).isBefore(this.reservationForm.controls['start'].value)) {
+                this.reservationForm.controls['start'].setValue(null);
+            }
+            this.updateItemStates();
+        });
         this.editId = this.params.get('reservationId');
         this._selectedProvider = {
             isAvailable: (itemId: string): boolean => {
@@ -146,6 +156,9 @@ export class ReservationPage implements OnInit, OnDestroy {
             },
 
             select: (itemId: string): void => {
+                if (this.unavailableItems.hasOwnProperty(itemId)) {
+                    console.log("Selecting unavailable item!");
+                }
                 if (!_.includes(this.selectedItemIds, itemId)) {
                     this.selectedItemIds.push(itemId);
                 }
@@ -186,6 +199,11 @@ export class ReservationPage implements OnInit, OnDestroy {
         this.items.data.forEach((item) => {
             if (!item.update()) {
                 removedItems.push(item);
+            }
+        });
+        this.itemGroups.forEach((itemGroup) => {
+            if (!itemGroup.update()) {
+                console.log("ERROR: Item group contains non-updated item");
             }
         });
         if (removedItems.length > 0) {

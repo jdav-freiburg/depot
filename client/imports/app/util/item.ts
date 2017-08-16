@@ -242,7 +242,7 @@ export class SelectableItemGroup implements SelectableItem {
     update(): boolean {
         let result = true;
         _.forEach(this.subItems, subItem => result = subItem.update() && result);
-        this.subItems = _.sortBy(this.subItems, (subItem) => (subItem.available?0:100) + (subItem.selected?0:1) + (subItem.condition==='good'?10:(subItem.condition==='bad'?20:30)));
+        this.subItems = _.sortBy(this.subItems, (subItem) => (subItem.available?0:100) + (subItem.condition==='good'?10:(subItem.condition==='bad'?20:30)) + (subItem.selected?0:1));
         this._selected = _.reduce(this.subItems, (sum: number, subItem: SelectableItem) => (subItem.selected?sum+1:sum), 0);
         this._deselected = _.reduce(this.subItems, (sum: number, subItem: SelectableItem) => (subItem.deselected?sum+1:sum), 0);
         this._available = _.reduce(this.subItems, (sum: number, subItem: SelectableItem) => (subItem.available?sum+1:sum), 0);

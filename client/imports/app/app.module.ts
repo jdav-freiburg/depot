@@ -1,3 +1,4 @@
+import * as moment from 'moment';
 import {ErrorHandler, NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 import {AppComponent} from "./app.component";
@@ -19,7 +20,7 @@ import {ReservationsPage} from "./pages/reservations/reservations";
 import {ReservationsDataService} from "./services/reservations-data";
 import {ReservationPage} from "./pages/reservation/reservation";
 import {UserComponent} from "./components/user/user";
-import { CalendarModule } from 'angular-calendar';
+import {CalendarDateFormatter, CalendarModule, CalendarMomentDateFormatter, MOMENT} from 'angular-calendar';
 import {DatePickerModal} from "./pages/date-picker-modal/date-picker-modal";
 import {ReservationDatePickerComponent} from "./components/reservation-date-picker/reservation-date-picker";
 import {ItemStateModal} from "./pages/item-state-modal/item-state-modal";
@@ -52,6 +53,7 @@ import {ImagePreviewModal} from "./pages/image-preview-modal/image-preview-modal
 import {ItemListColumnsPage} from "./components/item-list-editor/item-list-columns";
 import {ItemListComponent} from "./components/item-list-editor/item-list";
 import {CalendarItemsPage} from "./pages/calendar-items/calendar-items";
+
 
 @NgModule({
     // Components, Pipes, Directive
@@ -131,7 +133,9 @@ import {CalendarItemsPage} from "./pages/calendar-items/calendar-items";
         TranslateService,
         TranslateHelperService,
         GlobalMessagesDataService,
-        PictureService
+        PictureService,
+        {provide: CalendarDateFormatter, useClass: CalendarMomentDateFormatter},
+        {provide: MOMENT, useValue: moment}
     ],
     // Modules
     imports: [
