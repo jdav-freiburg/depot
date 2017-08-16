@@ -40,6 +40,10 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
         return this.view == 'cards';
     }
 
+    private get viewItems() {
+        return this.view == 'items';
+    }
+
     private get descriptionData() {
         return {
             name: this.reservation.name,

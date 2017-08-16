@@ -102,3 +102,25 @@
         </button>
     </ion-col>
 </ion-row>
+
+<ion-card *ngIf="viewItems">
+    <ion-toolbar>
+        <ion-title>
+            {{reservation.name}}
+        </ion-title>
+        <ion-buttons right>
+            <button ion-button (click)="editReservation()" clear icon-only *ngIf="canEdit">
+                <ion-icon *ngIf="isAdmin || isOwner" name="create"></ion-icon>
+                <ion-icon *ngIf="!isAdmin && !isOwner" name="search"></ion-icon>
+            </button>
+            <button ion-button (click)="deleteReservation()" clear icon-only *ngIf="canDelete">
+                <ion-icon name="trash"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-toolbar>
+    <ion-card-content>
+        <p>{{reservation.start | moment: 'L'}} - {{reservation.end | moment: 'L'}}</p>
+        <p>{{'RESERVATION_CARD.USER' | translate}}: <user-ref [userId]="reservation.userId"></user-ref></p>
+        <p>{{'RESERVATION_CARD.CONTACT' | translate}}: {{reservation.contact}}</p>
+    </ion-card-content>
+</ion-card>

@@ -185,6 +185,7 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
     private dayCacheStart: number = 0;
     private dayCacheEnd: number = 0;
 
+    private lastScroll: number;
     private canScroll: boolean = true;
 
     constructor(private itemsService: ItemsDataService,
@@ -472,7 +473,7 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
 
     private updateDays() {
         let natEl: HTMLDivElement = this.timetableContainer.nativeElement;
-        let visibleElements = Math.ceil(natEl.clientWidth / this.elementWidth) * 3;
+        let visibleElements = Math.max(Math.ceil(natEl.clientWidth / this.elementWidth) * 3, 30*3);
 
         this.days = [];
         let day = moment(this.centerDay.start).subtract(Math.floor(visibleElements / 2), 'days');
@@ -502,7 +503,7 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
         return (dayEnd - dayStart) * this.elementWidth;
     }
 
-    private onScroll($event: ScrollEvent) {
+    private onScroll() {
         let natEl: HTMLDivElement = this.timetableContainer.nativeElement;
         this.offsetTop = -natEl.scrollTop;
         this.offsetLeft = -natEl.scrollLeft;
@@ -510,7 +511,11 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
         let centerIndex = Math.floor(centerPos / this.elementWidth);
         this.centerDay = this.days[centerIndex];
         this.centerDayOffset = centerPos - centerIndex * this.elementWidth;
-        if ($event.deltaX !== 0 && (natEl.scrollLeft === 0 || natEl.scrollLeft === (natEl.scrollWidth - natEl.clientWidth)) && this.canScroll) {
+        let delta = natEl.scrollLeft - this.lastScroll;
+        this.lastScroll = natEl.scrollLeft;
+        console.log(delta, natEl.scrollLeft, natEl.scrollWidth - natEl.clientWidth - natEl.clientWidth / 2);
+        let margin = Math.max(natEl.clientWidth / 2, this.elementWidth*10);
+        if ((delta < 0 && natEl.scrollLeft <= margin) || (delta > 0 && natEl.scrollLeft >= (natEl.scrollWidth - natEl.clientWidth - margin)) && this.canScroll) {
             this.canScroll = false;
             this.updateDays();
             setTimeout(() => {

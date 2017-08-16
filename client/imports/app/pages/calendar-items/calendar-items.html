@@ -33,7 +33,7 @@
             <div #description class="description" [style.top.px]="offsetTop">
                 <div *ngFor="let item of itemCache" class="item-row title" [style.top.px]="item.y" [style.display]="item.visible?'block':'none'">{{item.item?.name}}, {{item.item?.description}}</div>
             </div>
-            <div #timetableContainer class="timetable-container scroll" (scroll)="onScroll($event)">
+            <div #timetableContainer class="timetable-container scroll" (scroll)="onScroll()">
                 <div #timetable class="timetable" [style.height.px]="filteredItems.length * elementHeight" [style.width.px]="days.length * elementWidth">
                     <div *ngFor="let item of itemCache" class="item-row entry"
                          [style.left.px]="0" [style.top.px]="item.y" [style.width.px]="days.length * elementWidth" [style.display]="item.visible?'block':'none'">
