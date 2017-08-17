@@ -17,7 +17,7 @@
 
 <ion-content>
     <ion-searchbar [(ngModel)]="filter" [placeholder]="'RESERVATIONS_PAGE.FILTER' | translate"></ion-searchbar>
-    <ion-list [virtualScroll]="reservations.data | reservationsfilter:filter" approxItemHeight="25px">
+    <ion-list [virtualScroll]="reservations.data | reservationsfilter:filter" approxItemHeight="161px">
         <div *virtualItem="let reservation" style="width: 100%">
             <reservation-card [reservation]="reservation" view="items"></reservation-card>
         </div>
