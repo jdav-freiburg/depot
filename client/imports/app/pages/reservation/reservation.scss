@@ -11,9 +11,13 @@
   opacity: 0.8;
 }
 
+.item-element {
+  z-index: 0;
+}
+
 .item-background-parent {
   position: relative;
-  z-index: -99;
+  z-index: -1;
 }
 
 .counter-badge {
@@ -38,7 +42,7 @@
   height: 100%;
   left: 0;
   top: 0;
-  z-index: -100;
+  z-index: -1;
 
   .item-background-container {
     background-color: pink;

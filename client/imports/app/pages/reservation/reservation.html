@@ -44,7 +44,7 @@
             <ion-searchbar [(ngModel)]="filter" (ngModelChange)="filterChange()" [placeholder]="'RESERVATION_PAGE.FILTER' | translate"></ion-searchbar>
             <ion-list>
                 <ng-container *ngFor="let item of itemGroups">
-                    <ion-item *ngIf="filter.length < 3 || item.checkFilters(filterQuery)">
+                    <ion-item class="item-element" *ngIf="filter.length < 3 || item.checkFilters(filterQuery)">
                         <ion-checkbox item-left [(ngModel)]="item.selected" [disabled]="!item.available || readonly"></ion-checkbox>
                         <ion-label class="item-background-parent">
                             <span class="item-background" *ngIf="item.subItems">
