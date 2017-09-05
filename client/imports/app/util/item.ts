@@ -200,7 +200,7 @@ export class SelectableItemGroup implements SelectableItem {
         return this.subItems[Math.max(this._selected - 1, 0)].externalId;
     }
     get name(): string {
-        return this.subItems[Math.max(this._selected - 1, 0)].description;
+        return this.subItems[Math.max(this._selected - 1, 0)].name;
     }
     get description(): string {
         return this.subItems[Math.max(this._selected - 1, 0)].description;
