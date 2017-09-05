@@ -1,37 +1,69 @@
 .clickable-thumbnail {
-  cursor: pointer;
-  position: relative;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .clickable-thumbnail img {
   border-radius: 8px;
 }
 
-.clickable-thumbnail:hover {
-  opacity: 0.8;
-}
 
 .item-element {
+  // z-index required for firefox to properly render the background
   z-index: 0;
+  align-items: stretch;
+  padding: 0;
 }
 
 .item-background-parent {
   position: relative;
-  z-index: -1;
 }
 
-.counter-badge {
-  margin: 0 5px 0 0;
+.counter-badge, .button-badge, .checkbox-badge {
+  margin: 0;
   padding: 0;
+
   background-color: transparent;
   color: inherit;
 
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.counter-badge {
   /deep/ button {
-    //color: white;
-    margin: 5px 0 5px 4px;
+    margin: 0;
   }
   /deep/ ion-icon {
-    padding: 0 1px;
+    padding: 0 5px;
+  }
+}
+
+.button-badge {
+  /deep/ div {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+  }
+  /deep/ button {
+    height: 100%;
+    margin: 0;
+  }
+  /deep/ ion-icon {
+    padding: 0 10px;
+  }
+}
+
+.checkbox-badge {
+  position: relative;
+  align-items: center;
+  display: flex;
+
+  /deep/ ion-checkbox {
+    margin: 0;
   }
 }
 
@@ -59,7 +91,7 @@
       justify-content: center;
       align-items: center;
       color: white;
-      box-shadow: 0px 0px 2px 2px #fff inset;
+      box-shadow: 0 0 2px 2px #fff inset;
       min-width: 1em;
       overflow: hidden;
     }

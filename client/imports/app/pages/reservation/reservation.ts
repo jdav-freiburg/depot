@@ -7,7 +7,8 @@ import {UserService} from "../../services/user";
 import {Reservation} from "../../../../../both/models/reservation.model";
 import {ReservationsDataService} from "../../services/reservations-data";
 import {
-    AlertController, ItemGroup, Loading, LoadingController, ModalController, NavController, NavParams, Platform,
+    AlertController, Checkbox, ItemGroup, Loading, LoadingController, ModalController, NavController, NavParams,
+    Platform,
     ToastController, VirtualScroll
 } from "ionic-angular";
 import * as moment from 'moment';
@@ -27,6 +28,13 @@ class SelectableItemSingleImage extends SelectableItemSingle {
 
     public constructor(item: Item, translate: TranslateService, selectedProvider: SelectedProvider) {
         super(item, translate, selectedProvider);
+    }
+}
+
+
+class SelectableItemGroupImage extends SelectableItemGroup {
+    public get pictureUrl(): string {
+        return (<SelectableItemSingleImage>this.subItems[Math.max(this._selected - 1, 0)]).pictureUrl;
     }
 }
 
@@ -68,7 +76,7 @@ export class ReservationPage implements OnInit, OnDestroy {
 
     private _selectedProvider: SelectedProvider;
     private itemGroups: SelectableItem[] = [];
-    private itemGroupsIndex: {[id:string]: SelectableItemGroup} = {};
+    private itemGroupsIndex: {[id:string]: SelectableItemGroupImage} = {};
 
     get translateTitleParams(): any {
         return {name: this.text};
@@ -317,11 +325,11 @@ export class ReservationPage implements OnInit, OnDestroy {
                 }
                 if (!transformed.itemGroupRef) {
                     if (transformed.itemGroup) {
-                        let itemGroup: SelectableItemGroup;
+                        let itemGroup: SelectableItemGroupImage;
                         if (this.itemGroupsIndex.hasOwnProperty(transformed.itemGroup)) {
                             itemGroup = this.itemGroupsIndex[transformed.itemGroup];
                         } else {
-                            itemGroup = new SelectableItemGroup();
+                            itemGroup = new SelectableItemGroupImage();
                             this.itemGroupsIndex[transformed.itemGroup] = itemGroup;
                             this.itemGroups.push(itemGroup);
                         }
@@ -548,5 +556,14 @@ export class ReservationPage implements OnInit, OnDestroy {
 
     filterChange() {
         this.filterQuery = this.filter.toLowerCase().split(/\s+/);
+    }
+
+    toggleAddItem(evt: Event, item: SelectableItem) {
+        console.log("Change", evt);
+        if (item.selectedCount < item.availableCount) {
+            item.selectedCount++;
+        } else {
+            item.selectedCount = 0;
+        }
     }
 }

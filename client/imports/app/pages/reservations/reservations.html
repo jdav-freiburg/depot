@@ -12,12 +12,14 @@
             </button>
         </ion-buttons>
     </ion-navbar>
+    <ion-toolbar>
+        <ion-searchbar [(ngModel)]="filter" (ngModelChange)="filterChange()" [placeholder]="'RESERVATIONS_PAGE.FILTER' | translate"></ion-searchbar>
+    </ion-toolbar>
 </ion-header>
 
 
 <ion-content>
-    <ion-searchbar [(ngModel)]="filter" [placeholder]="'RESERVATIONS_PAGE.FILTER' | translate"></ion-searchbar>
-    <ion-list [virtualScroll]="reservations.data | reservationsfilter:filter" approxItemHeight="161px">
+    <ion-list [virtualScroll]="displayReservations" approxItemHeight="171px">
         <div *virtualItem="let reservation" style="width: 100%">
             <reservation-card [reservation]="reservation" view="items"></reservation-card>
         </div>

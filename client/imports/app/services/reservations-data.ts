@@ -35,7 +35,10 @@ export class ReservationsDataService {
         ]);
     }
 
-    public getReservations(): ObservableCursor<Reservation> {
+    public getReservations(maxCount?: number): ObservableCursor<Reservation> {
+        if (maxCount !== undefined) {
+            return ReservationCollection.find({}, {sort: {start: -1}, limit: maxCount});
+        }
         return ReservationCollection.find({}, {sort: {start: -1}});
     }
 
