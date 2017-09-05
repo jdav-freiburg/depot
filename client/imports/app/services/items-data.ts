@@ -61,11 +61,11 @@ export class ItemsDataService {
     }
 
     public getItems(): ObservableCursor<Item> {
-        return ItemCollection.find({}, {sort: {name: 1, description: 1, condition: -1}});
+        return ItemCollection.find({}, {sort: {name: 1, description: 1, condition: -1, _id: 1}});
     }
 
     public getPublicItems(): ObservableCursor<Item> {
-        return ItemCollection.find({status: 'public'}, {sort: {name: 1, description: 1, condition: -1}});
+        return ItemCollection.find({status: 'public'}, {sort: {name: 1, description: 1, condition: -1, _id: 1}});
     }
 
     public getItemList(itemIds: string[]): ObservableCursor<Item> {
