@@ -531,11 +531,12 @@ export class ReservationPage implements OnInit, OnDestroy {
         return true;
     }
 
-    openItem(item: Item) {
+    openItem(item: SelectableItem) {
         this.forceClose = true;
         this.navCtrl.push(ItemStateModal, {
             showReservations: true,
             itemId: item._id,
+            reservationsItemIds: (item.isSingle?null:_.map(item.subItems, subItem => subItem._id)),
             skipReservationId: this.editId,
             rangeStart: this.startDate,
             rangeEnd: this.endDate,
@@ -559,7 +560,6 @@ export class ReservationPage implements OnInit, OnDestroy {
     }
 
     toggleAddItem(evt: Event, item: SelectableItem) {
-        console.log("Change", evt);
         if (item.selectedCount < item.availableCount) {
             item.selectedCount++;
         } else {

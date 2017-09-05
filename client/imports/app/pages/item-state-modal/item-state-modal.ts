@@ -39,8 +39,12 @@ export class ItemStateModal implements OnInit, OnDestroy {
 
     refresh: Subject<any> = new Subject();
 
-    get days_label(): string[] {
-        return moment.weekdaysShort();
+    get firstDayOfWeek(): number {
+        return moment.localeData().firstDayOfWeek();
+    }
+
+    get locale(): string {
+        return moment.locale();
     }
 
     range: {
@@ -108,41 +112,46 @@ export class ItemStateModal implements OnInit, OnDestroy {
             this.range.disableOutside = this.params.get('rangeDisableOutside');
         }
         let skipReservationId = this.params.get('skipReservationId');
+        let reservationsItemIds = this.params.get('reservationsItemIds');
         if (this.itemId) {
+            console.log("showReservation:", this.itemId);
             this.itemSubscription = this.itemDataService.getItem(this.itemId).zone().subscribe((items) => {
                 if (items.length === 1) {
                     this.item = items[0];
                 }
             });
-            if (this.params.get('showReservations')) {
-                this.reservationsSubscription = new QueryObserverTransform<Reservation, CalendarEvent>({
-                    query: this.reservationsDataService.getReservationsForItem(this.itemId),
-                    zone: this.ngZone,
-                    transformer: (reservation) => {
-                        if (reservation._id === skipReservationId) {
-                            return null;
-                        }
-                        return {
-                            start: reservation.start,
-                            end: reservation.end,
-                            title: this.translate.get('ITEM_STATE.RESERVATION_NAME', {
-                                user: this.users.tryGetUser(reservation.userId),
-                                type: _.find(this.reservationsDataService.reservationTypeOptions, option => option.value === reservation.type),
-                                reservation: reservation
-                            }),
-                            color: {
-                                primary: '#ff3333',
-                                secondary: '#cc6666'
-                            },
-                            allDay: true,
-                        };
-                    },
-                    suppressNull: true
-                });
-                this.reservationsSubscription.dataChanged.subscribe((data) => {
-                    this.events = _.concat((this.itemStateSubscription?this.itemStateSubscription.data:[]), data);
-                });
-            }
+        if (this.params.get('showReservations') && (this.itemId || reservationsItemIds))
+            console.log("showReservations:", reservationsItemIds);
+            this.reservationsSubscription = new QueryObserverTransform<Reservation, CalendarEvent>({
+                query: (reservationsItemIds?
+                    this.reservationsDataService.getReservationsForItems(reservationsItemIds):
+                    this.reservationsDataService.getReservationsForItem(this.itemId)),
+                zone: this.ngZone,
+                transformer: (reservation) => {
+                    if (reservation._id === skipReservationId) {
+                        return null;
+                    }
+                    return {
+                        start: reservation.start,
+                        end: reservation.end,
+                        title: this.translate.get('ITEM_STATE.RESERVATION_NAME', {
+                            user: this.users.tryGetUser(reservation.userId),
+                            type: _.find(this.reservationsDataService.reservationTypeOptions, option => option.value === reservation.type),
+                            reservation: reservation
+                        }),
+                        color: {
+                            primary: '#ff3333',
+                            secondary: '#cc6666'
+                        },
+                        allDay: true,
+                    };
+                },
+                suppressNull: true
+            });
+            this.reservationsSubscription.dataChanged.subscribe((data) => {
+                this.events = _.concat((this.itemStateSubscription?this.itemStateSubscription.data:[]), data);
+                console.log("Events:", this.events);
+            });
         }
     }
 
@@ -258,6 +267,7 @@ export class ItemStateModal implements OnInit, OnDestroy {
         });
         this.itemStateSubscription.dataChanged.subscribe((newData: CalendarEvent[]) => {
             this.events = _.concat(newData, (this.reservationsSubscription?this.reservationsSubscription.data:[]));
+            console.log("Events:", this.events);
         });
     }
 

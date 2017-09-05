@@ -38,8 +38,12 @@ export class DatePickerModal implements OnDestroy {
 
     refresh: Subject<any> = new Subject();
 
-    get days_label(): string[] {
-        return moment.weekdaysShort();
+    get firstDayOfWeek(): number {
+        return moment.localeData().firstDayOfWeek();
+    }
+
+    get locale(): string {
+        return moment.locale();
     }
 
     canSelect: boolean = true;

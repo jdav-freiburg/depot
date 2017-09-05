@@ -137,4 +137,8 @@ export class ReservationsDataService {
     getReservationsForItem(itemId: string): ObservableCursor<Reservation> {
         return ReservationCollection.find({itemIds: itemId});
     }
+
+    getReservationsForItems(itemIds: string[]): ObservableCursor<Reservation> {
+        return ReservationCollection.find({itemIds: {$in: itemIds}});
+    }
 }

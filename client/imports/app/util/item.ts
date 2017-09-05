@@ -193,6 +193,9 @@ export class SelectableItemSingle extends ExtendedItem implements SelectableItem
 }
 
 export class SelectableItemGroup implements SelectableItem {
+    get _id(): string {
+        return this.subItems[Math.max(this._selected - 1, 0)]._id;
+    }
     get externalId(): string {
         return this.subItems[Math.max(this._selected - 1, 0)].externalId;
     }

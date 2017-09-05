@@ -111,9 +111,12 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
         this.refreshItems();
     }
 
-    openItem(itemId) {
+    openItem(item: Item) {
         this.navCtrl.push(ItemStateModal, {
-            itemId: itemId
+            itemId: item._id,
+            skipReservationId: this.reservation._id,
+            rangeStart: this.reservation.start,
+            rangeEnd: this.reservation.end,
         });
     }
 

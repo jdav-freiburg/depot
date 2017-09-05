@@ -30,24 +30,44 @@
     display: none;
   }
 
-  .cal-day-selected {
+  .cal-day-selected.cal-in-month {
     background-color: cornflowerblue;
   }
 
-  .cal-day-selected:hover {
+  .cal-day-selected.cal-in-month:hover {
     background-color: lighten(cornflowerblue, 10%);
   }
 
-  .cal-day-range {
-    background-color: lightblue;
+  .cal-day-selected.cal-out-month {
+    background-color: rgba(cornflowerblue, 0.5);
   }
 
-  .cal-day-range:hover {
-    background-color: lighten(lightblue, 10%);
+  .cal-day-selected.cal-out-month:hover {
+    background-color: rgba(lighten(cornflowerblue, 10%), 0.5);
   }
 
-  .cal-day-disabled,
-  .cal-day-disabled:hover {
-    background-color: gray;
+  .cal-day-range.cal-in-month {
+    background-color: rgba(lightblue, 0.5);
+  }
+
+  .cal-day-range.cal-in-month:hover {
+    background-color: rgba(mix(lightblue, gray, 50%), 0.25);
+  }
+
+  .cal-day-range.cal-out-month {
+    background-color: rgba(lightblue, 0.25);
+  }
+
+  .cal-day-range.cal-out-month:hover {
+    background-color: rgba(mix(lightblue, gray, 50%), 0.25);
+  }
+
+  .cal-day-disabled.cal-in-month,
+  .cal-day-disabled.cal-in-month:hover {
+    background-color: rgba(gray, 0.5);
+  }
+  .cal-day-disabled.cal-out-month,
+  .cal-day-disabled.cal-out-month:hover{
+    background-color: rgba(gray, 0.25);
   }
 }

@@ -20,7 +20,10 @@ import {ReservationsPage} from "./pages/reservations/reservations";
 import {ReservationsDataService} from "./services/reservations-data";
 import {ReservationPage} from "./pages/reservation/reservation";
 import {UserComponent} from "./components/user/user";
-import {CalendarDateFormatter, CalendarModule, CalendarMomentDateFormatter, MOMENT} from 'angular-calendar';
+import {
+    CalendarDateFormatter, CalendarModule, CalendarMomentDateFormatter, DateFormatterParams,
+    MOMENT
+} from 'angular-calendar';
 import {DatePickerModal} from "./pages/date-picker-modal/date-picker-modal";
 import {ReservationDatePickerComponent} from "./components/reservation-date-picker/reservation-date-picker";
 import {ItemStateModal} from "./pages/item-state-modal/item-state-modal";
@@ -54,6 +57,12 @@ import {ItemListColumnsPage} from "./components/item-list-editor/item-list-colum
 import {ItemListComponent} from "./components/item-list-editor/item-list";
 import {CalendarItemsPage} from "./pages/calendar-items/calendar-items";
 
+
+class ShortCalendarMomentDateFormatter extends CalendarMomentDateFormatter {
+    public monthViewColumnHeader({ date, locale }: DateFormatterParams): string {
+        return moment(date).locale(locale).format('ddd');
+    }
+}
 
 @NgModule({
     // Components, Pipes, Directive
@@ -134,7 +143,7 @@ import {CalendarItemsPage} from "./pages/calendar-items/calendar-items";
         TranslateHelperService,
         GlobalMessagesDataService,
         PictureService,
-        {provide: CalendarDateFormatter, useClass: CalendarMomentDateFormatter},
+        {provide: CalendarDateFormatter, useClass: ShortCalendarMomentDateFormatter},
         {provide: MOMENT, useValue: moment}
     ],
     // Modules
