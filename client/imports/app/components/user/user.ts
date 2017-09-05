@@ -32,6 +32,9 @@ export class UserComponent implements OnInit, OnChanges, OnDestroy {
         }
         this.userSubscription = this.userService.usersChange.subscribe((users) => {
             this.user = _.find(users, (user) => user._id === this.userId);
+            if (!this.user) {
+                console.log("Did not find user", this.userId, "in", users);
+            }
         });
     }
 
