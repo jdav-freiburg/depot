@@ -556,6 +556,11 @@ export class ReservationPage implements OnInit, OnDestroy {
     }
 
     filterChange() {
+        // some easter egg :)
+        if (this.filter === "gimmeall") {
+            _.forEach(this.itemGroups, (itemGroup) => itemGroup.selectedCount = itemGroup.availableCount);
+            this.filter = "";
+        }
         this.filterQuery = this.filter.toLowerCase().split(/\s+/);
     }
 

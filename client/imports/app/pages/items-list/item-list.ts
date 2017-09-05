@@ -29,6 +29,8 @@ export class ItemListPage implements AfterViewInit, OnDestroy {
     @ViewChild(ItemListComponent)
     private itemList: ItemListComponent;
 
+    private filter: string = "";
+
     constructor(private itemsService: ItemsDataService, private navCtrl: NavController,
                 private translate: TranslateService, private ngZone: NgZone,
                 private formBuilder: FormBuilder, private alertCtrl: AlertController) {

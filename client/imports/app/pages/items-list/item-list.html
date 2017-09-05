@@ -18,8 +18,11 @@
             </button>
         </ion-buttons>
     </ion-navbar>
+    <ion-toolbar>
+        <ion-searchbar [(ngModel)]="filter" [placeholder]="'ITEM_LIST_PAGE.FILTER' | translate"></ion-searchbar>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <item-list [items]="items?items.data:null"></item-list>
+    <item-list [items]="items?items.data:null" [filter]="filter"></item-list>
 </ion-content>

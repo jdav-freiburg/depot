@@ -19,11 +19,14 @@
             <button ion-button icon-only *ngIf="items" (click)="itemList.save()" [disabled]="isWorking"><ion-icon name="checkmark"></ion-icon></button>
         </ion-buttons>
     </ion-navbar>
+    <ion-toolbar>
+        <ion-searchbar [(ngModel)]="filter" [placeholder]="'ITEM_LIST_PAGE.FILTER' | translate"></ion-searchbar>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
     <div *ngIf="!items" class="file-drop no-file" [ngClass]="{'file-over': fileIsOver}" fileDrop (fileOver)="onFileOver($event)" (onFileDrop)="onFileDrop($event)">
     </div>
 
-    <item-list [items]="items" [saveCompact]="false"></item-list>
+    <item-list [items]="items" [saveCompact]="false" [filter]="filter"></item-list>
 </ion-content>

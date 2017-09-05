@@ -12,10 +12,12 @@
             </button>
         </ion-buttons>
     </ion-navbar>
+    <ion-toolbar>
+        <ion-searchbar [(ngModel)]="filter" [placeholder]="'ITEM_CARDS_PAGE.FILTER' | translate"></ion-searchbar>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <ion-searchbar [(ngModel)]="filter" [placeholder]="'ITEM_CARDS_PAGE.FILTER' | translate"></ion-searchbar>
     <ion-list [virtualScroll]="filteredItems" approxItemHeight="200px">
         <div *virtualItem="let item" style="width: 100%">
             <item-card [item]="item" view="cards" [editable]="true" [createReset]="true"></item-card>

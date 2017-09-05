@@ -56,11 +56,12 @@ export class ItemListComponent {
 
     private filteredItems: ExtendedFormItem[];
 
-    private get filter(): string {
+    @Input()
+    public get filter(): string {
         return this._filter;
     }
 
-    private set filter(value: string) {
+    public set filter(value: string) {
         this._filter = value;
         this.updateFilter();
     }

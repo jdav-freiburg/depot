@@ -35,6 +35,8 @@ export class ItemsImporterPage implements AfterViewInit {
     @ViewChild(ItemListComponent)
     private itemList: ItemListComponent;
 
+    private filter: string = "";
+
     ngAfterViewInit() {
         this.itemList.onDelete = (item: ExtendedFormItem, callback?: Function) => {
             _.remove(this.items, (checkItem) => checkItem == item);
