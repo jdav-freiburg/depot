@@ -173,7 +173,7 @@ export class UserService {
     }
 
     public tryGetUser(id: string): User {
-        return _.find(this.users, user => user._id = id);
+        return _.find(this.users, user => user._id === id);
     }
 
 
