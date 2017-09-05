@@ -18,6 +18,8 @@ export interface User extends Meteor.User {
     language?: string;
     status?: string;
     roles?: string[];
+
+    filters?: string[];
 }
 
 export interface CreateUser {

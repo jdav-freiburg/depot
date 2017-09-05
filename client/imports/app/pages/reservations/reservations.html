@@ -21,7 +21,7 @@
 <ion-content>
     <ion-list [virtualScroll]="displayReservations" approxItemHeight="171px">
         <div *virtualItem="let reservation" style="width: 100%">
-            <reservation-card [reservation]="reservation" view="items"></reservation-card>
+            <reservation-card [reservation]="reservation" view="items" *ngIf="displayReservations.length"></reservation-card>
         </div>
     </ion-list>
 </ion-content>

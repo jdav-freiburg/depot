@@ -74,6 +74,9 @@ export class UserService {
     };
 
     constructor(private ngZone: NgZone, private ref: ApplicationRef, private translate: TranslateService) {
+        this.translate.languageKeyChange.subscribe((languageKey) => {
+            _.forEach(this._users, (user) => this.updateFilter(user));
+        });
         Accounts.onLogin(() => {
             ngZone.run(() => {
                 this._user = <User>Meteor.user();
@@ -107,12 +110,15 @@ export class UserService {
         Meteor.users.find({}, {sort: {_id: 1}}).observe({
             added: (data: User) => {
                 this.ngZone.run(() => {
+                    this.updateFilter(data);
+
                     this._users.push(data);
                     this.usersChange.next(this._users);
                 });
             },
             changed: (data: User) => {
                 this.ngZone.run(() => {
+                    this.updateFilter(data);
                     if (this._user && this._user._id === data._id) {
                         this._user = data;
                         if (this._user.status !== 'normal') {
@@ -138,6 +144,12 @@ export class UserService {
                 });
             },
         });
+    }
+
+    private updateFilter(user: User): void {
+        let statusText = (_.find(this.userStatusOptions, (option) => option.value === user.status) || {text: user.status}).text.toLowerCase();
+        let rolesText = _.map(user.roles, (role) => (this.getUserRoleOption(role)||{text:role}).text.toLowerCase());
+        user.filters = _.concat([user.fullName.toLowerCase(), user.phone, user.username, statusText], rolesText, _.map(user.emails, (email) => email.address));
     }
 
     public get users(): User[] {
@@ -173,7 +185,7 @@ export class UserService {
     }
 
     public tryGetUser(id: string): User {
-        return _.find(this.users, user => user._id === id);
+        return _.find(this.users, user => user._id = id);
     }
 
 

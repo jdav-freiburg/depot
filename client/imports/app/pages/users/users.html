@@ -12,56 +12,55 @@
             </button>
         </ion-buttons>-->
     </ion-navbar>
+    <ion-toolbar>
+        <ion-searchbar [(ngModel)]="filter" (ngModelChange)="filterChange()" [placeholder]="'USERS_PAGE.FILTER' | translate"></ion-searchbar>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <ion-searchbar [(ngModel)]="filter" [placeholder]="'USERS_PAGE.FILTER' | translate"></ion-searchbar>
-    <div class="edit-table">
-        <div class="edit-tr">
-            <span class="edit-th">{{'USERS_PAGE.USERNAME' | translate}}</span>
-            <span class="edit-th">{{'USERS_PAGE.EMAIL' | translate}}</span>
-            <span class="edit-th">{{'USERS_PAGE.FULL_NAME' | translate}}</span>
-            <span class="edit-th">{{'USERS_PAGE.PHONE' | translate}}</span>
-            <span class="edit-th">{{'USERS_PAGE.STATUS' | translate}}</span>
-            <span class="edit-th">{{'USERS_PAGE.ROLES' | translate}}</span>
-            <span class="edit-th"></span>
-        </div>
-        <ng-container *ngFor="let user of users | usersfilter:filter">
-            <div class="edit-tr">
-                <span class="edit-td">{{user.username}}</span>
-                <span class="edit-td">
-                    <span *ngFor="let email of user.emails; first as isFirst">
-                        <span *ngIf="!isFirst">, </span>
-                        <a href="mailto:{{email.address}}">{{email.address}}</a>
-                    </span>
-                </span>
-                <span class="edit-td">{{user.fullName}}</span>
-                <span class="edit-td">{{user.phone}}</span>
-                <span class="edit-td">
-                    <span [ngSwitch]="user.status">
-                        <ng-container *ngFor="let option of userService.userStatusOptions">
-                            <span *ngSwitchCase="option.value" [style.color]="option.colorCss">{{option.text}}</span>
+    <ion-list [virtualScroll]="displayUsers" approxItemHeight="217px">
+        <div *virtualItem="let user" style="width: 100%">
+            <ion-card *ngIf="displayUsers.length">
+                <ion-toolbar>
+                    <ion-title>
+                        {{user.username}}
+                    </ion-title>
+                    <ion-buttons right>
+                        <button ion-button (click)="editItem(user._id)" clear icon-only>
+                            <ion-icon *ngIf="isAdmin" name="create"></ion-icon>
+                            <ion-icon *ngIf="!isAdmin" name="search"></ion-icon>
+                        </button>
+                    </ion-buttons>
+                </ion-toolbar>
+                <ion-card-content>
+                    <p>{{'USERS_PAGE.EMAIL' | translate}}:
+                        <ng-container *ngFor="let email of user.emails; first as isFirst">
+                            <ng-container *ngIf="!isFirst">, </ng-container>
+                            <a href="mailto:{{email.address}}">{{email.address}}</a>
                         </ng-container>
-                        <span *ngSwitchDefault>{{user.status}}</span>
-                    </span>
-                </span>
-                <span class="edit-td">
-                    <span *ngFor="let role of user.roles">
-                        <span [ngSwitch]="role">
-                            <ng-container *ngFor="let option of userService.userRolesOptions">
+                    </p>
+                    <p>{{'USERS_PAGE.FULL_NAME' | translate}}: {{user.fullName}}</p>
+                    <p>{{'USERS_PAGE.PHONE' | translate}}: {{user.phone}}</p>
+                    <p>{{'USERS_PAGE.STATUS' | translate}}:
+                        <ng-container [ngSwitch]="user.status">
+                            <ng-container *ngFor="let option of userService.userStatusOptions">
                                 <span *ngSwitchCase="option.value" [style.color]="option.colorCss">{{option.text}}</span>
                             </ng-container>
-                            <span *ngSwitchDefault>{{role}}</span>
-                        </span>
-                    </span>
-                </span>
-                <span class="edit-td">
-                    <button ion-button (click)="editItem(user._id)" clear icon-only>
-                        <ion-icon *ngIf="isAdmin" name="create"></ion-icon>
-                        <ion-icon *ngIf="!isAdmin" name="search"></ion-icon>
-                    </button>
-                </span>
-            </div>
-        </ng-container>
-    </div>
+                            <ng-container *ngSwitchDefault>{{user.status}}</ng-container>
+                        </ng-container>
+                    </p>
+                    <p>{{'USERS_PAGE.ROLES' | translate}}:
+                        <ng-container *ngFor="let role of user.roles">
+                            <ng-container [ngSwitch]="role">
+                                <ng-container *ngFor="let option of userService.userRolesOptions">
+                                    <span *ngSwitchCase="option.value" [style.color]="option.colorCss">{{option.text}}</span>
+                                </ng-container>
+                                <ng-container *ngSwitchDefault>{{role}}</ng-container>
+                            </ng-container>
+                        </ng-container>
+                    </p>
+                </ion-card-content>
+            </ion-card>
+        </div>
+    </ion-list>
 </ion-content>
