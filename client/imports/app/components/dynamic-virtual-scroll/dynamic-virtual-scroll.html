@@ -1,0 +1,6 @@
+<div class="dynamic-virtual-scroll" [style.height.px]="height">
+    <ng-content></ng-content>
+    <div class="virtual-item-container" *ngFor="let item of itemCache" [style.top.px]="item.y" [style.display]="item.visible?'block':'none'">
+        <ng-container #virtualItemContainer></ng-container>
+    </div>
+</div>

@@ -48,6 +48,7 @@ export class ReservationPage implements OnInit, OnDestroy {
 
     private siblingReservationsHandle: Subscription;
     private selfSubscription: Subscription;
+    private dataChangeSubscription: Subscription;
 
     unavailableItems: {[_id: string]: boolean} = {};
 
@@ -67,16 +68,18 @@ export class ReservationPage implements OnInit, OnDestroy {
     originalSelectedItemIds: string[] = [];
     selectedItemIds: string[] = [];
 
-    private items: QueryObserverTransform<Item, SelectableItemSingle>;
-
     filter: string = "";
     filterQuery: string[] = [];
 
     forceClose: boolean = false;
 
     private _selectedProvider: SelectedProvider;
+
+    private items: QueryObserverTransform<Item, SelectableItemSingle>;
     private itemGroups: SelectableItem[] = [];
     private itemGroupsIndex: {[id:string]: SelectableItemGroupImage} = {};
+
+    private displayItems: SelectableItem[] = [];
 
     get translateTitleParams(): any {
         return {name: this.text};
@@ -214,6 +217,7 @@ export class ReservationPage implements OnInit, OnDestroy {
                 console.log("ERROR: Item group contains non-updated item");
             }
         });
+        this.filterChange();
         if (removedItems.length > 0) {
             console.log("Found items to remove:", this.reservation, removedItems);
             this.toast.create({
@@ -272,6 +276,7 @@ export class ReservationPage implements OnInit, OnDestroy {
                 this.itemGroups.forEach((item) => {
                     item.update();
                 });
+                this.filterChange();
                 this.reservation = reservation;
                 this.updateItemStates();
                 this.isLoaded = true;
@@ -392,6 +397,9 @@ export class ReservationPage implements OnInit, OnDestroy {
                 }
             }
         });
+        this.dataChangeSubscription = this.items.dataChanged.subscribe(() => {
+            this.filterChange();
+        });
         if (this.editId) {
             this.load();
         }
@@ -405,6 +413,10 @@ export class ReservationPage implements OnInit, OnDestroy {
         if (this.selfSubscription) {
             this.selfSubscription.unsubscribe();
             this.selfSubscription = null;
+        }
+        if (this.dataChangeSubscription) {
+            this.dataChangeSubscription.unsubscribe();
+            this.dataChangeSubscription = null;
         }
         if (this.items != null) {
             this.items.unsubscribe();
@@ -562,6 +574,11 @@ export class ReservationPage implements OnInit, OnDestroy {
             this.filter = "";
         }
         this.filterQuery = this.filter.toLowerCase().split(/\s+/);
+        if (this.filter.length < 3) {
+            this.displayItems = this.itemGroups;
+        } else {
+            this.displayItems = _.filter(this.itemGroups, itemGroup => itemGroup.checkFilters(this.filterQuery))
+        }
     }
 
     toggleAddItem(evt: Event, item: SelectableItem) {

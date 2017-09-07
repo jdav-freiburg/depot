@@ -1,0 +1,21 @@
+:host {
+  display: block;
+  position: relative;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.dynamic-virtual-scroll {
+  display: block;
+  position: relative;
+  width: 100%;
+}
+
+.dynamic-virtual-scroll .virtual-item-container {
+  position: absolute;
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}

@@ -18,9 +18,9 @@
 </ion-header>
 
 <ion-content>
-    <ion-list [virtualScroll]="displayUsers" approxItemHeight="217px">
-        <div *virtualItem="let user" style="width: 100%">
-            <ion-card *ngIf="displayUsers.length">
+    <dynamic-virtual-scroll [minItemHeight]="217" [scrollLive]="true">
+        <ng-container *dynamicItem="let user of displayUsers">
+            <ion-card *ngIf="user">
                 <ion-toolbar>
                     <ion-title>
                         {{user.username}}
@@ -61,6 +61,6 @@
                     </p>
                 </ion-card-content>
             </ion-card>
-        </div>
-    </ion-list>
+        </ng-container>
+    </dynamic-virtual-scroll>
 </ion-content>

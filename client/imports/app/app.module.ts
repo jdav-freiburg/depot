@@ -56,6 +56,8 @@ import {ImagePreviewModal} from "./pages/image-preview-modal/image-preview-modal
 import {ItemListColumnsPage} from "./components/item-list-editor/item-list-columns";
 import {ItemListComponent} from "./components/item-list-editor/item-list";
 import {CalendarItemsPage} from "./pages/calendar-items/calendar-items";
+import {DynamicVirtualScrollComponent} from "./components/dynamic-virtual-scroll/dynamic-virtual-scroll";
+import {DynamicItem} from "./components/dynamic-virtual-scroll/dynamic-virtual-scroll-item";
 
 
 class ShortCalendarMomentDateFormatter extends CalendarMomentDateFormatter {
@@ -102,7 +104,9 @@ class ShortCalendarMomentDateFormatter extends CalendarMomentDateFormatter {
         ImagePreviewModal,
         ItemListColumnsPage,
         ItemListComponent,
-        CalendarItemsPage
+        CalendarItemsPage,
+        DynamicVirtualScrollComponent,
+        DynamicItem
     ],
     // Entry Components
     entryComponents: [

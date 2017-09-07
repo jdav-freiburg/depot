@@ -102,7 +102,11 @@ export class ReservationsPage implements OnInit, OnDestroy {
             }
         });
         this.reservations.dataChanged.subscribe((reservations) => {
-            this.displayReservations = _.filter(reservations, (reservation) => this.filter.length < 3 || reservation.checkFilters(this.filterQuery));
+            if (this.filter.length < 3) {
+                this.displayReservations = this.reservations.data;
+            } else {
+                this.displayReservations = _.filter(this.reservations.data, (reservation) => reservation.checkFilters(this.filterQuery));
+            }
         });
     }
 

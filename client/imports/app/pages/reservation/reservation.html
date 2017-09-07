@@ -42,11 +42,11 @@
         <ion-card-header>{{'RESERVATION_PAGE.ITEMS' | translate}}</ion-card-header>
         <ion-card-content>
             <ion-searchbar [(ngModel)]="filter" (ngModelChange)="filterChange()" [placeholder]="'RESERVATION_PAGE.FILTER' | translate"></ion-searchbar>
-            <ion-list>
-                <ng-container *ngFor="let item of itemGroups">
-                    <ion-item class="item-element" *ngIf="filter.length < 3 || item.checkFilters(filterQuery)">
+            <dynamic-virtual-scroll [minItemHeight]="82" [scrollLive]="true">
+                <ng-container *dynamicItem="let item of displayItems">
+                    <ion-item class="item-element" *ngIf="item">
                         <ion-label class="item-background-parent">
-                            <span class="item-background" *ngIf="item.subItems">
+                            <span class="item-background">
                                 <span class="item-background-container">
                                     <ng-container *ngFor="let subItem of item.subItems">
                                         <span class="item-background-item {{subItem.condition}}" [ngClass]="{'selected': subItem.selected, 'unavailable': !subItem.available}">
@@ -95,7 +95,7 @@
                         </ion-badge>
                     </ion-item>
                 </ng-container>
-            </ion-list>
+            </dynamic-virtual-scroll>
             <!--<ion-list no-padding [virtualScroll]="items.data | itemsfilter:filter" approxItemHeight="85px" bufferRatio="5">
                 <ion-item *virtualItem="let item">
                     <! --<ion-avatar item-left><img src="{{item.picture}}"></ion-avatar>- ->

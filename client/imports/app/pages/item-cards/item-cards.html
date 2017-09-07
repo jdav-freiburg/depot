@@ -18,10 +18,10 @@
 </ion-header>
 
 <ion-content>
-    <ion-list [virtualScroll]="filteredItems" approxItemHeight="200px">
-        <div *virtualItem="let item" style="width: 100%">
+    <dynamic-virtual-scroll [minItemHeight]="200" [scrollLive]="true">
+        <ng-container *dynamicItem="let item of filteredItems">
             <item-card [item]="item" view="cards" [editable]="true" [createReset]="true"></item-card>
             <div padding-bottom></div>
-        </div>
-    </ion-list>
+        </ng-container>
+    </dynamic-virtual-scroll>
 </ion-content>

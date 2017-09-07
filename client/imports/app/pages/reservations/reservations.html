@@ -19,9 +19,14 @@
 
 
 <ion-content>
-    <ion-list [virtualScroll]="displayReservations" approxItemHeight="171px">
+    <dynamic-virtual-scroll [minItemHeight]="171" [scrollLive]="true">
+        <ng-container *dynamicItem="let reservation of displayReservations">
+            <reservation-card [reservation]="reservation" view="items" *ngIf="reservation"></reservation-card>
+        </ng-container>
+    </dynamic-virtual-scroll>
+    <!--<ion-list [virtualScroll]="displayReservations" approxItemHeight="171px">
         <div *virtualItem="let reservation" style="width: 100%">
             <reservation-card [reservation]="reservation" view="items" *ngIf="displayReservations.length"></reservation-card>
         </div>
-    </ion-list>
+    </ion-list>-->
 </ion-content>
