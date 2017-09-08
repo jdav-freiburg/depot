@@ -247,6 +247,8 @@ export class DynamicVirtualScrollComponent implements DoCheck, OnDestroy {
         if (this._dynamicItem && this._items) {
             if (this.checkCacheSize()) {
                 this.scrollCache(true);
+            } else {
+                this.scrollCache();
             }
         }
     }

@@ -23,11 +23,12 @@ export class VirtualContext {
 @Directive({
     selector: "[dynamicItem]"
 })
-export class DynamicItem {
-    constructor(public templateRef: TemplateRef<VirtualContext>) {
+export class DynamicItem implements DoCheck {
+    constructor(public templateRef: TemplateRef<VirtualContext>, private differs: IterableDiffers) {
     }
 
     private _itemOf: NgIterable<any> = null;
+    private _differ: IterableDiffer<any> = null;
 
     @Input()
     public dynamicItemTrackBy: TrackByFunction<any>;
@@ -35,6 +36,7 @@ export class DynamicItem {
     @Input()
     public set dynamicItemOf(dynamicItemOf: NgIterable<any>) {
         this._itemOf = dynamicItemOf;
+        this._differ = this.differs.find(dynamicItemOf).create(this.dynamicItemTrackBy);
         this.listChange.next(this._itemOf);
     }
 
@@ -43,4 +45,13 @@ export class DynamicItem {
     }
 
     public readonly listChange: Subject<Iterable<any>> = new BehaviorSubject<Iterable<any>>(null);
+
+    ngDoCheck(): void {
+        if (this._differ) {
+            let diff = this._differ.diff(this._itemOf);
+            if (diff) {
+                this.listChange.next(this._itemOf);
+            }
+        }
+    }
 }
