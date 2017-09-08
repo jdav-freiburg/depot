@@ -7,7 +7,7 @@ import * as _ from "lodash";
 import * as moment from 'moment';
 import {AlertController, NavController, ScrollEvent, ToastController} from "ionic-angular";
 import {TranslateService} from "../../services/translate";
-import {ChangeableDataTransform, QueryObserver, QueryObserverTransform} from "../../util/query-observer";
+import {QueryObserverTransform} from "../../util/query-observer";
 import {Subscription} from "rxjs/Subscription";
 import {ExtendedItem, FilterItem, ItemGroup} from "../../util/item";
 import {PictureService} from "../../services/picture";
@@ -199,8 +199,7 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
         this.items = new QueryObserverTransform<Item, CalendarExtendedItem>({
             query: this.itemsService.getPublicItems(),
             zone: this.ngZone,
-            transformer: (item) => {
-                let transformed: CalendarExtendedItem = (<ChangeableDataTransform<Item, CalendarExtendedItem>>item)._transformed;
+            transformer: (item, transformed: CalendarExtendedItem) => {
                 if (transformed) {
                     if (item.itemGroup !== transformed.itemGroup) {
                         if (transformed.itemGroup) {
@@ -258,8 +257,7 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
                 this.itemGroupsItemIndex[transformed._id] = transformed;
                 return transformed;
             },
-            removed: (item, index) => {
-                let transformed: CalendarExtendedItem = (<any>item)._transformed;
+            removed: (item, transformed: CalendarExtendedItem, index) => {
                 if (transformed) {
                     if (transformed.itemGroup) {
                         let itemGroup = this.itemGroupsIndex[transformed.itemGroup];
@@ -294,8 +292,7 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
         this.reservations = new QueryObserverTransform<Reservation, CalendarReservation>({
             query: this.reservationsService.getReservations(),
             zone: this.ngZone,
-            transformer: (reservation) => {
-                let transformed: CalendarReservation = (<ChangeableDataTransform<Reservation, CalendarReservation>>reservation)._transformed;
+            transformer: (reservation, transformed: CalendarReservation) => {
                 if (transformed) {
                     transformed.itemIds.forEach((itemId) => {
                         if (this.itemGroupsItemIndex.hasOwnProperty(itemId)) {
@@ -313,8 +310,7 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
                 });
                 return transformed;
             },
-            removed: (reservation, index) => {
-                let transformed: CalendarReservation = (<ChangeableDataTransform<Reservation, CalendarReservation>>reservation)._transformed;
+            removed: (reservation, transformed: CalendarReservation, index) => {
                 if (transformed) {
                     transformed.itemIds.forEach((itemId) => {
                         if (this.itemGroupsItemIndex.hasOwnProperty(itemId)) {

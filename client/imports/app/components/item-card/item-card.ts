@@ -55,7 +55,7 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
             externalId: [""],
             purchaseDate: [null],
             lastService: [null],
-            condition: ["100"],
+            condition: [itemsService.itemConditionOptions[0].value],
             conditionComment: [""],
             itemGroup: [""],
             status: ["public", Validators.required],

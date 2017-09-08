@@ -7,7 +7,7 @@ import {ReservationsDataService} from "../../services/reservations-data";
 import {Reservation} from "../../../../../both/models/reservation.model";
 import {NavController} from "ionic-angular";
 import {ReservationPage} from "../reservation/reservation";
-import {ChangeableDataTransform, QueryObserverTransform} from "../../util/query-observer";
+import {QueryObserverTransform} from "../../util/query-observer";
 import {TranslateService} from "../../services/translate";
 
 class ReservationExt implements Reservation {
@@ -91,8 +91,7 @@ export class ReservationsPage implements OnInit, OnDestroy {
         this.reservations = new QueryObserverTransform<Reservation, ReservationExt>({
             query: this.reservationsService.getReservations(),
             zone: this.ngZone,
-            transformer: reservation => {
-                let transformed: ReservationExt = (<ChangeableDataTransform<Reservation, ReservationExt>>reservation)._transformed;
+            transformer: (reservation, transformed: ReservationExt) => {
                 if (transformed) {
                     transformed.updateFrom(reservation, this.translate, this.users);
                 } else {

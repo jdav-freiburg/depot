@@ -7,7 +7,7 @@ import * as _ from "lodash";
 import * as moment from 'moment';
 import {AlertController, NavController, ToastController} from "ionic-angular";
 import {TranslateService} from "../../services/translate";
-import {ChangeableDataTransform, QueryObserverTransform} from "../../util/query-observer";
+import {QueryObserverTransform} from "../../util/query-observer";
 import {ItemCardsPage} from "../item-cards/item-cards";
 import {Subscription} from "rxjs/Subscription";
 import {FormBuilder} from "@angular/forms";
@@ -40,11 +40,10 @@ export class ItemListPage implements AfterViewInit, OnDestroy {
         this.items = new QueryObserverTransform<Item, ExtendedFormItem>({
             query: this.itemsService.getItems(),
             zone: this.ngZone,
-            transformer: (item) => {
+            transformer: (item, transformed) => {
                 if (!item) {
                     return null;
                 }
-                let transformed: ExtendedFormItem = (<ChangeableDataTransform<Item, ExtendedFormItem>>item)._transformed;
                 if (transformed) {
                     transformed.updateFrom(item, this.translate);
                     console.log("Got item update for:", this.isSaving, transformed.form.dirty, transformed);

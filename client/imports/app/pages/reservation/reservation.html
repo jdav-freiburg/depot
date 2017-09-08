@@ -43,7 +43,7 @@
         <ion-card-header>{{'RESERVATION_PAGE.ITEMS' | translate}}</ion-card-header>
         <ion-card-content>
             <ion-searchbar [(ngModel)]="filter" (ngModelChange)="filterChange()" scroll-switch (fullInViewChange)="fixSearchbar=!$event" [placeholder]="'RESERVATION_PAGE.FILTER' | translate"></ion-searchbar>
-            <dynamic-virtual-scroll [minItemHeight]="82" [scrollLive]="true">
+            <dynamic-virtual-scroll [minItemHeight]="87" [scrollLive]="true">
                 <ng-container *dynamicItem="let item of displayItems">
                     <ion-item class="item-element" *ngIf="item">
                         <ion-label class="item-background-parent">

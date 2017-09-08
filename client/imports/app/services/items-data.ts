@@ -107,6 +107,11 @@ export class ItemsDataService {
         return ItemCollection.find({_id: id});
     }
 
+
+    public getItemGroup(itemGroup: string): ObservableCursor<Item> {
+        return ItemCollection.find({itemGroup: itemGroup});
+    }
+
     public remove(id: string, callback?: Function): void {
         Meteor.call('items.remove', {
             itemId: id

@@ -8,7 +8,7 @@ import {UserService} from "../../services/user";
 import * as moment from 'moment';
 import {NavController} from "ionic-angular";
 import {TranslateService} from "../../services/translate";
-import {ChangeableDataTransform, QueryObserver, QueryObserverTransform} from "../../util/query-observer";
+import {QueryObserverTransform} from "../../util/query-observer";
 import {ItemListPage} from "../items-list/item-list";
 import {ExtendedItem, FilterItem} from "../../util/item";
 import {Subscription} from "rxjs/Subscription";
@@ -64,7 +64,7 @@ export class ItemCardsPage implements OnInit, OnDestroy {
         this.items = new QueryObserverTransform<Item, FilterItem>({
             query: this.itemsService.getItems(),
             zone: this.ngZone,
-            transformer: (item) => {
+            transformer: (item, transformed: FilterItem) => {
                 if (!item) {
                     item = {
                         _id: null,
@@ -88,7 +88,6 @@ export class ItemCardsPage implements OnInit, OnDestroy {
                         status: "public"
                     };
                 }
-                let transformed: FilterItem = (<ChangeableDataTransform<Item, FilterItem>>item)._transformed;
                 if (transformed) {
                     transformed.updateFrom(item, this.translate);
                 } else {

@@ -19,7 +19,7 @@ import {ItemStateModal} from "../item-state-modal/item-state-modal";
 import {Subscription} from "rxjs/Subscription";
 import {TranslateService} from "../../services/translate";
 import {TranslateHelperService} from "../../services/translate-helper";
-import {ChangeableDataTransform, QueryObserverTransform} from "../../util/query-observer";
+import {QueryObserverTransform} from "../../util/query-observer";
 import {SelectableItemSingle, SelectableItemGroup, SelectedProvider, SelectableItem} from "../../util/item";
 import {PictureService} from "../../services/picture";
 import {ImagePreviewModal} from "../image-preview-modal/image-preview-modal";
@@ -296,8 +296,7 @@ export class ReservationPage implements OnInit, OnDestroy {
         this.items = new QueryObserverTransform<Item, SelectableItemSingleImage>({
             query: this.itemsDataService.getPublicItems(),
             zone: this.ngZone,
-            transformer: (item) => {
-                let transformed: SelectableItemSingleImage = (<ChangeableDataTransform<Item, SelectableItemSingleImage>>item)._transformed;
+            transformer: (item, transformed: SelectableItemSingleImage) => {
                 if (transformed) {
                     if (item.itemGroup !== transformed.itemGroup) {
                         if (transformed.itemGroup) {
@@ -367,8 +366,7 @@ export class ReservationPage implements OnInit, OnDestroy {
                 }
                 return transformed;
             },
-            removed: (item, index) => {
-                let transformed: SelectableItem = (<any>item)._transformed;
+            removed: (item, transformed: SelectableItem, index) => {
                 if (transformed) {
                     if (transformed.itemGroup) {
                         let itemGroup = this.itemGroupsIndex[transformed.itemGroup];
