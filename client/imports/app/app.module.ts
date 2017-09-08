@@ -58,6 +58,7 @@ import {ItemListComponent} from "./components/item-list-editor/item-list";
 import {CalendarItemsPage} from "./pages/calendar-items/calendar-items";
 import {DynamicVirtualScrollComponent} from "./components/dynamic-virtual-scroll/dynamic-virtual-scroll";
 import {DynamicItem} from "./components/dynamic-virtual-scroll/dynamic-virtual-scroll-item";
+import {ScrollSwitchDirective} from "./components/scroll-switch/scroll-switch";
 
 
 class ShortCalendarMomentDateFormatter extends CalendarMomentDateFormatter {
@@ -106,7 +107,8 @@ class ShortCalendarMomentDateFormatter extends CalendarMomentDateFormatter {
         ItemListComponent,
         CalendarItemsPage,
         DynamicVirtualScrollComponent,
-        DynamicItem
+        DynamicItem,
+        ScrollSwitchDirective
     ],
     // Entry Components
     entryComponents: [

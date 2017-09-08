@@ -1,4 +1,4 @@
-import {Component, NgZone, OnDestroy, OnInit} from "@angular/core";
+import {Component, NgZone, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import template from "./reservation.html";
 import style from "./reservation.scss";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
@@ -7,7 +7,8 @@ import {UserService} from "../../services/user";
 import {Reservation} from "../../../../../both/models/reservation.model";
 import {ReservationsDataService} from "../../services/reservations-data";
 import {
-    AlertController, Checkbox, ItemGroup, Loading, LoadingController, ModalController, NavController, NavParams,
+    AlertController, Checkbox, Content, ItemGroup, Loading, LoadingController, ModalController, NavController,
+    NavParams,
     Platform,
     ToastController, VirtualScroll
 } from "ionic-angular";
@@ -73,6 +74,8 @@ export class ReservationPage implements OnInit, OnDestroy {
 
     forceClose: boolean = false;
 
+    fixSearchbar: boolean = false;
+
     private _selectedProvider: SelectedProvider;
 
     private items: QueryObserverTransform<Item, SelectableItemSingle>;
@@ -80,6 +83,9 @@ export class ReservationPage implements OnInit, OnDestroy {
     private itemGroupsIndex: {[id:string]: SelectableItemGroupImage} = {};
 
     private displayItems: SelectableItem[] = [];
+
+    @ViewChild(Content)
+    private content: Content;
 
     get translateTitleParams(): any {
         return {name: this.text};
@@ -568,6 +574,7 @@ export class ReservationPage implements OnInit, OnDestroy {
     }
 
     filterChange() {
+        console.log("FilterChange:", this.filter);
         // some easter egg :)
         if (this.filter === "gimmeall") {
             _.forEach(this.itemGroups, (itemGroup) => itemGroup.selectedCount = itemGroup.availableCount);

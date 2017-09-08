@@ -83,6 +83,11 @@ export class ReservationDatePickerComponent implements ControlValueAccessor {
         this.open();
     }
 
+    tap(ev: UIEvent) {
+        ev.preventDefault();
+        this.open();
+    }
+
     @HostListener('keyup.space', ['$event'])
     keySpace(ev: KeyboardEvent) {
         ev.preventDefault();
