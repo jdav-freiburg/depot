@@ -1,0 +1,63 @@
+<ion-header>
+    <ion-navbar>
+        <ion-buttons end>
+            <button ion-button clear icon-only (click)="selectPicture()" [disabled]="itemForm.controls['picture'].disabled" clear>
+                <ion-icon name="image"></ion-icon>
+            </button>
+            <button *ngIf="itemForm.controls['status'].value=='public'" ion-button (click)="itemForm.controls['status'].setValue('hidden');itemForm.controls['status'].markAsDirty()" [disabled]="itemForm.controls['status'].disabled" clear icon-only>
+                <ion-icon name="eye"></ion-icon>
+            </button>
+            <button *ngIf="itemForm.controls['status'].value!='public'" ion-button (click)="itemForm.controls['status'].setValue('public');itemForm.controls['status'].markAsDirty()" [disabled]="itemForm.controls['status'].disabled" clear icon-only>
+                <ion-icon name="eye-off"></ion-icon>
+            </button>
+            <button ion-button icon-only (click)="saveItemCopy()" *ngIf="canCopy">
+                <ion-icon name="copy"></ion-icon>
+            </button>
+            <button ion-button icon-only (click)="cancel()">
+                <ion-icon name="close"></ion-icon>
+            </button>
+            <button ion-button icon-only (click)="saveItem()">
+                <ion-icon name="checkmark"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <form [formGroup]="itemForm" (submit)="saveItem()">
+        <ion-list>
+            <ion-item>
+                <ion-label floating>{{'ITEM_CARD.NAME' | translate}}</ion-label>
+                <ion-input type="text" formControlName="name"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>{{'ITEM_CARD.DESCRIPTION' | translate}}</ion-label>
+                <ion-input type="text" formControlName="description"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>{{'ITEM_CARD.EXTERNAL_ID' | translate}}</ion-label>
+                <ion-input type="text" formControlName="externalId"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>{{'ITEM_CARD.TAGS' | translate}}</ion-label>
+                <ion-input type="text" formControlName="tags"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>{{'ITEM_CARD.ITEM_GROUP' | translate}}</ion-label>
+                <ion-input type="text" formControlName="itemGroup"></ion-input>
+            </ion-item>
+            <item-date-picker formControlName="purchaseDate" [label]="'ITEM_CARD.PURCHASE_DATE' | translate"></item-date-picker>
+            <item-date-picker formControlName="lastService" [label]="'ITEM_CARD.LAST_SERVICE' | translate"></item-date-picker>
+            <ion-item>
+                <ion-label floating>{{'ITEM_CARD.CONDITION' | translate}}</ion-label>
+                <ion-select formControlName="condition">
+                    <ion-option *ngFor="let option of itemsService.itemConditionOptions" [value]="option.value">{{option.text}}</ion-option>
+                </ion-select>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>{{'ITEM_CARD.CONDITION_COMMENT' | translate}}</ion-label>
+                <ion-input type="text" formControlName="conditionComment"></ion-input>
+            </ion-item>
+        </ion-list>
+    </form>
+</ion-content>

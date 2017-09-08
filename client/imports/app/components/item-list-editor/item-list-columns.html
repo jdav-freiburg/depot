@@ -1,46 +1,16 @@
 <ion-list>
     <ion-item>
-        <ion-label>{{'ITEM_CARD.EXTERNAL_ID' | translate}}</ion-label>
-        <ion-checkbox [(ngModel)]="columns.externalId.visible"></ion-checkbox>
+        <ion-label>{{'ITEM_CARD.EDITOR' | translate}}</ion-label>
+        <ion-checkbox [(ngModel)]="columns.editor.visible"></ion-checkbox>
     </ion-item>
-    <ion-item>
-        <ion-label>{{'ITEM_CARD.NAME' | translate}}</ion-label>
-        <ion-checkbox [(ngModel)]="columns.name.visible"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-        <ion-label>{{'ITEM_CARD.DESCRIPTION' | translate}}</ion-label>
-        <ion-checkbox [(ngModel)]="columns.description.visible"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-        <ion-label>{{'ITEM_CARD.CONDITION' | translate}}</ion-label>
-        <ion-checkbox [(ngModel)]="columns.condition.visible"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-        <ion-label>{{'ITEM_CARD.CONDITION_COMMENT' | translate}}</ion-label>
-        <ion-checkbox [(ngModel)]="columns.conditionComment.visible"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-        <ion-label>{{'ITEM_CARD.LAST_SERVICE' | translate}}</ion-label>
-        <ion-checkbox [(ngModel)]="columns.lastService.visible"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-        <ion-label>{{'ITEM_CARD.PURCHASE_DATE' | translate}}</ion-label>
-        <ion-checkbox [(ngModel)]="columns.purchaseDate.visible"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-        <ion-label>{{'ITEM_CARD.ITEM_GROUP' | translate}}</ion-label>
-        <ion-checkbox [(ngModel)]="columns.itemGroup.visible"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-        <ion-label>{{'ITEM_CARD.TAGS' | translate}}</ion-label>
-        <ion-checkbox [(ngModel)]="columns.tags.visible"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-        <ion-label>{{'ITEM_CARD.STATUS' | translate}}</ion-label>
-        <ion-checkbox [(ngModel)]="columns.status.visible"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-        <ion-label>{{'ITEM_CARD.PICTURE' | translate}}</ion-label>
-        <ion-checkbox [(ngModel)]="columns.picture.visible"></ion-checkbox>
+    <ion-item *ngFor="let column of columnDefs">
+        <ion-label>
+            {{column.translateKey | translate}}
+        </ion-label>
+        <ion-checkbox [(ngModel)]="columns[column.key].visible"></ion-checkbox>
+        <button ion-button clear icon-only item-right small (click)="columns[column.key].lock = !columns[column.key].lock">
+            <ion-icon name="lock" *ngIf="columns[column.key].lock"></ion-icon>
+            <ion-icon name="unlock" *ngIf="!columns[column.key].lock"></ion-icon>
+        </button>
     </ion-item>
 </ion-list>

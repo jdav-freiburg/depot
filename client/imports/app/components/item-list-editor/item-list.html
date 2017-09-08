@@ -1,4 +1,9 @@
 <ion-row class="item-card-row">
+    <ion-col col-auto *ngIf="columns.editor.visible">
+        <button ion-button [disabled]="true" clear icon-only small no-padding>
+            <ion-icon name="create"></ion-icon>
+        </button>
+    </ion-col>
     <ion-col col-1 *ngIf="columns.externalId.visible">
         {{'ITEM_CARD.EXTERNAL_ID' | translate}}
     </ion-col>
@@ -44,43 +49,47 @@
 </ion-row>
 <dynamic-virtual-scroll [minItemHeight]="25">
     <ng-container *dynamicItem="let item of filteredItems">
-
         <form *ngIf="item && item.form" [formGroup]="item.form">
             <ion-row class="item-card-row">
+                <ion-col col-auto *ngIf="columns.editor.visible">
+                    <button ion-button (click)="openItemEditor(item)" clear icon-only small no-padding>
+                        <ion-icon name="create"></ion-icon>
+                    </button>
+                </ion-col>
                 <ion-col col-1 *ngIf="columns.externalId.visible">
-                    <ion-input type="text" formControlName="externalId"></ion-input>
+                    <ion-input type="text" formControlName="externalId" (ngModelChange)="onItemChanged(item, 'externalId', $event)"></ion-input>
                 </ion-col>
                 <ion-col col-2 *ngIf="columns.name.visible">
-                    <ion-input type="text" formControlName="name"></ion-input>
+                    <ion-input type="text" formControlName="name" (ngModelChange)="onItemChanged(item, 'name', $event)"></ion-input>
                 </ion-col>
                 <ion-col *ngIf="columns.description.visible">
-                    <ion-input type="text" formControlName="description"></ion-input>
+                    <ion-input type="text" formControlName="description" (ngModelChange)="onItemChanged(item, 'description', $event)""></ion-input>
                 </ion-col>
                 <ion-col col-1 *ngIf="columns.condition.visible">
-                    <ion-select formControlName="condition">
+                    <ion-select formControlName="condition" (ngModelChange)="onItemChanged(item, 'condition', $event)">
                         <ion-option *ngFor="let option of itemsService.itemConditionOptions" [value]="option.value">{{option.text}}</ion-option>
                     </ion-select>
                 </ion-col>
                 <ion-col *ngIf="columns.conditionComment.visible">
-                    <ion-input type="text" formControlName="conditionComment"></ion-input>
+                    <ion-input type="text" formControlName="conditionComment" (ngModelChange)="onItemChanged(item, 'conditionComment', $event)"></ion-input>
                 </ion-col>
                 <ion-col col-1 *ngIf="columns.lastService.visible">
-                    <item-date-picker formControlName="lastService" [label]="'ITEM_CARD.LAST_SERVICE' | translate" [compact]="true"></item-date-picker>
+                    <item-date-picker formControlName="lastService" [label]="'ITEM_CARD.LAST_SERVICE' | translate" [compact]="true" (ngModelChange)="onItemChanged(item, 'lastService', $event)"></item-date-picker>
                 </ion-col>
                 <ion-col col-1 *ngIf="columns.purchaseDate.visible">
-                    <item-date-picker formControlName="purchaseDate" [label]="'ITEM_CARD.PURCHASE_DATE' | translate" [compact]="true"></item-date-picker>
+                    <item-date-picker formControlName="purchaseDate" [label]="'ITEM_CARD.PURCHASE_DATE' | translate" [compact]="true" (ngModelChange)="onItemChanged(item, 'purchaseDate', $event)"></item-date-picker>
                 </ion-col>
                 <ion-col *ngIf="columns.itemGroup.visible">
-                    <ion-input type="text" formControlName="itemGroup"></ion-input>
+                    <ion-input type="text" formControlName="itemGroup" (ngModelChange)="onItemChanged(item, 'itemGroup', $event)"></ion-input>
                 </ion-col>
                 <ion-col *ngIf="columns.tags.visible">
-                    <ion-input type="text" formControlName="tags"></ion-input>
+                    <ion-input type="text" formControlName="tags" (ngModelChange)="onItemChanged(item, 'tags', $event)"></ion-input>
                 </ion-col>
                 <ion-col col-auto *ngIf="columns.status.visible">
-                    <button *ngIf="item.form.controls['status'].value=='public'" ion-button (click)="item.form.controls['status'].setValue('hidden');item.form.controls['status'].markAsDirty()" [disabled]="item.form.controls['status'].disabled" clear icon-only small no-padding>
+                    <button *ngIf="item.form.controls['status'].value=='public'" ion-button (click)="item.form.controls['status'].setValue('hidden');item.form.controls['status'].markAsDirty();onItemChanged(item,'status',null)" [disabled]="item.form.controls['status'].disabled" clear icon-only small no-padding>
                         <ion-icon name="eye"></ion-icon>
                     </button>
-                    <button *ngIf="item.form.controls['status'].value!='public'" ion-button (click)="item.form.controls['status'].setValue('public');item.form.controls['status'].markAsDirty()" [disabled]="item.form.controls['status'].disabled" clear icon-only small no-padding>
+                    <button *ngIf="item.form.controls['status'].value!='public'" ion-button (click)="item.form.controls['status'].setValue('public');item.form.controls['status'].markAsDirty();onItemChanged(item,'status',null)" [disabled]="item.form.controls['status'].disabled" clear icon-only small no-padding>
                         <ion-icon name="eye-off"></ion-icon>
                     </button>
                 </ion-col>
@@ -91,7 +100,7 @@
                     </button>
                 </ion-col>
                 <ion-col col-auto>
-                    <button ion-button (click)="deleteItemInternal(item)" type="button" clear icon-only small no-padding>
+                    <button ion-button (click)="deleteItem(item)" clear icon-only small no-padding>
                         <ion-icon name="trash"></ion-icon>
                     </button>
                 </ion-col>

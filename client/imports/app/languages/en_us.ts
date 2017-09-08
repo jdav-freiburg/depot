@@ -89,6 +89,7 @@ export const en_us = {
     "TAGS": "Tags"
   },
   "ITEM_CARD": {
+    "EDITOR": "Edit",
     "EXTERNAL_ID": "External ID",
     "NAME": "Name",
     "DESCRIPTION": "Description",

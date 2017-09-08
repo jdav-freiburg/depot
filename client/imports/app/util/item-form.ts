@@ -7,23 +7,42 @@ import {ExtendedItem} from "./item";
 import {TranslateService} from "../services/translate";
 
 export class ExtendedFormItem extends ExtendedItem {
-    readonly form: FormGroup;
+    form: FormGroup;
 
     public constructor(item: Item, translate: TranslateService, fb: FormBuilder) {
         super(item, translate);
 
-        this.form = fb.group({
-            name: [this.name, Validators.required],
-            description: [this.description, Validators.required],
-            externalId: [this.externalId],
-            purchaseDate: [this.purchaseDate],
-            lastService: [this.lastService],
-            condition: [this.condition || "good"],
-            conditionComment: [this.conditionComment],
-            itemGroup: [this.itemGroup],
-            status: [this.status || "public", Validators.required],
-            tags: [_.join(this.tags, ',')],
-            picture: [this.picture],
+        this.form = ExtendedFormItem.createFormGroup(fb, item);
+    }
+
+    public static createFormGroup(fb: FormBuilder, itemSrc: Item) {
+        if (!itemSrc) {
+            return fb.group({
+                name: ["", Validators.required],
+                description: ["", Validators.required],
+                externalId: [""],
+                purchaseDate: [null],
+                lastService: [null],
+                condition: ["good"],
+                conditionComment: [""],
+                itemGroup: [""],
+                status: ["public", Validators.required],
+                tags: [""],
+                picture: [null],
+            });
+        }
+        return fb.group({
+            name: [itemSrc.name, Validators.required],
+            description: [itemSrc.description, Validators.required],
+            externalId: [itemSrc.externalId],
+            purchaseDate: [itemSrc.purchaseDate],
+            lastService: [itemSrc.lastService],
+            condition: [itemSrc.condition || "good"],
+            conditionComment: [itemSrc.conditionComment],
+            itemGroup: [itemSrc.itemGroup],
+            status: [itemSrc.status || "public", Validators.required],
+            tags: [_.join(itemSrc.tags, ',')],
+            picture: [itemSrc.picture],
         });
     }
 
@@ -42,41 +61,40 @@ export class ExtendedFormItem extends ExtendedItem {
         return null;
     }
 
-    setFormValues() {
-        this.form.setValue({
-            name: this.name || "",
-            description: this.description || "",
-            externalId: this.externalId || "",
-            purchaseDate: this.purchaseDate || null,
-            lastService: this.lastService || null,
-            condition: this.condition || "good",
-            conditionComment: this.conditionComment || "",
-            itemGroup: this.itemGroup || "",
-            status: this.status || "public",
-            tags: _.join(this.tags, ','),
-            picture: this.picture
+    public static setFormValues(form: FormGroup, itemSrc: Item) {
+        form.setValue({
+            name: itemSrc.name || "",
+            description: itemSrc.description || "",
+            externalId: itemSrc.externalId || "",
+            purchaseDate: itemSrc.purchaseDate || null,
+            lastService: itemSrc.lastService || null,
+            condition: itemSrc.condition || "good",
+            conditionComment: itemSrc.conditionComment || "",
+            itemGroup: itemSrc.itemGroup || "",
+            status: itemSrc.status || "public",
+            tags: _.join(itemSrc.tags, ','),
+            picture: itemSrc.picture
         });
+    }
+
+    reset(fb: FormBuilder) {
+        this.form = ExtendedFormItem.createFormGroup(fb, this);
         this.markClean();
     }
 
-    reset() {
-        this.form.reset();
-        this.markClean();
-    }
-
-    getItemValues(): Item {
+    public static getFormItem(form: FormGroup): Item {
         return {
-            name: this.form.controls['name'].value || "",
-            description: this.form.controls['description'].value || "",
-            externalId: this.form.controls['externalId'].value || "",
-            condition: this.form.controls['condition'].value || "good",
-            conditionComment: this.form.controls['conditionComment'].value || "",
-            purchaseDate: ExtendedFormItem.getDate(this.form.controls['purchaseDate'].value),
-            lastService: ExtendedFormItem.getDate(this.form.controls['lastService'].value),
-            itemGroup: this.form.controls['itemGroup'].value || null,
-            status: this.form.controls['status'].value || "public",
-            tags: ExtendedFormItem.getTags(this.form.controls['tags'].value),
-            picture: this.form.controls['picture'].value
+            name: form.controls['name'].value || "",
+            description: form.controls['description'].value || "",
+            externalId: form.controls['externalId'].value || "",
+            condition: form.controls['condition'].value || "good",
+            conditionComment: form.controls['conditionComment'].value || "",
+            purchaseDate: ExtendedFormItem.getDate(form.controls['purchaseDate'].value),
+            lastService: ExtendedFormItem.getDate(form.controls['lastService'].value),
+            itemGroup: form.controls['itemGroup'].value || null,
+            status: form.controls['status'].value || "public",
+            tags: ExtendedFormItem.getTags(form.controls['tags'].value),
+            picture: form.controls['picture'].value
         };
     }
 

@@ -5,13 +5,12 @@ import template from "./item-list.html";
 import style from "./item-list.scss";
 import * as _ from "lodash";
 import * as moment from 'moment';
-import {AlertController, NavController, ToastController} from "ionic-angular";
+import {AlertController, NavController} from "ionic-angular";
 import {TranslateService} from "../../services/translate";
 import {QueryObserverTransform} from "../../util/query-observer";
 import {ItemCardsPage} from "../item-cards/item-cards";
 import {Subscription} from "rxjs/Subscription";
 import {FormBuilder} from "@angular/forms";
-import {TranslateHelperService} from "../../services/translate-helper";
 import {ExtendedFormItem} from "../../util/item-form";
 import {ItemListComponent} from "../../components/item-list-editor/item-list";
 
@@ -40,7 +39,7 @@ export class ItemListPage implements AfterViewInit, OnDestroy {
         this.items = new QueryObserverTransform<Item, ExtendedFormItem>({
             query: this.itemsService.getItems(),
             zone: this.ngZone,
-            transformer: (item, transformed) => {
+            transformer: (item, transformed: ExtendedFormItem) => {
                 if (!item) {
                     return null;
                 }
@@ -59,11 +58,13 @@ export class ItemListPage implements AfterViewInit, OnDestroy {
                                 {
                                     text: this.translate.get('ITEM_CARD.CHANGE.ACCEPT'),
                                     handler: () => {
-                                        transformed.setFormValues();
+                                        transformed.reset(this.formBuilder);
                                     }
                                 },
                             ]
                         }).present();
+                    } else if (!transformed.form.dirty) {
+                        transformed.reset(this.formBuilder);
                     }
                 } else {
                     transformed = new ExtendedFormItem(item, this.translate, this.formBuilder);

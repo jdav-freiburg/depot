@@ -90,6 +90,7 @@ export const de_de = {
     "TAGS": "Tags"
   },
   "ITEM_CARD": {
+    "EDITOR": "Bearbeiten",
     "EXTERNAL_ID": "Externe ID",
     "NAME": "Name",
     "DESCRIPTION": "Beschreibung",
