@@ -43,32 +43,14 @@ class Day {
 }
 
 interface CalendarItem extends FilterItem {
-    readonly pictureUrl: string;
-
     reservations: CalendarReservation[];
 }
 
 class CalendarExtendedItem extends ExtendedItem implements CalendarItem {
-    itemGroupRef: CalendarItemGroup;
-
     reservations: CalendarReservation[] = [];
-
-    pictureUrl: string;
 
     constructor(item: Item, translate: TranslateService) {
         super(item, translate);
-    }
-}
-
-class CalendarItemGroup extends ItemGroup<CalendarExtendedItem> implements CalendarItem {
-    get pictureUrl(): string {
-        return this.subItems[this.activeIndex].pictureUrl;
-    }
-
-    reservations: CalendarReservation[] = [];
-
-    public constructor() {
-        super();
     }
 }
 
@@ -115,6 +97,8 @@ class ItemCache {
     public item: CalendarItem = null;
     public y: number;
     public visible: boolean = false;
+    public firstOfGroup: boolean = false;
+    public lastOfGroup: boolean = false;
 
     constructor(index: number) {
         this.index = index;
@@ -142,9 +126,7 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
     private items: QueryObserverTransform<Item, CalendarExtendedItem>;
     private itemsChangedSubscription: Subscription;
 
-    private itemGroups: CalendarItem[] = [];
-    private itemGroupsIndex: {[id:string]: CalendarItemGroup} = {};
-    private itemGroupsItemIndex: {[id:string]: CalendarItem} = {};
+    private itemIndex: {[id:string]: CalendarItem} = {};
 
     private filteredItems: CalendarItem[] = [];
 
@@ -190,7 +172,7 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
 
     constructor(private itemsService: ItemsDataService,
                 private translate: TranslateService, private ngZone: NgZone,
-                private pictureService: PictureService, private reservationsService: ReservationsDataService,
+                private reservationsService: ReservationsDataService,
                 private navCtrl: NavController) {
     }
 
@@ -201,86 +183,16 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
             zone: this.ngZone,
             transformer: (item, transformed: CalendarExtendedItem) => {
                 if (transformed) {
-                    if (item.itemGroup !== transformed.itemGroup) {
-                        if (transformed.itemGroup) {
-                            let itemGroup = transformed.itemGroupRef;
-                            if (!itemGroup) {
-                                console.log("ERROR: Data inconsistent");
-                            } else {
-                                let removed = _.remove(itemGroup.subItems, item);
-                                if (removed.length !== 1) {
-                                    console.log("ERROR: Data inconsistent");
-                                }
-                                if (itemGroup.subItems.length === 0) {
-                                    let removed = _.remove(this.itemGroups, (itemGroupRef) => itemGroupRef === itemGroup);
-                                    delete this.itemGroupsIndex[transformed.itemGroup];
-                                    if (removed.length !== 1) {
-                                        console.log("ERROR: Data inconsistent");
-                                    }
-                                } else {
-                                    itemGroup.update();
-                                }
-                            }
-                            transformed.itemGroupRef = null;
-                        } else {
-                            let removed = _.remove(this.itemGroups, (itemGroupRef) => itemGroupRef === transformed);
-                            if (removed.length !== 1) {
-                                console.log("ERROR: Data inconsistent");
-                            }
-                        }
-                    }
                     transformed.updateFrom(item, this.translate);
                 } else {
                     transformed = new CalendarExtendedItem(item, this.translate);
                 }
-                if (transformed.picture) {
-                    transformed.pictureUrl = this.pictureService.getPictureThumbnailUrl(transformed.picture);
-                }
-                if (!transformed.itemGroupRef) {
-                    if (transformed.itemGroup) {
-                        let itemGroup: CalendarItemGroup;
-                        if (this.itemGroupsIndex.hasOwnProperty(transformed.itemGroup)) {
-                            itemGroup = this.itemGroupsIndex[transformed.itemGroup];
-                        } else {
-                            itemGroup = new CalendarItemGroup();
-                            this.itemGroupsIndex[transformed.itemGroup] = itemGroup;
-                            this.itemGroups.push(itemGroup);
-                        }
-                        transformed.itemGroupRef = itemGroup;
-                        itemGroup.subItems.push(transformed);
-                        itemGroup.update();
-                    } else {
-                        transformed.itemGroupRef = null;
-                        this.itemGroups.push(transformed);
-                    }
-                }
-                this.itemGroupsItemIndex[transformed._id] = transformed;
+                this.itemIndex[transformed._id] = transformed;
                 return transformed;
             },
             removed: (item, transformed: CalendarExtendedItem, index) => {
                 if (transformed) {
-                    if (transformed.itemGroup) {
-                        let itemGroup = this.itemGroupsIndex[transformed.itemGroup];
-                        if (!itemGroup) {
-                            console.log("ERROR: Data inconsistent");
-                        } else {
-                            let removed = _.remove(itemGroup.subItems, item);
-                            if (removed.length !== 1) {
-                                console.log("ERROR: Data inconsistent");
-                            }
-                            if (itemGroup.subItems.length === 0) {
-                                let removed = _.remove(this.itemGroups, (itemGroupDel) => itemGroupDel === itemGroup);
-                                delete this.itemGroupsIndex[transformed.itemGroup];
-                                if (removed.length !== 1) {
-                                    console.log("ERROR: Data inconsistent");
-                                }
-                            } else {
-                                itemGroup.update();
-                            }
-                        }
-                        transformed.itemGroupRef = null;
-                    }
-                    delete this.itemGroupsItemIndex[transformed._id];
+                    delete this.itemIndex[transformed._id];
                 }
             }
         });
@@ -295,8 +207,8 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
             transformer: (reservation, transformed: CalendarReservation) => {
                 if (transformed) {
                     transformed.itemIds.forEach((itemId) => {
-                        if (this.itemGroupsItemIndex.hasOwnProperty(itemId)) {
-                            _.remove(this.itemGroupsItemIndex[itemId].reservations, (itemRes) => itemRes == transformed);
+                        if (this.itemIndex.hasOwnProperty(itemId)) {
+                            _.remove(this.itemIndex[itemId].reservations, (itemRes) => itemRes == transformed);
                         }
                     });
                     transformed.updateFrom(reservation);
@@ -304,8 +216,8 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
                     transformed = new CalendarReservation(reservation);
                 }
                 transformed.itemIds.forEach((itemId) => {
-                    if (this.itemGroupsItemIndex.hasOwnProperty(itemId)) {
-                        this.itemGroupsItemIndex[itemId].reservations.push(transformed);
+                    if (this.itemIndex.hasOwnProperty(itemId)) {
+                        this.itemIndex[itemId].reservations.push(transformed);
                     }
                 });
                 return transformed;
@@ -313,8 +225,8 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
             removed: (reservation, transformed: CalendarReservation, index) => {
                 if (transformed) {
                     transformed.itemIds.forEach((itemId) => {
-                        if (this.itemGroupsItemIndex.hasOwnProperty(itemId)) {
-                            _.remove(this.itemGroupsItemIndex[itemId].reservations, (itemRes) => itemRes == transformed);
+                        if (this.itemIndex.hasOwnProperty(itemId)) {
+                            _.remove(this.itemIndex[itemId].reservations, (itemRes) => itemRes == transformed);
                         }
                     });
                 }
@@ -341,17 +253,17 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
         if (!this.items) {
             this.filteredItems = [];
         } else if (!this._filter || this._filter.length < 3) {
-            this.filteredItems = this.itemGroups;
-            _.forEach(this.itemGroups, (item, i) => {
+            this.filteredItems = this.items.data;
+            _.forEach(this.items.data, (item, i) => {
                 item.visible = true;
             });
         } else {
-            _.forEach(this.itemGroups, (item) => {
+            _.forEach(this.items.data, (item) => {
                 item.visible = item.checkFilters(this._filterQuery);
             });
-            this.filteredItems = _.filter(this.itemGroups, item => item.visible);
+            this.filteredItems = _.filter(this.items.data, item => item.visible);
         }
-        console.log("Update filter " + this._filter + " --> " + this.filteredItems.length + "/" + (this.itemGroups?this.itemGroups.length:0) + " items");
+        console.log("Update filter " + this._filter + " --> " + this.filteredItems.length + "/" + (this.items && this.items.data?this.items.data.length:0) + " items");
         this.checkCacheSize();
         this.scrollCache(true);
     }
@@ -442,22 +354,32 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
                     if (startIdx !== -1) {
                         cacheIdx = startIdx;
                     }
+                    let prevGroup = startIndex > 0 ? this.filteredItems[startIndex - 1].itemGroup : "";
                     for (let i = startIndex; i < endIndex; i++) {
+                        let nextGroup = i < this.filteredItems.length - 1 ? this.filteredItems[i + 1].itemGroup : "";
                         this.itemCache[cacheIdx].srcIndex = i;
                         this.itemCache[cacheIdx].item = this.filteredItems[i];
+                        this.itemCache[cacheIdx].firstOfGroup = (_.isEmpty(this.filteredItems[i].itemGroup) || prevGroup != this.filteredItems[i].itemGroup);
+                        this.itemCache[cacheIdx].lastOfGroup = (_.isEmpty(this.filteredItems[i].itemGroup) || nextGroup != this.filteredItems[i].itemGroup);
                         this.itemCache[cacheIdx].y = i * this.elementHeight;
                         this.itemCache[cacheIdx].index = cacheIdx;
                         this.itemCache[cacheIdx].visible = true;
+                        prevGroup = this.filteredItems[i].itemGroup;
                         cacheIdx = ((cacheIdx + 1) % this.itemCache.length);
                     }
                 } else {
                     let cacheIdx = endIdx;
+                    let nextGroup = endIndex < this.filteredItems.length - 1 ? this.filteredItems[endIndex + 1].itemGroup : "";
                     for (let i = endIndex - 1; i >= startIndex; i--) {
+                        let prevGroup = i > 0 ? this.filteredItems[i - 1].itemGroup : "";
                         this.itemCache[cacheIdx].srcIndex = i;
                         this.itemCache[cacheIdx].item = this.filteredItems[i];
+                        this.itemCache[cacheIdx].firstOfGroup = (_.isEmpty(this.filteredItems[i].itemGroup) || prevGroup != this.filteredItems[i].itemGroup);
+                        this.itemCache[cacheIdx].lastOfGroup = (_.isEmpty(this.filteredItems[i].itemGroup) || nextGroup != this.filteredItems[i].itemGroup);
                         this.itemCache[cacheIdx].y = i * this.elementHeight;
                         this.itemCache[cacheIdx].index = cacheIdx;
                         this.itemCache[cacheIdx].visible = true;
+                        nextGroup = this.filteredItems[i].itemGroup;
                         cacheIdx = ((cacheIdx - 1 + this.itemCache.length) % this.itemCache.length);
                     }
                 }
@@ -509,7 +431,6 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
         this.centerDayOffset = centerPos - centerIndex * this.elementWidth;
         let delta = natEl.scrollLeft - this.lastScroll;
         this.lastScroll = natEl.scrollLeft;
-        console.log(delta, natEl.scrollLeft, natEl.scrollWidth - natEl.clientWidth - natEl.clientWidth / 2);
         let margin = Math.max(natEl.clientWidth / 2, this.elementWidth*10);
         if ((delta < 0 && natEl.scrollLeft <= margin) || (delta > 0 && natEl.scrollLeft >= (natEl.scrollWidth - natEl.clientWidth - margin)) && this.canScroll) {
             this.canScroll = false;
