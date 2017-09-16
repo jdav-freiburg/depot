@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from "@angular/core";
+import {Component, Input, NgZone, OnChanges, OnDestroy, OnInit, SimpleChanges} from "@angular/core";
 import template from "./reservation-card.html";
 import style from "./reservation-card.scss";
 import * as _ from "lodash";
@@ -14,6 +14,18 @@ import {TranslateService} from "../../services/translate";
 import {TranslateHelperService} from "../../services/translate-helper";
 import {UserService} from "../../services/user";
 import * as moment from 'moment';
+import {ExtendedItem} from "../../util/item";
+import {QueryObserverTransform} from "../../util/query-observer";
+import {PictureService} from "../../services/picture";
+import {ImagePreviewModal} from "../../pages/image-preview-modal/image-preview-modal";
+
+class ItemWithImage extends ExtendedItem {
+    public pictureUrl: string;
+
+    public constructor(item: Item, translate: TranslateService) {
+        super(item, translate);
+    }
+}
 
 @Component({
     selector: "reservation-card",
@@ -24,8 +36,9 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
     @Input() reservationId: string = "";
     @Input() reservation: Reservation = null;
     @Input() view: string = "cards";
-    items: Item[] = [];
-    private itemsSubscription: Subscription;
+    items: ItemWithImage[] = [];
+    private itemsSubscription: QueryObserverTransform<Item, ItemWithImage>;
+    private itemsSubscriptionSubscription: Subscription;
     private reservationSubscription: Subscription;
 
     private get viewList() {
@@ -57,7 +70,8 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
     constructor(private navCtrl: NavController, private itemsService: ItemsDataService,
                 private reservationsService: ReservationsDataService, private translate: TranslateService,
                 private alertCtrl: AlertController, private toast: ToastController,
-                private translateHelper: TranslateHelperService, private users: UserService) {
+                private translateHelper: TranslateHelperService, private users: UserService, private zone: NgZone,
+                private pictureService: PictureService) {
     }
 
     ngOnInit() {
@@ -69,9 +83,29 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
             this.itemsSubscription.unsubscribe();
             this.itemsSubscription = null;
         }
+        if (this.itemsSubscriptionSubscription) {
+            this.itemsSubscriptionSubscription.unsubscribe();
+            this.itemsSubscriptionSubscription = null;
+        }
         if (this.reservation) {
-            this.itemsSubscription = this.itemsService.getItemList(this.reservation.itemIds).zone().subscribe((items) => {
+            this.itemsSubscription = new QueryObserverTransform<Item, ItemWithImage>({
+                query: this.itemsService.getPublicItems(),
+                zone: this.zone,
+                transformer: (item, transformed: ItemWithImage) => {
+                    if (transformed) {
+                        transformed.updateFrom(item, this.translate);
+                    } else {
+                        transformed = new ItemWithImage(item, this.translate);
+                    }
+                    if (transformed.picture) {
+                        transformed.pictureUrl = this.pictureService.getPictureThumbnailUrl(transformed.picture);
+                    }
+                    return transformed;
+                },
+            });
+            this.itemsSubscriptionSubscription = this.itemsSubscription.dataChanged.subscribe((items) => {
                 this.items = items;
+                console.log("Items:", this.items);
             });
         } else {
             this.items = [];
@@ -100,6 +134,10 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
             this.itemsSubscription.unsubscribe();
             this.itemsSubscription = null;
         }
+        if (this.itemsSubscriptionSubscription) {
+            this.itemsSubscriptionSubscription.unsubscribe();
+            this.itemsSubscriptionSubscription = null;
+        }
         if (this.reservationSubscription) {
             this.reservationSubscription.unsubscribe();
             this.reservationSubscription = null;
@@ -117,6 +155,13 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
             skipReservationId: this.reservation._id,
             rangeStart: this.reservation.start,
             rangeEnd: this.reservation.end,
+        });
+    }
+
+    openItemPicture(item: Item) {
+        this.navCtrl.push(ImagePreviewModal, {
+            picture: item.picture,
+            title: item.name
         });
     }
 

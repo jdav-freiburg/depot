@@ -30,6 +30,9 @@
                     <p>{{item.description}}</p>
                 </ion-label>
                 <button ion-button icon-only clear item-end class="clickable" (click)="openItem(item)"><ion-icon name="search"></ion-icon></button>
+                <button ion-button icon-only clear item-end class="clickable" (click)="openItemPicture(item); $event.preventDefault(); $event.stopPropagation()" *ngIf="item.pictureUrl">
+                    <ion-thumbnail class="clickable-thumbnail"><img [src]="item.pictureUrl"></ion-thumbnail>
+                </button>
             </ion-item>
         </ion-item-group>
     </ion-card-content>
