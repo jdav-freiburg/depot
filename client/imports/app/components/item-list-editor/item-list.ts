@@ -40,7 +40,7 @@ export class ItemListComponent implements DoCheck {
         'condition',
         'conditionComment',
         'itemGroup',
-        'status',
+        'state',
         'tags',
         'picture'
     ];
@@ -55,7 +55,7 @@ export class ItemListComponent implements DoCheck {
         condition: {visible: true, lock: false},
         conditionComment: {visible: true, lock: false},
         itemGroup: {visible: false, lock: true},
-        status: {visible: true, lock: false},
+        state: {visible: true, lock: false},
         tags: {visible: true, lock: true},
         picture: {visible: true, lock: true},
     };
@@ -234,7 +234,7 @@ export class ItemListComponent implements DoCheck {
 
                         itemGroup: "",
 
-                        status: "public"
+                        state: "public"
                     }, this.translate, this.fb);
                     this._newItems.push(editItem);
                 }

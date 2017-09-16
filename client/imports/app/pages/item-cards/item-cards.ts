@@ -85,7 +85,7 @@ export class ItemCardsPage implements OnInit, OnDestroy {
 
                         itemGroup: null,
 
-                        status: "public"
+                        state: "public"
                     };
                 }
                 if (transformed) {

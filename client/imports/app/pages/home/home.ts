@@ -36,7 +36,7 @@ export class HomePage implements OnDestroy {
     private editMessagePreview: boolean = false;
 
     get lockedUsers(): User[] {
-        return _.filter(this.users.users, (user) => user.status === 'locked');
+        return _.filter(this.users.users, (user) => user.state === 'locked');
     }
 
     get isAdmin(): boolean {

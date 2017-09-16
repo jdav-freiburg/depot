@@ -16,7 +16,7 @@ export interface User extends Meteor.User {
     picture?: string;
     phone?: string;
     language?: string;
-    status?: string;
+    state?: string;
     roles?: string[];
 
     filters?: string[];
@@ -31,6 +31,6 @@ export interface CreateUser {
     picture?: string;
     phone?: string;
     language?: string;
-    status?: string;
+    state?: string;
     roles?: string[];
 }

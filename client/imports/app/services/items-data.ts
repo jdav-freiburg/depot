@@ -41,17 +41,17 @@ export class ItemsDataService {
         ]);
     }
 
-    get itemStatusOptions(): TranslateOption[] {
+    get itemStateOptions(): TranslateOption[] {
         return this.translate.getAll([
             {
-                translate: 'ITEM.STATUS.PUBLIC',
+                translate: 'ITEM.STATE.PUBLIC',
                 value: "public",
                 color: 'good',
                 colorCss: colors.good,
                 text: ""
             },
             {
-                translate: 'ITEM.STATUS.HIDDEN',
+                translate: 'ITEM.STATE.HIDDEN',
                 value: "hidden",
                 color: 'danger',
                 colorCss: colors.danger,
@@ -65,7 +65,7 @@ export class ItemsDataService {
     }
 
     public getPublicItems(): ObservableCursor<Item> {
-        return ItemCollection.find({status: 'public'}, {sort: {name: 1, description: 1, condition: -1, _id: 1}});
+        return ItemCollection.find({state: 'public'}, {sort: {name: 1, description: 1, condition: -1, _id: 1}});
     }
 
     public getItemList(itemIds: string[]): ObservableCursor<Item> {

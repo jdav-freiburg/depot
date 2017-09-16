@@ -41,12 +41,12 @@
                     </p>
                     <p>{{'USERS_PAGE.FULL_NAME' | translate}}: {{user.fullName}}</p>
                     <p>{{'USERS_PAGE.PHONE' | translate}}: {{user.phone}}</p>
-                    <p>{{'USERS_PAGE.STATUS' | translate}}:
-                        <ng-container [ngSwitch]="user.status">
-                            <ng-container *ngFor="let option of userService.userStatusOptions">
+                    <p>{{'USERS_PAGE.STATE' | translate}}:
+                        <ng-container [ngSwitch]="user.state">
+                            <ng-container *ngFor="let option of userService.userStateOptions">
                                 <span *ngSwitchCase="option.value" [style.color]="option.colorCss">{{option.text}}</span>
                             </ng-container>
-                            <ng-container *ngSwitchDefault>{{user.status}}</ng-container>
+                            <ng-container *ngSwitchDefault>{{user.state}}</ng-container>
                         </ng-container>
                     </p>
                     <p>{{'USERS_PAGE.ROLES' | translate}}:

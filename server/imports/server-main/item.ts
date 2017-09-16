@@ -23,7 +23,7 @@ Meteor.publish('items.public', function() {
     if (!this.userId) {
         return [];
     }
-    return ItemCollection.find({status: 'public'});
+    return ItemCollection.find({state: 'public'});
 });
 Meteor.publish('items', function() {
     if (!this.userId) {
@@ -32,7 +32,7 @@ Meteor.publish('items', function() {
     if (Roles.userHasRole(this.userId, 'manager')) {
         return ItemCollection.find({});
     }
-    return ItemCollection.find({status: 'public'});
+    return ItemCollection.find({state: 'public'});
 });
 
 Meteor.publish('item.states.all', function() {
@@ -89,7 +89,7 @@ function insertItem(userId: string, item: Item, updateComment: string) {
             lastService: item.lastService,
             purchaseDate: item.purchaseDate,
             tags: item.tags,
-            status: item.status},
+            state: item.state},
 
         userId: userId,
 
@@ -163,9 +163,9 @@ function updateItem(userId: string, item: Item, itemRef: Item, updateComment: st
         updateState.fields['itemGroup'] = item.itemGroup;
         hadChange = true;
     }
-    if (item.status !== itemRef.status) {
-        updateData.status = item.status;
-        updateState.fields['status'] = item.status;
+    if (item.state !== itemRef.state) {
+        updateData.state = item.state;
+        updateState.fields['state'] = item.state;
         hadChange = true;
     }
 

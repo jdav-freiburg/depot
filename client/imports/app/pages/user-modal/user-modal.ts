@@ -74,8 +74,8 @@ export class UserModal implements OnInit, OnDestroy {
     usernameForm: FormGroup;
     userPasswordForm: FormGroup;
 
-    _userStatus: string = "";
-    userStatusIsWorking: boolean = false;
+    _userState: string = "";
+    userStateIsWorking: boolean = false;
     newEmailAddress: string = "";
 
     roles: RoleAccess[] = [];
@@ -113,7 +113,7 @@ export class UserModal implements OnInit, OnDestroy {
                 editAddress: email.address
             };
         });
-        this._userStatus = this.user.status;
+        this._userState = this.user.state;
         this.roles = this.userService.userRolesOptions.map((roleDef) => {
             return new RoleAccess(this.user, roleDef);
         });
@@ -296,17 +296,17 @@ export class UserModal implements OnInit, OnDestroy {
             });
     }
 
-    get userStatus(): string {
-        return this._userStatus;
+    get userState(): string {
+        return this._userState;
     }
 
-    set userStatus(status: string) {
-        this._userStatus = status;
-        console.log("saveStatus", status);
-        this.userStatusIsWorking = true;
-        this.userService.saveUserStatus(this.user._id, status,
+    set userState(state: string) {
+        this._userState = state;
+        console.log("saveState", state);
+        this.userStateIsWorking = true;
+        this.userService.saveUserState(this.user._id, state,
             (err, result) => {
-                this.userStatusIsWorking = false;
+                this.userStateIsWorking = false;
                 if (err) {
                     console.log("Error:", err);
                     this.toast.create({

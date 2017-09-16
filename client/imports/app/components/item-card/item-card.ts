@@ -58,7 +58,7 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
             condition: [itemsService.itemConditionOptions[0].value],
             conditionComment: [""],
             itemGroup: [""],
-            status: ["public", Validators.required],
+            state: ["public", Validators.required],
             tags: [""],
             picture: [""],
         });
@@ -130,7 +130,7 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
             condition: this.item.condition || "good",
             conditionComment: this.item.conditionComment || "",
             itemGroup: this.item.itemGroup || "",
-            status: this.item.status || "public",
+            state: this.item.state || "public",
             tags: _.join(this.item.tags, ','),
             picture: this.item.picture
         });
@@ -216,7 +216,7 @@ export class ItemCardComponent implements OnInit, OnChanges, OnDestroy {
             purchaseDate: this.getDate(this.itemForm.controls['purchaseDate'].value),
             lastService: this.getDate(this.itemForm.controls['lastService'].value),
             itemGroup: this.itemForm.controls['itemGroup'].value || null,
-            status: this.itemForm.controls['status'].value || "public",
+            state: this.itemForm.controls['state'].value || "public",
             tags: this.getTags(this.itemForm.controls['tags'].value),
             picture: this.itemForm.controls['picture'].value
         };

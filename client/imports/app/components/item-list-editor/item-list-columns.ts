@@ -16,7 +16,7 @@ export class ItemListColumnsPage {
         {key: 'condition', translateKey: 'ITEM_CARD.CONDITION'},
         {key: 'conditionComment', translateKey: 'ITEM_CARD.CONDITION_COMMENT'},
         {key: 'itemGroup', translateKey: 'ITEM_CARD.ITEM_GROUP'},
-        {key: 'status', translateKey: 'ITEM_CARD.STATUS'},
+        {key: 'state', translateKey: 'ITEM_CARD.STATE'},
         {key: 'tags', translateKey: 'ITEM_CARD.TAGS'},
         {key: 'picture', translateKey: 'ITEM_CARD.PICTURE'},
     ];
@@ -31,7 +31,7 @@ export class ItemListColumnsPage {
         condition: {visible: true, lock: false},
         conditionComment: {visible: true, lock: false},
         itemGroup: {visible: false, lock: false},
-        status: {visible: true, lock: false},
+        state: {visible: true, lock: false},
         tags: {visible: true, lock: false},
         picture: {visible: true, lock: false},
     };

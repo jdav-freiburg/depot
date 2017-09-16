@@ -5,7 +5,7 @@ import './item.ts';
 import './reservation.ts';
 import './global-messages.ts';
 import './picture-store.ts';
-import {CreateUser} from "../../../both/models/user.model";
+import {CreateUser, User} from "../../../both/models/user.model";
 import {ItemStateCollection} from "../../../both/collections/item-state.collection";
 import {ReservationCollection} from "../../../both/collections/reservation.collection";
 import {TokenCollection} from "../../../both/collections/token.collection";
@@ -18,6 +18,7 @@ import {FileCollection} from "../../../both/collections/file.collection";
 import {UploadFS} from "meteor/jalik:ufs";
 import {Picture} from "../../../both/models/picture.model";
 import {Item} from "../../../both/models/item.model";
+import {UserCollection} from "../../../both/collections/user.collection";
 
 export class Main {
     start(): void {
@@ -37,11 +38,11 @@ export class Main {
                 picture: null,
                 phone: '00123456789',
                 language: 'en',
-                status: 'normal',
+                state: 'normal',
                 roles: ['admin', 'manager']
             };
             let user = Accounts.createUser(userData);
-            Meteor.users.update({_id: user}, {$set: {roles: ['admin', 'manager'], status: 'normal', emails: [{address: 'admin@localhost', verified: true}]}});
+            Meteor.users.update({_id: user}, {$set: {roles: ['admin', 'manager'], state: 'normal', emails: [{address: 'admin@localhost', verified: true}]}});
         }
     }
 }
@@ -63,7 +64,7 @@ Meteor.startup(function () {
     Meteor.users._ensureIndex({username: 1});
     Meteor.users._ensureIndex({email: 1});
     ItemStateCollection.rawCollection().createIndex({itemId: 1});
-    ItemCollection.rawCollection().createIndex({status: 1, name: 1, description: 1, condition: -1, externalId: 1});
+    ItemCollection.rawCollection().createIndex({state: 1, name: 1, description: 1, condition: -1, externalId: 1});
     ReservationCollection.rawCollection().createIndex({start: -1, end: 1});
     ReservationCollection.rawCollection().createIndex({userId: 1, start: -1, end: 1});
     ReservationCollection.rawCollection().createIndex({itemIds: 1, start: -1, end: 1});
@@ -125,6 +126,30 @@ Meteor.startup(function () {
             let picture = `${file.store}/${file._id}/${file.name};${file.thumbnailStore}/${file.thumbnailId}/${file.name}`;
             console.log("Updating", item._id, item.picture, "=>", picture);
             update({_id: item._id}, {$set: {picture: picture}})
+        });
+    });
+
+    migrate('update-item-status-state', () => {
+        let items = ItemCollection.find().fetch();
+        let update = Meteor.wrapAsync(ItemCollection.rawCollection().update, ItemCollection.rawCollection());
+        _.forEach(items, (item: Item) => {
+            if (!(<any>item).status) {
+                return;
+            }
+            console.log("Updating", item._id + ".status --> " + item._id + ".state");
+            update({_id: item._id}, {$set: {state: (<any>item).status}, $unset: {status: 1}});
+        });
+    });
+
+    migrate('update-user-status-state', () => {
+        let users = UserCollection.find().fetch();
+        let update = Meteor.wrapAsync(UserCollection.rawCollection().update, UserCollection.rawCollection());
+        _.forEach(users, (user: User) => {
+            if (!(<any>user).status) {
+                return;
+            }
+            console.log("Updating", user._id + ".status --> " + user._id + ".state");
+            update({_id: user._id}, {$set: {state: (<any>user).status}, $unset: {status: 1}});
         });
     });
 });

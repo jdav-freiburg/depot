@@ -15,10 +15,10 @@
                     </ion-item>
                 </ion-col>
                 <ion-col col-auto>
-                    <button *ngIf="itemForm.controls['status'].value=='public'" ion-button (click)="itemForm.controls['status'].setValue('hidden');itemForm.controls['status'].markAsDirty()" [disabled]="itemForm.controls['status'].disabled || !editable" clear icon-only>
+                    <button *ngIf="itemForm.controls['state'].value=='public'" ion-button (click)="itemForm.controls['state'].setValue('hidden');itemForm.controls['state'].markAsDirty()" [disabled]="itemForm.controls['state'].disabled || !editable" clear icon-only>
                         <ion-icon name="eye"></ion-icon>
                     </button>
-                    <button *ngIf="itemForm.controls['status'].value!='public'" ion-button (click)="itemForm.controls['status'].setValue('public');itemForm.controls['status'].markAsDirty()" [disabled]="itemForm.controls['status'].disabled || !editable" clear icon-only>
+                    <button *ngIf="itemForm.controls['state'].value!='public'" ion-button (click)="itemForm.controls['state'].setValue('public');itemForm.controls['state'].markAsDirty()" [disabled]="itemForm.controls['state'].disabled || !editable" clear icon-only>
                         <ion-icon name="eye-off"></ion-icon>
                     </button>
                 </ion-col>
@@ -68,7 +68,7 @@
                 <ion-col col-auto>
                     <ion-item>
                         <ion-label floating>{{'ITEM_CARD.CONDITION' | translate}}</ion-label>
-                        <ion-select formControlName="condition">
+                        <ion-select [okText]="'SELECT.OK' | translate" [cancelText]="'SELECT.CANCEL' | translate"  interface="action-sheet" formControlName="condition">
                             <ion-option *ngFor="let option of itemsService.itemConditionOptions" [value]="option.value">{{option.text}}</ion-option>
                         </ion-select>
                     </ion-item>
@@ -118,8 +118,8 @@
         </ng-container>
     </ion-col>
     <ion-col col-auto>
-        <ion-icon *ngIf="item.status=='public'" name="eye"></ion-icon>
-        <ion-icon *ngIf="item.status!='public'" name="eye-off"></ion-icon>
+        <ion-icon *ngIf="item.state=='public'" name="eye"></ion-icon>
+        <ion-icon *ngIf="item.state!='public'" name="eye-off"></ion-icon>
     </ion-col>
 </ion-row>
 
@@ -136,7 +136,7 @@
             <ion-input type="text" formControlName="description"></ion-input>
         </ion-col>
         <ion-col col-1>
-            <ion-select formControlName="condition">
+            <ion-select [okText]="'SELECT.OK' | translate" [cancelText]="'SELECT.CANCEL' | translate"  interface="action-sheet" formControlName="condition">
                 <ion-option *ngFor="let option of itemsService.itemConditionOptions" [value]="option.value">{{option.text}}</ion-option>
             </ion-select>
         </ion-col>
@@ -153,10 +153,10 @@
             <ion-input type="text" formControlName="tags"></ion-input>
         </ion-col>
         <ion-col col-auto>
-            <button *ngIf="itemForm.controls['status'].value=='public'" ion-button (click)="itemForm.controls['status'].setValue('hidden');itemForm.controls['status'].markAsDirty()" [disabled]="itemForm.controls['status'].disabled" clear icon-only small no-padding>
+            <button *ngIf="itemForm.controls['state'].value=='public'" ion-button (click)="itemForm.controls['state'].setValue('hidden');itemForm.controls['state'].markAsDirty()" [disabled]="itemForm.controls['state'].disabled" clear icon-only small no-padding>
                 <ion-icon name="eye"></ion-icon>
             </button>
-            <button *ngIf="itemForm.controls['status'].value!='public'" ion-button (click)="itemForm.controls['status'].setValue('public');itemForm.controls['status'].markAsDirty()" [disabled]="itemForm.controls['status'].disabled" clear icon-only small no-padding>
+            <button *ngIf="itemForm.controls['state'].value!='public'" ion-button (click)="itemForm.controls['state'].setValue('public');itemForm.controls['state'].markAsDirty()" [disabled]="itemForm.controls['state'].disabled" clear icon-only small no-padding>
                 <ion-icon name="eye-off"></ion-icon>
             </button>
         </ion-col>

@@ -21,7 +21,7 @@ export const ItemSchema = new SimpleSchema({
 
     itemGroup: { type: String, optional: true },
 
-    status: { type: String, optional: true }
+    state: { type: String, optional: true }
 });
 
 export interface Item {
@@ -43,5 +43,5 @@ export interface Item {
 
     itemGroup?: string;
 
-    status?: string;
+    state?: string;
 }

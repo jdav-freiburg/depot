@@ -100,10 +100,10 @@ export class ItemsImporterPage implements AfterViewInit {
     private exportItems() {
         let itemsData = this.itemsService.getItems().fetch();
         let header = ['_id', 'externalId', 'name', 'description', 'condition', 'conditionComment', 'purchaseDate',
-            'lastService', 'tags', 'status', 'itemGroup', 'picture'];
+            'lastService', 'tags', 'state', 'itemGroup', 'picture'];
         let data = _.map(itemsData, (item) => [item._id, item.externalId, item.name, item.description, item.condition,
             item.conditionComment, this.momentFormat(item.purchaseDate), this.momentFormat(item.lastService),
-            _.join(item.tags, ','), item.status, item.itemGroup, item.picture]);
+            _.join(item.tags, ','), item.state, item.itemGroup, item.picture]);
         let exportData = Baby.unparse({fields: header, data: data}, {delimiter: ';'});
         let blob = new Blob([exportData], { type: 'text/csv' });
         let url= URL.createObjectURL(blob);
@@ -158,7 +158,7 @@ export class ItemsImporterPage implements AfterViewInit {
 
                 tags: (!(<string>entry[8]).trim()?[]:_.map(_.split(<string>entry[8], ","), str => str.trim())),
 
-                status: <string>entry[9],
+                state: <string>entry[9],
 
                 itemGroup: <string>entry[10] || null
             }, this.translate, this.formBuilder);

@@ -31,7 +31,7 @@
     <ion-col *ngIf="columns.tags.visible">
         {{'ITEM_CARD.TAGS' | translate}}
     </ion-col>
-    <ion-col col-auto *ngIf="columns.status.visible">
+    <ion-col col-auto *ngIf="columns.state.visible">
         <button ion-button [disabled]="true" clear icon-only small no-padding>
             <ion-icon name="eye"></ion-icon>
         </button>
@@ -66,7 +66,7 @@
                     <ion-input type="text" formControlName="description" (ngModelChange)="onItemChanged(item, 'description', $event)""></ion-input>
                 </ion-col>
                 <ion-col col-1 *ngIf="columns.condition.visible">
-                    <ion-select formControlName="condition" (ngModelChange)="onItemChanged(item, 'condition', $event)">
+                    <ion-select [okText]="'SELECT.OK' | translate" [cancelText]="'SELECT.CANCEL' | translate"  formControlName="condition" interface="action-sheet" (ngModelChange)="onItemChanged(item, 'condition', $event)">
                         <ion-option *ngFor="let option of itemsService.itemConditionOptions" [value]="option.value">{{option.text}}</ion-option>
                     </ion-select>
                 </ion-col>
@@ -85,11 +85,11 @@
                 <ion-col *ngIf="columns.tags.visible">
                     <ion-input type="text" formControlName="tags" (ngModelChange)="onItemChanged(item, 'tags', $event)"></ion-input>
                 </ion-col>
-                <ion-col col-auto *ngIf="columns.status.visible">
-                    <button *ngIf="item.form.controls['status'].value=='public'" ion-button (click)="item.form.controls['status'].setValue('hidden');item.form.controls['status'].markAsDirty();onItemChanged(item,'status',null)" [disabled]="item.form.controls['status'].disabled" clear icon-only small no-padding>
+                <ion-col col-auto *ngIf="columns.state.visible">
+                    <button *ngIf="item.form.controls['state'].value=='public'" ion-button (click)="item.form.controls['state'].setValue('hidden');item.form.controls['state'].markAsDirty();onItemChanged(item,'state',null)" [disabled]="item.form.controls['state'].disabled" clear icon-only small no-padding>
                         <ion-icon name="eye"></ion-icon>
                     </button>
-                    <button *ngIf="item.form.controls['status'].value!='public'" ion-button (click)="item.form.controls['status'].setValue('public');item.form.controls['status'].markAsDirty();onItemChanged(item,'status',null)" [disabled]="item.form.controls['status'].disabled" clear icon-only small no-padding>
+                    <button *ngIf="item.form.controls['state'].value!='public'" ion-button (click)="item.form.controls['state'].setValue('public');item.form.controls['state'].markAsDirty();onItemChanged(item,'state',null)" [disabled]="item.form.controls['state'].disabled" clear icon-only small no-padding>
                         <ion-icon name="eye-off"></ion-icon>
                     </button>
                 </ion-col>

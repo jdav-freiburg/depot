@@ -26,7 +26,7 @@ export class ExtendedFormItem extends ExtendedItem {
                 condition: ["good"],
                 conditionComment: [""],
                 itemGroup: [""],
-                status: ["public", Validators.required],
+                state: ["public", Validators.required],
                 tags: [""],
                 picture: [null],
             });
@@ -40,7 +40,7 @@ export class ExtendedFormItem extends ExtendedItem {
             condition: [itemSrc.condition || "good"],
             conditionComment: [itemSrc.conditionComment],
             itemGroup: [itemSrc.itemGroup],
-            status: [itemSrc.status || "public", Validators.required],
+            state: [itemSrc.state || "public", Validators.required],
             tags: [_.join(itemSrc.tags, ',')],
             picture: [itemSrc.picture],
         });
@@ -71,7 +71,7 @@ export class ExtendedFormItem extends ExtendedItem {
             condition: itemSrc.condition || "good",
             conditionComment: itemSrc.conditionComment || "",
             itemGroup: itemSrc.itemGroup || "",
-            status: itemSrc.status || "public",
+            state: itemSrc.state || "public",
             tags: _.join(itemSrc.tags, ','),
             picture: itemSrc.picture
         });
@@ -92,7 +92,7 @@ export class ExtendedFormItem extends ExtendedItem {
             purchaseDate: ExtendedFormItem.getDate(form.controls['purchaseDate'].value),
             lastService: ExtendedFormItem.getDate(form.controls['lastService'].value),
             itemGroup: form.controls['itemGroup'].value || null,
-            status: form.controls['status'].value || "public",
+            state: form.controls['state'].value || "public",
             tags: ExtendedFormItem.getTags(form.controls['tags'].value),
             picture: form.controls['picture'].value
         };

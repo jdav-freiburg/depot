@@ -3,7 +3,7 @@ import SimpleSchema from 'simpl-schema';
 export const GroupSchema = new SimpleSchema({
     name: { type: String, optional: true },
 
-    status: { type: String, optional: true },
+    state: { type: String, optional: true },
 
     admins: { type: Array, optional: true },
     'admins.$': { type: String },
@@ -16,7 +16,7 @@ export interface Group {
 
     name: string;
 
-    status: string;
+    state: string;
 
     admins: string[];
     users: string[];

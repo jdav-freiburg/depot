@@ -21,7 +21,7 @@ export class ExtendedItem implements FilterItem {
     public picture: string;
     public tags: string[];
     public itemGroup: string;
-    public status: string;
+    public state: string;
 
     public visible: boolean = true;
 
@@ -60,7 +60,7 @@ export class ExtendedItem implements FilterItem {
         this.picture = item.picture;
         this.tags = item.tags;
         this.itemGroup = item.itemGroup;
-        this.status = item.status;
+        this.state = item.state;
         this.updateText(translate);
     }
 
@@ -227,8 +227,8 @@ export class SelectableItemGroup implements SelectableItem {
     get itemGroup(): string {
         return this.subItems[Math.max(this._selected - 1, 0)].itemGroup;
     }
-    get status(): string {
-        return this.subItems[Math.max(this._selected - 1, 0)].status;
+    get state(): string {
+        return this.subItems[Math.max(this._selected - 1, 0)].state;
     }
 
     checkFilters(query: string[]): boolean {
@@ -350,8 +350,8 @@ export class ItemGroup<InnerType extends FilterItem> implements FilterItem {
     get itemGroup(): string {
         return this.subItems[this.activeIndex].itemGroup;
     }
-    get status(): string {
-        return this.subItems[this.activeIndex].status;
+    get state(): string {
+        return this.subItems[this.activeIndex].state;
     }
 
     checkFilters(query: string[]): boolean {

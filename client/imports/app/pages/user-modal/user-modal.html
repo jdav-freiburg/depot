@@ -179,16 +179,16 @@
     <ion-card *ngIf="user && isAdmin">
         <ion-toolbar>
             <ion-title>
-                {{'USER_MODAL.STATUS' | translate}}
+                {{'USER_MODAL.STATE' | translate}}
             </ion-title>
         </ion-toolbar>
         <ion-card-content>
             <ion-item>
                 <ion-label floating>
-                    {{'USER_MODAL.STATUS' | translate}}
+                    {{'USER_MODAL.STATE' | translate}}
                 </ion-label>
-                <ion-select type="text" [(ngModel)]="userStatus" [disabled]="!user || !canEdit || !isAdmin || userStatusIsWorking">
-                    <ion-option *ngFor="let option of userService.userStatusOptions" [value]="option.value">{{option.text}}</ion-option>
+                <ion-select [okText]="'SELECT.OK' | translate" [cancelText]="'SELECT.CANCEL' | translate"  type="text" interface="action-sheet" [(ngModel)]="userState" [disabled]="!user || !canEdit || !isAdmin || userStateIsWorking">
+                    <ion-option *ngFor="let option of userService.userStateOptions" [value]="option.value">{{option.text}}</ion-option>
                 </ion-select>
             </ion-item>
         </ion-card-content>

@@ -246,10 +246,10 @@ export class ItemStateModal implements OnInit, OnDestroy {
                     textParts.push(this.translate.get('ITEM_STATE.PICTURE', {tags: state.fields.picture}));
                 }
 
-                if (_.has(state.fields, 'status')) {
-                    let option = _.find(this.itemDataService.itemStatusOptions, option => option.value == state.fields.status)
-                      || this.itemDataService.itemStatusOptions[0];
-                    textParts.push(this.translate.get('ITEM_STATE.STATUS', {statusOption: option}));
+                if (_.has(state.fields, 'state')) {
+                    let option = _.find(this.itemDataService.itemStateOptions, option => option.value == state.fields.state)
+                      || this.itemDataService.itemStateOptions[0];
+                    textParts.push(this.translate.get('ITEM_STATE.STATE', {stateOption: option}));
                 }
 
                 let secondaryColor = Color(primaryColor).lighten(0.15).hex();

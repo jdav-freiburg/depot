@@ -40,31 +40,31 @@ export class UserService {
         return this.userRolesOptions.find((role) => role.value === roleName);
     }
 
-    public get userStatusOptions(): TranslateOption[] {
+    public get userStateOptions(): TranslateOption[] {
         return this.translate.getAll([
             {
-                translate: 'USER.STATUS.NORMAL',
+                translate: 'USER.STATE.NORMAL',
                 value: "normal",
                 color: 'good',
                 colorCss: colors.good,
                 text: ""
             },
             {
-                translate: 'USER.STATUS.LOCKED',
+                translate: 'USER.STATE.LOCKED',
                 value: "locked",
                 color: 'warning',
                 colorCss: colors.warning,
                 text: ""
             },
             {
-                translate: 'USER.STATUS.DISABLED',
+                translate: 'USER.STATE.DISABLED',
                 value: "disabled",
                 color: 'danger',
                 colorCss: colors.danger,
                 text: ""
             },
             /*{
-                translate: 'USER.STATUS.DELETED',
+                translate: 'USER.STATE.DELETED',
                 value: "deleted",
                 color: 'danger',
                 colorCss: colors.danger,
@@ -80,7 +80,7 @@ export class UserService {
         Accounts.onLogin(() => {
             ngZone.run(() => {
                 this._user = <User>Meteor.user();
-                if (this._user.status !== 'normal') {
+                if (this._user.state !== 'normal') {
                     Accounts.logout();
                 }
                 console.log("User:", this._user);
@@ -97,7 +97,7 @@ export class UserService {
         Accounts.onPageLoadLogin(() => {
             ngZone.run(() => {
                 this._user = <User>Meteor.user();
-                if (this._user.status !== 'normal') {
+                if (this._user.state !== 'normal') {
                     Accounts.logout();
                 }
                 console.log("User:", this._user);
@@ -121,7 +121,7 @@ export class UserService {
                     this.updateFilter(data);
                     if (this._user && this._user._id === data._id) {
                         this._user = data;
-                        if (this._user.status !== 'normal') {
+                        if (this._user.state !== 'normal') {
                             Accounts.logout();
                         }
                         this.userChange.next(this._user);
@@ -147,9 +147,9 @@ export class UserService {
     }
 
     private updateFilter(user: User): void {
-        let statusText = (_.find(this.userStatusOptions, (option) => option.value === user.status) || {text: user.status}).text.toLowerCase();
+        let stateText = (_.find(this.userStateOptions, (option) => option.value === user.state) || {text: user.state}).text.toLowerCase();
         let rolesText = _.map(user.roles, (role) => (this.getUserRoleOption(role)||{text:role}).text.toLowerCase());
-        user.filters = _.concat([user.fullName.toLowerCase(), user.phone, user.username, statusText], rolesText, _.map(user.emails, (email) => email.address));
+        user.filters = _.concat([user.fullName.toLowerCase(), user.phone, user.username, stateText], rolesText, _.map(user.emails, (email) => email.address));
     }
 
     public get users(): User[] {
@@ -271,10 +271,10 @@ export class UserService {
         });
     }
 
-    saveUserStatus(userId: string, status: string, callback?: Function) {
-        Meteor.call('users.setStatus', {
+    saveUserState(userId: string, state: string, callback?: Function) {
+        Meteor.call('users.setState', {
             userId: userId,
-            status: status
+            state: state
         }, (err, res) => {
             this.ngZone.run(() => {
                 if (callback) {

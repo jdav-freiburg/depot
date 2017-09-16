@@ -52,7 +52,7 @@ Meteor.publish(null, function() {
                 'phone': 1,
                 'picture': 1,
                 'language': 1,
-                'status': 1,
+                'state': 1,
                 'roles': 1,
             }
         });
@@ -71,7 +71,7 @@ Meteor.publish('users', function() {
                 'phone': 1,
                 'picture': 1,
                 'language': 1,
-                'status': 1,
+                'state': 1,
                 'roles': 1
             }
         });
@@ -95,7 +95,7 @@ Accounts.onCreateUser((options: User, user: User) => {
     user.fullName = options.fullName;
     user.picture = options.picture;
     user.language = options.language;
-    user.status = "locked";
+    user.state = "locked";
     user.roles = [];
 
     for (let i = 0; i < user.emails.length; i++) {
@@ -122,17 +122,17 @@ Accounts.validateLoginAttempt(function(options) {
         console.log("E-Mail(s) not verified: ", options.user.emails);
         throw new Meteor.Error('user-email-not-verified', "user-email-not-verified", _.join(_.map(options.user.emails, (email: Meteor.UserEmail) => email.address), ','));
     }
-    if (options.user.status === 'locked') {
+    if (options.user.state === 'locked') {
         throw new Meteor.Error('user-locked', "user-locked");
     }
-    if (options.user.status === 'disabled') {
+    if (options.user.state === 'disabled') {
         throw new Meteor.Error('user-disabled', "user-disabled");
     }
-    if (options.user.status === 'deleted') {
+    if (options.user.state === 'deleted') {
         return false;
     }
-    if (options.user.status !== 'normal') {
-        throw new Meteor.Error('status', "user-status-not-normal", options.user.status);
+    if (options.user.state !== 'normal') {
+        throw new Meteor.Error('state', "user-state-not-normal", options.user.state);
     }
     return true;
 });
@@ -425,13 +425,13 @@ Meteor.methods({
         if (!user) {
             throw new Meteor.Error('entity', "Invalid user");
         }
-        if (user.status === 'normal') {
+        if (user.state === 'normal') {
             return;
         }
-        if (user.status !== 'locked') {
+        if (user.state !== 'locked') {
             throw new Meteor.Error('unauthorized', "Not allowed to modify other user");
         }
-        UserCollection.update({_id: userId}, {$set: {status: 'normal'}});
+        UserCollection.update({_id: userId}, {$set: {state: 'normal'}});
         let globalMessage: GlobalMessage = {
             timestamp: new Date(),
             type: "new-user",
@@ -442,25 +442,25 @@ Meteor.methods({
         };
         GlobalMessageCollection.insert(globalMessage);
     },
-    'users.setStatus'({status, userId}: { status: string, userId: string}): void {
+    'users.setState'({state, userId}: { state: string, userId: string}): void {
         if (!this.userId) {
             return;
         }
         new SimpleSchema({
-            status: String,
+            state: String,
             userId: userId,
         }).validate({
-            status,
+            state,
             userId,
         });
 
         if (!Roles.userHasRole(this.userId, 'admin')) {
             throw new Meteor.Error('unauthorized', "Not allowed to modify other user");
         }
-        if (status === 'deleted') {
-            UserCollection.update({_id: userId}, {$set: {status: status, username: null, emails: []}});
+        if (state === 'deleted') {
+            UserCollection.update({_id: userId}, {$set: {state: state, username: null, emails: []}});
         } else {
-            UserCollection.update({_id: userId}, {$set: {status: status}});
+            UserCollection.update({_id: userId}, {$set: {state: state}});
         }
     },
 });

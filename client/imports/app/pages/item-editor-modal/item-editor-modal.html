@@ -4,10 +4,10 @@
             <button ion-button clear icon-only (click)="selectPicture()" [disabled]="itemForm.controls['picture'].disabled" clear>
                 <ion-icon name="image"></ion-icon>
             </button>
-            <button *ngIf="itemForm.controls['status'].value=='public'" ion-button (click)="itemForm.controls['status'].setValue('hidden');itemForm.controls['status'].markAsDirty()" [disabled]="itemForm.controls['status'].disabled" clear icon-only>
+            <button *ngIf="itemForm.controls['state'].value=='public'" ion-button (click)="itemForm.controls['state'].setValue('hidden');itemForm.controls['state'].markAsDirty()" [disabled]="itemForm.controls['state'].disabled" clear icon-only>
                 <ion-icon name="eye"></ion-icon>
             </button>
-            <button *ngIf="itemForm.controls['status'].value!='public'" ion-button (click)="itemForm.controls['status'].setValue('public');itemForm.controls['status'].markAsDirty()" [disabled]="itemForm.controls['status'].disabled" clear icon-only>
+            <button *ngIf="itemForm.controls['state'].value!='public'" ion-button (click)="itemForm.controls['state'].setValue('public');itemForm.controls['state'].markAsDirty()" [disabled]="itemForm.controls['state'].disabled" clear icon-only>
                 <ion-icon name="eye-off"></ion-icon>
             </button>
             <button ion-button icon-only (click)="saveItemCopy()" *ngIf="canCopy">
@@ -50,7 +50,7 @@
             <item-date-picker formControlName="lastService" [label]="'ITEM_CARD.LAST_SERVICE' | translate"></item-date-picker>
             <ion-item>
                 <ion-label floating>{{'ITEM_CARD.CONDITION' | translate}}</ion-label>
-                <ion-select formControlName="condition">
+                <ion-select [okText]="'SELECT.OK' | translate" [cancelText]="'SELECT.CANCEL' | translate"  interface="action-sheet" formControlName="condition">
                     <ion-option *ngFor="let option of itemsService.itemConditionOptions" [value]="option.value">{{option.text}}</ion-option>
                 </ion-select>
             </ion-item>

@@ -19,7 +19,7 @@
     <form [formGroup]="reservationForm" (ngSubmit)="save()">
         <ion-item>
             <ion-label floating>{{'RESERVATION_PAGE.TYPE' | translate}}</ion-label>
-            <ion-select formControlName="type" *ngIf="!readonly">
+            <ion-select [okText]="'SELECT.OK' | translate" [cancelText]="'SELECT.CANCEL' | translate" formControlName="type" interface="action-sheet" *ngIf="!readonly">
                 <ion-option *ngFor="let option of reservationsDataService.reservationTypeOptions" [value]="option.value">{{option.text}}</ion-option>
             </ion-select>
             <ion-input *ngIf="readonly" type="text" formControlName="type" [readonly]="readonly"></ion-input>
