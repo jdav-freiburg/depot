@@ -18,21 +18,21 @@ export class ItemsDataService {
     get itemConditionOptions(): TranslateOption[] {
         return this.translate.getAll([
             {
-                translate: 'ITEM.CONDITION.GOOD',
+                translate: 'ITEM.CONDITIONS.GOOD',
                 value: "good",
                 color: 'good',
                 colorCss: colors.good,
                 text: ""
             },
             {
-                translate: 'ITEM.CONDITION.BAD',
+                translate: 'ITEM.CONDITIONS.BAD',
                 value: "bad",
                 color: 'warning',
                 colorCss: colors.warning,
                 text: ""
             },
             {
-                translate: 'ITEM.CONDITION.BROKEN',
+                translate: 'ITEM.CONDITIONS.BROKEN',
                 value: "broken",
                 color: 'danger',
                 colorCss: colors.danger,
@@ -44,14 +44,14 @@ export class ItemsDataService {
     get itemStateOptions(): TranslateOption[] {
         return this.translate.getAll([
             {
-                translate: 'ITEM.STATE.PUBLIC',
+                translate: 'ITEM.STATES.PUBLIC',
                 value: "public",
                 color: 'good',
                 colorCss: colors.good,
                 text: ""
             },
             {
-                translate: 'ITEM.STATE.HIDDEN',
+                translate: 'ITEM.STATES.HIDDEN',
                 value: "hidden",
                 color: 'danger',
                 colorCss: colors.danger,

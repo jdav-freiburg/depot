@@ -20,7 +20,7 @@
         <p>{{'RESERVATION_CARD.DESCRIPTION' | translate:descriptionData}}</p>
         <ion-item-group>
             <ion-item-divider>
-                {{'RESERVATION_CARD.ITEMS' | translate}}
+                {{'RESERVATION.ITEMS' | translate}}
             </ion-item-divider>
             <ion-item *ngFor="let item of items">
                 <!--<ion-avatar item-left><img src="{{item.picture}}"></ion-avatar>-->
@@ -77,19 +77,19 @@
         <ion-icon name="people"></ion-icon>
     </ion-col>
     <ion-col col-2>
-        {{'RESERVATION_CARD.NAME' | translate}}
+        {{'RESERVATION.NAME' | translate}}
     </ion-col>
     <ion-col>
-        {{'RESERVATION_CARD.START' | translate}}
+        {{'RESERVATION.START' | translate}}
     </ion-col>
     <ion-col>
-        {{'RESERVATION_CARD.END' | translate}}
+        {{'RESERVATION.END' | translate}}
     </ion-col>
     <ion-col>
-        {{'RESERVATION_CARD.USER' | translate}}
+        {{'RESERVATION.USER' | translate}}
     </ion-col>
     <ion-col col-2>
-        {{'RESERVATION_CARD.CONTACT' | translate}}
+        {{'RESERVATION.CONTACT' | translate}}
     </ion-col>
     <ion-col col-auto>
         <button ion-button clear icon-only [disabled]="true" small no-padding>
@@ -120,7 +120,7 @@
     </ion-toolbar>
     <ion-card-content>
         <p>{{reservation.start | moment: 'L'}} - {{reservation.end | moment: 'L'}}</p>
-        <p>{{'RESERVATION_CARD.USER' | translate}}: <user-ref [userId]="reservation.userId"></user-ref></p>
-        <p>{{'RESERVATION_CARD.CONTACT' | translate}}: {{reservation.contact}}</p>
+        <p>{{'RESERVATION.USER' | translate}}: <user-ref [userId]="reservation.userId"></user-ref></p>
+        <p>{{'RESERVATION.CONTACT' | translate}}: {{reservation.contact}}</p>
     </ion-card-content>
 </ion-card>

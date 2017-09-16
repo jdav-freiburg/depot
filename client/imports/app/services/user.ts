@@ -20,14 +20,14 @@ export class UserService {
     public get userRolesOptions(): TranslateOption[] {
         return this.translate.getAll([
             {
-                translate: 'USER.ROLES.ADMIN',
+                translate: 'USER.ROLES_VALUES.ADMIN',
                 value: "admin",
                 color: 'good',
                 colorCss: colors.good,
                 text: ""
             },
             {
-                translate: 'USER.ROLES.MANAGER',
+                translate: 'USER.ROLES_VALUES.MANAGER',
                 value: "manager",
                 color: 'warning',
                 colorCss: colors.warning,
@@ -43,28 +43,28 @@ export class UserService {
     public get userStateOptions(): TranslateOption[] {
         return this.translate.getAll([
             {
-                translate: 'USER.STATE.NORMAL',
+                translate: 'USER.STATES.NORMAL',
                 value: "normal",
                 color: 'good',
                 colorCss: colors.good,
                 text: ""
             },
             {
-                translate: 'USER.STATE.LOCKED',
+                translate: 'USER.STATES.LOCKED',
                 value: "locked",
                 color: 'warning',
                 colorCss: colors.warning,
                 text: ""
             },
             {
-                translate: 'USER.STATE.DISABLED',
+                translate: 'USER.STATES.DISABLED',
                 value: "disabled",
                 color: 'danger',
                 colorCss: colors.danger,
                 text: ""
             },
             /*{
-                translate: 'USER.STATE.DELETED',
+                translate: 'USER.STATES.DELETED',
                 value: "deleted",
                 color: 'danger',
                 colorCss: colors.danger,

@@ -34,6 +34,8 @@ export const en_us = {
     },
     "LOGIN_PAGE": {
         "TITLE": "Login",
+    },
+    "LOGIN": {
         "EMAIL_OR_USERNAME": "E-Mail or Username",
         "PASSWORD": "Password",
         "LOG_IN": "Log In",
@@ -75,21 +77,9 @@ export const en_us = {
     },
     "ITEMS_IMPORTER_PAGE": {
         "TITLE": "Import Items",
-        "FILE": "Choose file...",
-        "FILTER": "Filter",
-        "EXTERNAL_ID": "External ID",
-        "NAME": "Name",
-        "DESCRIPTION": "Description",
-        "PURCHASE_DATE": "Purchase Date",
-        "LAST_SERVICE": "Last Service",
-        "CONDITION": "Condition",
-        "CONDITION_COMMENT": "Condition Comment",
-        "STATE": "State",
-        "ITEM_GROUP": "Group",
-        "TAGS": "Tags"
     },
-    "ITEM_CARD": {
-        "EDITOR": "Edit",
+    "ITEM": {
+        "FILTER": "Filter",
         "EXTERNAL_ID": "External ID",
         "NAME": "Name",
         "DESCRIPTION": "Description",
@@ -101,6 +91,25 @@ export const en_us = {
         "ITEM_GROUP": "Group",
         "TAGS": "Tags",
         "PICTURE": "Picture",
+        "STATES": {
+            "PUBLIC": "Public",
+            "HIDDEN": "Hidden"
+        },
+        "CONDITIONS": {
+            "GOOD": "Good",
+            "BAD": "Bad",
+            "BROKEN": "Broken"
+        },
+        "FILTER_TAGS": {
+            "NAME": "name",
+            "DESCRIPTION": "description",
+            "TAG": "tag",
+            "EXTERNAL_ID": "externalid",
+            "SELECTED": "selected\0reserved\0reservated"
+        }
+    },
+    "ITEM_CARD": {
+        "EDITOR": "Edit",
         "SAVE": {
             "TITLE": "Save",
             "SUBTITLE": "Save Entry",
@@ -123,17 +132,27 @@ export const en_us = {
             "CANCEL": "Keep"
         }
     },
-    "RESERVATION_PAGE": {
-        "TITLE": (data) => `Reservation - ${data.name}`,
+    "RESERVATION": {
+        "FILTER": "Filter",
+
         "TYPE": "Type of Journey",
         "NAME": "Name",
         "START": "Start",
         "END": "End",
         "CONTACT": "Contact",
         "ITEMS": "Items",
+
+        "USER": "User",
+        "GROUP": "Group",
+
+        "TYPES": {
+            "GROUP": "Group",
+            "PRIVATE": "Private"
+        }
+    },
+    "RESERVATION_PAGE": {
+        "TITLE": (data) => `Reservation - ${data.name}`,
         "NOT_AVAILABLE": "Not Available",
-        "ITEM_CONDITION_BAD": "Bad",
-        "ITEM_CONDITION_BROKEN": "Broken",
         "SOME_NOT_AVAILABLE": (data) => `${data.total - data.available}/${data.total} not available`,
         "SOME_REMOVED": (data) => `${data.total}/${data.selected + data.total} removed`,
         "REMOVED": "Removed",
@@ -145,21 +164,47 @@ export const en_us = {
             "LEAVE": "Leave",
             "SAVE": "Save"
         },
-        "FILTER": "Filter",
         "SAVED": (reservation) => `Saved reservation ${reservation.name}`
     },
     "RESERVATIONS_PAGE": {
-        "TITLE": "Reservations",
-        "FILTER": "Filter"
+        "TITLE": "Reservations"
     },
-    "SIGNUP_PAGE": {
-        "TITLE": "Sign Up",
+    "RESERVATION_CARD": {
+        "HEADER": "Reservation",
+        "DESCRIPTION": (reservation) => `${reservation.type.text}. From ${moment(reservation.start).format('L')} until ${moment(reservation.end).format('L')}.`,
+        "DELETE": {
+            "TITLE": (data) => `Delete ${data.name}?`,
+            "SUB_TITLE": (data) => `Do you really want to delete reservation ${data.name}?`,
+            "YES": "Yes",
+            "NO": "No"
+        }
+    },
+    "USER": {
+        "FILTER": "Filter",
+
         "USERNAME": "Username",
         "EMAIL": "E-Mail",
         "PASSWORD": "Password",
         "PASSWORD_REPEAT": "Repeat Password",
         "FULL_NAME": "Full Name",
         "PHONE": "Phone",
+        "STATE": "State",
+        "ROLES": "Roles",
+        "PICTURE": "Picture",
+
+        "STATES": {
+            "NORMAL": "Normal",
+            "LOCKED": "Locked",
+            "DISABLED": "Disabled",
+            "DELETED": "Deleted"
+        },
+        "ROLES_VALUES": {
+            "ADMIN": "Administrator",
+            "MANAGER": "Item Manager"
+        }
+    },
+    "SIGNUP_PAGE": {
+        "TITLE": "Sign Up",
         "SIGN_UP": "Sign Up",
         "SUCCESS": {
             "TITLE": "Registered Successfully",
@@ -172,52 +217,18 @@ export const en_us = {
     },
     "USERS_PAGE": {
         "TITLE": "Users",
-        "USERNAME": "Username",
-        "EMAIL": "E-Mail",
-        "FULL_NAME": "Full Name",
-        "PHONE": "Phone",
-        "STATE": "State",
-        "ROLES": "Roles",
-        "FILTER": "Filter"
     },
     "USER_MODAL": {
         "TITLE": (data) => `${data.name}`,
-        "ID": "Id",
-        "USERNAME": "Username",
         "PERSONAL": "Personal",
-        "FULL_NAME": "Full Name",
-        "PHONE": "Phone",
-        "PICTURE": "Picture",
-        "EMAIL": "E-Mail",
         "EMAIL_ADD": "Add E-Mail",
-        "PASSWORD": "Password",
         "PASSWORD_OLD": "Current Password",
         "PASSWORD_NEW": "New Password",
         "PASSWORD_NEW_REPEAT": "Repeat New Password",
         "PASSWORD_RANDOM": "Random Password",
-        "ROLES": "Roles",
-        "STATE": "State",
         "ERROR": {
             "PASSWORD_MINLENGTH": "Password must be at least 6 characters",
             "PASSWORD_MATCH": "Passwords do not match",
-        }
-    },
-    "RESERVATION_CARD": {
-        "HEADER": "Reservation",
-        "ITEMS": "Items",
-        "DESCRIPTION": (reservation) => `${reservation.type.text}. From ${moment(reservation.start).format('L')} until ${moment(reservation.end).format('L')}.`,
-        "TYPE": "Type",
-        "NAME": "Name",
-        "START": "Start",
-        "END": "End",
-        "USER": "User",
-        "GROUP": "Group",
-        "CONTACT": "Contact",
-        "DELETE": {
-            "TITLE": (data) => `Delete ${data.name}?`,
-            "SUB_TITLE": (data) => `Do you really want to delete reservation ${data.name}?`,
-            "YES": "Yes",
-            "NO": "No"
         }
     },
     "CALENDAR_ITEMS_PAGE": {
@@ -267,30 +278,6 @@ export const en_us = {
         "LOGIN": "Login",
         "SIGNUP": "Sign Up"
     },
-    "RESERVATION": {
-        "TYPE": {
-            "GROUP": "Group",
-            "PRIVATE": "Private"
-        }
-    },
-    "ITEM": {
-        "STATE": {
-            "PUBLIC": "Public",
-            "HIDDEN": "Hidden"
-        },
-        "CONDITION": {
-            "GOOD": "Good",
-            "BAD": "Bad",
-            "BROKEN": "Broken"
-        },
-        "FILTER_TAG": {
-            "NAME": "name",
-            "DESCRIPTION": "description",
-            "TAG": "tag",
-            "EXTERNAL_ID": "externalid",
-            "SELECTED": "selected\0reserved\0reservated"
-        }
-    },
     "ITEM_STATE": {
         "TEXT": (data) => (data.comment ? data.comment + "<br>\n" : "") + (_.join(data.texts, ", <br>\n") || ""),
         "LAST_SERVICE": (data) => `Service at ${moment(data.lastService).toLocaleString()}`,
@@ -304,18 +291,6 @@ export const en_us = {
         "PICTURE": (data) => `New Picture`,
         "STATE": (data) => `New State: ${data.stateOption.text}`,
         "RESERVATION_NAME": (data) => `Reservation ${data.user ? data.user.fullName : ""} - ${data.type.text} - ${data.reservation.name}`
-    },
-    "USER": {
-        "STATE": {
-            "NORMAL": "Normal",
-            "LOCKED": "Locked",
-            "DISABLED": "Disabled",
-            "DELETED": "Deleted"
-        },
-        "ROLES": {
-            "ADMIN": "Administrator",
-            "MANAGER": "Item Manager"
-        }
     },
     "SELECT": {
         "OK": "Ok",

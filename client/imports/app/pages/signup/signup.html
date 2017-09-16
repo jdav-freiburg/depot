@@ -12,15 +12,15 @@
 <ion-content>
     <form [formGroup]="signupForm" (ngSubmit)="doSignup($event)">
         <ion-item>
-            <ion-label floating>{{'SIGNUP_PAGE.USERNAME' | translate}}</ion-label>
+            <ion-label floating>{{'USER.USERNAME' | translate}}</ion-label>
             <ion-input type="text" formControlName="username"></ion-input>
         </ion-item>
         <ion-item>
-            <ion-label floating>{{'SIGNUP_PAGE.EMAIL' | translate}}</ion-label>
+            <ion-label floating>{{'USER.EMAIL' | translate}}</ion-label>
             <ion-input type="email" formControlName="email"></ion-input>
         </ion-item>
         <ion-item>
-            <ion-label floating>{{'SIGNUP_PAGE.PASSWORD' | translate}}</ion-label>
+            <ion-label floating>{{'USER.PASSWORD' | translate}}</ion-label>
             <ion-input type="password" formControlName="password"></ion-input>
         </ion-item>
         <ion-item *ngIf="!signupForm.controls['password'].valid && signupForm.controls['password'].touched" color="danger">
@@ -29,7 +29,7 @@
             </p>
         </ion-item>
         <ion-item>
-            <ion-label floating>{{'SIGNUP_PAGE.PASSWORD_REPEAT' | translate}}</ion-label>
+            <ion-label floating>{{'USER.PASSWORD_REPEAT' | translate}}</ion-label>
             <ion-input type="password" formControlName="password2"></ion-input>
         </ion-item>
         <ion-item *ngIf="!signupForm.controls['password2'].valid && signupForm.controls['password2'].touched" color="danger">
@@ -38,11 +38,11 @@
             </p>
         </ion-item>
         <ion-item>
-            <ion-label floating>{{'SIGNUP_PAGE.FULL_NAME' | translate}}</ion-label>
+            <ion-label floating>{{'USER.FULL_NAME' | translate}}</ion-label>
             <ion-input type="text" formControlName="fullName"></ion-input>
         </ion-item>
         <ion-item>
-            <ion-label floating>{{'SIGNUP_PAGE.PHONE' | translate}}</ion-label>
+            <ion-label floating>{{'USER.PHONE' | translate}}</ion-label>
             <ion-input type="text" formControlName="phone"></ion-input>
         </ion-item>
         <button ion-button type="submit" block [disabled]="!signupForm.valid">{{'SIGNUP_PAGE.SIGN_UP' | translate}}</button>

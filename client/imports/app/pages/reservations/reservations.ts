@@ -45,7 +45,7 @@ class ReservationExt implements Reservation {
     }
 
     public updateText(translate: TranslateService, users: UserService) {
-        this._filters = [this.name.toLowerCase(), translate.get('RESERVATION_PAGE.TYPE.' + this.type), this.contact.toLowerCase()];
+        this._filters = [this.name.toLowerCase(), translate.get('RESERVATION.TYPE.' + this.type), this.contact.toLowerCase()];
         let user = users.tryGetUser(this.userId);
         if (user) {
             this._filters.push(user.fullName.toLowerCase())

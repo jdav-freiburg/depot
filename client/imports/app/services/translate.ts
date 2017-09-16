@@ -116,12 +116,12 @@ export class TranslateService {
                 if (_.isString(res)) {
                     return res;
                 }
-                console.log("Expected string result from translator for", path);
+                console.error("Expected string result from translator for", path);
             } catch(err) {
-                console.log(err);
+                console.error(err);
             }
         }
-        console.log("No language entry in " + this.languageKey + " for", path);
+        console.error("No language entry in " + this.languageKey + " for", path);
         if (_.isArray(path)) {
             return _.join(path, '.');
         }

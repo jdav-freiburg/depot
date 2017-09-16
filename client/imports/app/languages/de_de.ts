@@ -35,6 +35,8 @@ export const de_de = {
     },
     "LOGIN_PAGE": {
         "TITLE": "Login",
+    },
+    "LOGIN": {
         "EMAIL_OR_USERNAME": "E-Mail oder Benutzername",
         "PASSWORD": "Passwort",
         "LOG_IN": "Log In",
@@ -76,21 +78,9 @@ export const de_de = {
     },
     "ITEMS_IMPORTER_PAGE": {
         "TITLE": "Material importieren",
-        "FILE": "Datei auswählen...",
-        "FILTER": "Filtern",
-        "EXTERNAL_ID": "Externe ID",
-        "NAME": "Name",
-        "DESCRIPTION": "Beschreibung",
-        "PURCHASE_DATE": "Kaufdatum",
-        "LAST_SERVICE": "Letzte Wartung",
-        "CONDITION": "Zustand",
-        "CONDITION_COMMENT": "Zustandskommentar",
-        "STATE": "Status",
-        "ITEM_GROUP": "Gruppe",
-        "TAGS": "Tags"
     },
-    "ITEM_CARD": {
-        "EDITOR": "Bearbeiten",
+    "ITEM": {
+        "FILTER": "Filtern",
         "EXTERNAL_ID": "Externe ID",
         "NAME": "Name",
         "DESCRIPTION": "Beschreibung",
@@ -102,6 +92,25 @@ export const de_de = {
         "ITEM_GROUP": "Gruppe",
         "TAGS": "Tags",
         "PICTURE": "Bild",
+        "STATES": {
+            "PUBLIC": "Öffentlich",
+            "HIDDEN": "Versteckt"
+        },
+        "CONDITIONS": {
+            "GOOD": "Gut",
+            "BAD": "Schlecht",
+            "BROKEN": "Kaputt"
+        },
+        "FILTER_TAGS": {
+            "NAME": "name",
+            "DESCRIPTION": "beschreibung\0description",
+            "TAG": "tag",
+            "EXTERNAL_ID": "id",
+            "SELECTED": "wahl\0gewählt\0selektiert\0selected\0reserviert"
+        }
+    },
+    "ITEM_CARD": {
+        "EDITOR": "Bearbeiten",
         "SAVE": {
             "TITLE": "Speichern",
             "SUBTITLE": "Eintrag Speichern",
@@ -124,14 +133,26 @@ export const de_de = {
             "CANCEL": "Behalten"
         }
     },
-    "RESERVATION_PAGE": {
-        "TITLE": (data) => `Reservierung - ${data.name}`,
+    "RESERVATION": {
+        "FILTER": "Filtern",
+
         "TYPE": "Art der Ausfahrt",
         "NAME": "Name",
         "START": "Start",
         "END": "Ende",
         "CONTACT": "Kontakt",
         "ITEMS": "Material",
+
+        "USER": "Benutzer",
+        "GROUP": "Gruppe",
+
+        "TYPES": {
+            "GROUP": "Gruppe",
+            "PRIVATE": "Privat"
+        }
+    },
+    "RESERVATION_PAGE": {
+        "TITLE": (data) => `Reservierung - ${data.name}`,
         "NOT_AVAILABLE": "Nicht verfügbar",
         "ITEM_CONDITION_BAD": "Schlecht",
         "ITEM_CONDITION_BROKEN": "Kaputt",
@@ -150,17 +171,45 @@ export const de_de = {
         "SAVED": (reservation) => `Reservierung ${reservation.name} gespeichert`
     },
     "RESERVATIONS_PAGE": {
-        "TITLE": "Reservierungen",
-        "FILTER": "Filtern"
+        "TITLE": "Reservierungen"
     },
-    "SIGNUP_PAGE": {
-        "TITLE": "Anmelden",
+    "RESERVATION_CARD": {
+        "HEADER": "Reservierung",
+        "DESCRIPTION": (reservation) => `${reservation.type.text}. Vom ${moment(reservation.start).format('L')} bis ${moment(reservation.end).format('L')}.`,
+        "DELETE": {
+            "TITLE": (data) => `Lösche ${data.name}?`,
+            "SUB_TITLE": (data) => `Reservierung ${data.name} wirklich löschen?`,
+            "YES": "Ja",
+            "NO": "Nein"
+        }
+    },
+    "USER": {
+        "FILTER": "Filter",
+
+        "ID": "Id",
         "USERNAME": "Benutzername",
         "EMAIL": "E-Mail",
         "PASSWORD": "Passwort",
         "PASSWORD_REPEAT": "Passwort Wiederholen",
         "FULL_NAME": "Vollständiger Name",
         "PHONE": "Telefon",
+        "STATE": "Status",
+        "ROLES": "Rollen",
+        "PICTURE": "Bild",
+
+        "STATES": {
+            "NORMAL": "Normal",
+            "LOCKED": "Gesperrt",
+            "DISABLED": "Deaktiviert",
+            "DELETED": "Gelöscht"
+        },
+        "ROLES_VALUES": {
+            "ADMIN": "Administrator",
+            "MANAGER": "Materialwart"
+        }
+    },
+    "SIGNUP_PAGE": {
+        "TITLE": "Anmelden",
         "SIGN_UP": "Anmelden",
         "SUCCESS": {
             "TITLE": "Erfolgreich registriert",
@@ -173,52 +222,18 @@ export const de_de = {
     },
     "USERS_PAGE": {
         "TITLE": "Benutzer",
-        "USERNAME": "Benutzername",
-        "EMAIL": "E-Mail",
-        "FULL_NAME": "Vollständiger Name",
-        "PHONE": "Telefon",
-        "STATE": "Status",
-        "ROLES": "Rollen",
-        "FILTER": "Filtern"
     },
     "USER_MODAL": {
         "TITLE": (data) => `${data.name}`,
-        "ID": "Id",
-        "USERNAME": "Benutzername",
         "PERSONAL": "Persönlich",
-        "FULL_NAME": "Vollständiger Name",
-        "PHONE": "Telefon",
-        "PICTURE": "Bild",
-        "EMAIL": "E-Mail",
         "EMAIL_ADD": "E-Mail Hinzufügen",
-        "PASSWORD": "Passwort",
         "PASSWORD_OLD": "Aktuelles Passwort",
         "PASSWORD_NEW": "Neues Passwort",
         "PASSWORD_NEW_REPEAT": "Neues Passwort Wiederholen",
         "PASSWORD_RANDOM": "Zufälliges Passwort",
-        "ROLES": "Rollen",
-        "STATE": "Status",
         "ERROR": {
             "PASSWORD_MINLENGTH": "Passwort muss mindestens 6 Zeichen lang sein",
             "PASSWORD_MATCH": "Passwörter stimmen nicht überein",
-        }
-    },
-    "RESERVATION_CARD": {
-        "HEADER": "Reservierung",
-        "ITEMS": "Material",
-        "DESCRIPTION": (reservation) => `${reservation.type.text}. Vom ${moment(reservation.start).format('L')} bis ${moment(reservation.end).format('L')}.`,
-        "TYPE": "Typ",
-        "NAME": "Name",
-        "START": "Start",
-        "END": "Ende",
-        "USER": "Benutzer",
-        "GROUP": "Gruppe",
-        "CONTACT": "Kontakt",
-        "DELETE": {
-            "TITLE": (data) => `Lösche ${data.name}?`,
-            "SUB_TITLE": (data) => `Reservierung ${data.name} wirklich löschen?`,
-            "YES": "Ja",
-            "NO": "Nein"
         }
     },
     "CALENDAR_ITEMS_PAGE": {
@@ -268,30 +283,6 @@ export const de_de = {
         "LOGIN": "Login",
         "SIGNUP": "Anmelden"
     },
-    "RESERVATION": {
-        "TYPE": {
-            "GROUP": "Gruppe",
-            "PRIVATE": "Privat"
-        }
-    },
-    "ITEM": {
-        "STATE": {
-            "PUBLIC": "Öffentlich",
-            "HIDDEN": "Versteckt"
-        },
-        "CONDITION": {
-            "GOOD": "Gut",
-            "BAD": "Schlecht",
-            "BROKEN": "Kaputt"
-        },
-        "FILTER_TAG": {
-            "NAME": "name",
-            "DESCRIPTION": "beschreibung\0description",
-            "TAG": "tag",
-            "EXTERNAL_ID": "id",
-            "SELECTED": "wahl\0gewählt\0selektiert\0selected\0reserviert"
-        }
-    },
     "ITEM_STATE": {
         "TEXT": (data) => (data.comment ? data.comment + "<br>\n" : "") + (_.join(data.texts, ", <br>\n") || ""),
         "LAST_SERVICE": (data) => `Wartung am ${moment(data.lastService).format('L')}`,
@@ -305,18 +296,6 @@ export const de_de = {
         "PICTURE": (data) => `Neues Bild`,
         "STATE": (data) => `Neuer Status: ${data.stateOption.text}`,
         "RESERVATION_NAME": (data) => `Reservierung ${data.user ? data.user.fullName : ""} - ${data.type.text} - ${data.reservation.name}`
-    },
-    "USER": {
-        "STATE": {
-            "NORMAL": "Normal",
-            "LOCKED": "Gesperrt",
-            "DISABLED": "Deaktiviert",
-            "DELETED": "Gelöscht"
-        },
-        "ROLES": {
-            "ADMIN": "Administrator",
-            "MANAGER": "Materialwart"
-        }
     },
     "SELECT": {
         "OK": "Ok",

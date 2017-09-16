@@ -14,35 +14,35 @@
 
 <ion-content>
     <ion-toolbar ion-fixed *ngIf="fixSearchbar">
-        <ion-searchbar [(ngModel)]="filter" (ngModelChange)="filterChange()" [placeholder]="'RESERVATION_PAGE.FILTER' | translate"></ion-searchbar>
+        <ion-searchbar [(ngModel)]="filter" (ngModelChange)="filterChange()" [placeholder]="'ITEM.FILTER' | translate"></ion-searchbar>
     </ion-toolbar>
     <form [formGroup]="reservationForm" (ngSubmit)="save()">
         <ion-item>
-            <ion-label floating>{{'RESERVATION_PAGE.TYPE' | translate}}</ion-label>
+            <ion-label floating>{{'RESERVATION.TYPE' | translate}}</ion-label>
             <ion-select [okText]="'SELECT.OK' | translate" [cancelText]="'SELECT.CANCEL' | translate" formControlName="type" interface="action-sheet" *ngIf="!readonly">
                 <ion-option *ngFor="let option of reservationsDataService.reservationTypeOptions" [value]="option.value">{{option.text}}</ion-option>
             </ion-select>
             <ion-input *ngIf="readonly" type="text" formControlName="type" [readonly]="readonly"></ion-input>
         </ion-item>
         <ion-item>
-            <ion-label floating>{{'RESERVATION_PAGE.NAME' | translate}}</ion-label>
+            <ion-label floating>{{'RESERVATION.NAME' | translate}}</ion-label>
             <ion-input type="text" formControlName="name" [readonly]="readonly"></ion-input>
         </ion-item>
-        <reservation-date-picker formControlName="start" [label]="'RESERVATION_PAGE.START' | translate" [rangeEnd]="reservationForm.controls.end.value"
+        <reservation-date-picker formControlName="start" [label]="'RESERVATION.START' | translate" [rangeEnd]="reservationForm.controls.end.value"
                                  [rangeStart]="readonly?reservationForm.controls.start.value:null"
                                  [showReservations]="true" [skipReservationId]="editId" [readonly]="readonly"></reservation-date-picker>
-        <reservation-date-picker formControlName="end" [label]="'RESERVATION_PAGE.END' | translate" [rangeStart]="reservationForm.controls.start.value"
+        <reservation-date-picker formControlName="end" [label]="'RESERVATION.END' | translate" [rangeStart]="reservationForm.controls.start.value"
                                  [rangeEnd]="readonly?reservationForm.controls.end.value:null"
                                  [showReservations]="true" [skipReservationId]="editId" [readonly]="readonly"></reservation-date-picker>
         <ion-item>
-            <ion-label floating>{{'RESERVATION_PAGE.CONTACT' | translate}}</ion-label>
+            <ion-label floating>{{'RESERVATION.CONTACT' | translate}}</ion-label>
             <ion-input type="text" formControlName="contact" [readonly]="readonly"></ion-input>
         </ion-item>
     </form>
     <ion-card>
-        <ion-card-header>{{'RESERVATION_PAGE.ITEMS' | translate}}</ion-card-header>
+        <ion-card-header>{{'RESERVATION.ITEMS' | translate}}</ion-card-header>
         <ion-card-content>
-            <ion-searchbar [(ngModel)]="filter" (ngModelChange)="filterChange()" scroll-switch (fullInViewChange)="fixSearchbar=!$event" [placeholder]="'RESERVATION_PAGE.FILTER' | translate"></ion-searchbar>
+            <ion-searchbar [(ngModel)]="filter" (ngModelChange)="filterChange()" scroll-switch (fullInViewChange)="fixSearchbar=!$event" [placeholder]="'ITEM.FILTER' | translate"></ion-searchbar>
             <dynamic-virtual-scroll [minItemHeight]="87" [scrollLive]="true">
                 <ng-container *dynamicItem="let item of displayItems">
                     <ion-item class="item-element" *ngIf="item">

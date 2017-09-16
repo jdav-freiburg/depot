@@ -122,13 +122,13 @@ export class ReservationPage implements OnInit, OnDestroy {
     get reservationTypeOptions(): any[] {
         return this.translate.getAll([
             {
-                translate: 'RESERVATION.TYPE.GROUP',
+                translate: 'RESERVATION.TYPES.GROUP',
                 value: "group",
                 color: 'good',
                 text: ""
             },
             {
-                translate: 'RESERVATION.TYPE.PRIVATE',
+                translate: 'RESERVATION.TYPES.PRIVATE',
                 value: "private",
                 color: 'warning',
                 text: ""
@@ -227,7 +227,7 @@ export class ReservationPage implements OnInit, OnDestroy {
         if (removedItems.length > 0) {
             console.log("Found items to remove:", this.reservation, removedItems);
             this.toast.create({
-                message: this.translate.get("RESERVATION_PAGE.ITEMS_REMOVED", {'items': _.map(removedItems, item => item.name)}),
+                message: this.translate.get("RESERVATION.ITEMS_REMOVED", {'items': _.map(removedItems, item => item.name)}),
                 duration: 2500
             }).present();
         }
@@ -348,7 +348,7 @@ export class ReservationPage implements OnInit, OnDestroy {
                         if (!itemGroup.update()) {
                             console.log("Removed item:", this.reservation, transformed);
                             this.toast.create({
-                                message: this.translate.get("RESERVATION_PAGE.ITEMS_REMOVED", {'items': [transformed.name]}),
+                                message: this.translate.get("RESERVATION.ITEMS_REMOVED", {'items': [transformed.name]}),
                                 duration: 2500
                             }).present();
                         }
@@ -358,7 +358,7 @@ export class ReservationPage implements OnInit, OnDestroy {
                         if (!transformed.update()) {
                             console.log("Removed item:", this.reservation, transformed);
                             this.toast.create({
-                                message: this.translate.get("RESERVATION_PAGE.ITEMS_REMOVED", {'items': [transformed.name]}),
+                                message: this.translate.get("RESERVATION.ITEMS_REMOVED", {'items': [transformed.name]}),
                                 duration: 2500
                             }).present();
                         }
@@ -394,7 +394,7 @@ export class ReservationPage implements OnInit, OnDestroy {
                     if (transformed.selected) {
                         console.log("Removed item:", this.reservation, transformed);
                         this.toast.create({
-                            message: this.translate.get("RESERVATION_PAGE.ITEMS_REMOVED", {'items': [transformed.name]}),
+                            message: this.translate.get("RESERVATION.ITEMS_REMOVED", {'items': [transformed.name]}),
                             duration: 2500
                         }).present();
                     }

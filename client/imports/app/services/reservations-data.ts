@@ -19,14 +19,14 @@ export class ReservationsDataService {
     public get reservationTypeOptions(): TranslateOption[] {
         return this.translate.getAll([
             {
-                translate: 'RESERVATION.TYPE.GROUP',
+                translate: 'RESERVATION.TYPES.GROUP',
                 value: "group",
                 color: 'good',
                 colorCss: colors.good,
                 text: ""
             },
             {
-                translate: 'RESERVATION.TYPE.PRIVATE',
+                translate: 'RESERVATION.TYPES.PRIVATE',
                 value: "private",
                 color: 'warning',
                 colorCss: colors.warning,

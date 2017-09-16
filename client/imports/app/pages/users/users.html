@@ -13,7 +13,7 @@
         </ion-buttons>-->
     </ion-navbar>
     <ion-toolbar>
-        <ion-searchbar [(ngModel)]="filter" (ngModelChange)="filterChange()" [placeholder]="'USERS_PAGE.FILTER' | translate"></ion-searchbar>
+        <ion-searchbar [(ngModel)]="filter" (ngModelChange)="filterChange()" [placeholder]="'USER.FILTER' | translate"></ion-searchbar>
     </ion-toolbar>
 </ion-header>
 
@@ -33,15 +33,15 @@
                     </ion-buttons>
                 </ion-toolbar>
                 <ion-card-content>
-                    <p>{{'USERS_PAGE.EMAIL' | translate}}:
+                    <p>{{'USER.EMAIL' | translate}}:
                         <ng-container *ngFor="let email of user.emails; first as isFirst">
                             <ng-container *ngIf="!isFirst">, </ng-container>
                             <a href="mailto:{{email.address}}">{{email.address}}</a>
                         </ng-container>
                     </p>
-                    <p>{{'USERS_PAGE.FULL_NAME' | translate}}: {{user.fullName}}</p>
-                    <p>{{'USERS_PAGE.PHONE' | translate}}: {{user.phone}}</p>
-                    <p>{{'USERS_PAGE.STATE' | translate}}:
+                    <p>{{'USER.FULL_NAME' | translate}}: {{user.fullName}}</p>
+                    <p>{{'USER.PHONE' | translate}}: {{user.phone}}</p>
+                    <p>{{'USER.STATE' | translate}}:
                         <ng-container [ngSwitch]="user.state">
                             <ng-container *ngFor="let option of userService.userStateOptions">
                                 <span *ngSwitchCase="option.value" [style.color]="option.colorCss">{{option.text}}</span>
@@ -49,7 +49,7 @@
                             <ng-container *ngSwitchDefault>{{user.state}}</ng-container>
                         </ng-container>
                     </p>
-                    <p>{{'USERS_PAGE.ROLES' | translate}}:
+                    <p>{{'USER.ROLES' | translate}}:
                         <ng-container *ngFor="let role of user.roles">
                             <ng-container [ngSwitch]="role">
                                 <ng-container *ngFor="let option of userService.userRolesOptions">

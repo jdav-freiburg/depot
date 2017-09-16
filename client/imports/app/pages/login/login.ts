@@ -52,11 +52,11 @@ export class LoginPage {
 
     showResendEmail(initialEmail) {
         this.alert.create({
-            title: this.translate.get('LOGIN_PAGE.RESEND_EMAIL_REQUEST.TITLE'),
-            message: this.translate.get('LOGIN_PAGE.RESEND_EMAIL_REQUEST.MESSAGE'),
+            title: this.translate.get('LOGIN.RESEND_EMAIL_REQUEST.TITLE'),
+            message: this.translate.get('LOGIN.RESEND_EMAIL_REQUEST.MESSAGE'),
             inputs: [
                 {
-                    placeholder: this.translate.get('LOGIN_PAGE.RESEND_EMAIL_REQUEST.EMAIL_OR_USERNAME'),
+                    placeholder: this.translate.get('LOGIN.RESEND_EMAIL_REQUEST.EMAIL_OR_USERNAME'),
                     type: 'text',
                     value: initialEmail,
                     name: 'emailOrUsername'
@@ -64,11 +64,11 @@ export class LoginPage {
             ],
             buttons: [
                 {
-                    text: this.translate.get('LOGIN_PAGE.RESEND_EMAIL_REQUEST.CANCEL'),
+                    text: this.translate.get('LOGIN.RESEND_EMAIL_REQUEST.CANCEL'),
                     role: 'cancel'
                 },
                 {
-                    text: this.translate.get('LOGIN_PAGE.RESEND_EMAIL_REQUEST.OK'),
+                    text: this.translate.get('LOGIN.RESEND_EMAIL_REQUEST.OK'),
                     handler: (data) => {
                         this.resendVerificationMail(data.emailOrUsername);
                     }
@@ -79,11 +79,11 @@ export class LoginPage {
 
     showForgotPassword() {
         this.alert.create({
-            title: this.translate.get('LOGIN_PAGE.PASSWORD_RESET_REQUEST.TITLE'),
-            message: this.translate.get('LOGIN_PAGE.PASSWORD_RESET_REQUEST.MESSAGE'),
+            title: this.translate.get('LOGIN.PASSWORD_RESET_REQUEST.TITLE'),
+            message: this.translate.get('LOGIN.PASSWORD_RESET_REQUEST.MESSAGE'),
             inputs: [
                 {
-                    placeholder: this.translate.get('LOGIN_PAGE.PASSWORD_RESET_REQUEST.EMAIL_OR_USERNAME'),
+                    placeholder: this.translate.get('LOGIN.PASSWORD_RESET_REQUEST.EMAIL_OR_USERNAME'),
                     type: 'text',
                     value: this.loginForm.controls['emailOrUsername'].value,
                     name: 'emailOrUsername'
@@ -91,11 +91,11 @@ export class LoginPage {
             ],
             buttons: [
                 {
-                    text: this.translate.get('LOGIN_PAGE.PASSWORD_RESET_REQUEST.CANCEL'),
+                    text: this.translate.get('LOGIN.PASSWORD_RESET_REQUEST.CANCEL'),
                     role: 'cancel'
                 },
                 {
-                    text: this.translate.get('LOGIN_PAGE.PASSWORD_RESET_REQUEST.OK'),
+                    text: this.translate.get('LOGIN.PASSWORD_RESET_REQUEST.OK'),
                     handler: (data) => {
                         this.forgotPassword(data.emailOrUsername);
                     }
@@ -117,11 +117,11 @@ export class LoginPage {
                 }
             } else {
                 this.alert.create({
-                    title: this.translate.get('LOGIN_PAGE.PASSWORD_RESET_SUCCESS.TITLE'),
-                    message: this.translate.get('LOGIN_PAGE.PASSWORD_RESET_SUCCESS.MESSAGE'),
+                    title: this.translate.get('LOGIN.PASSWORD_RESET_SUCCESS.TITLE'),
+                    message: this.translate.get('LOGIN.PASSWORD_RESET_SUCCESS.MESSAGE'),
                     buttons: [
                         {
-                            text: this.translate.get('LOGIN_PAGE.PASSWORD_RESET_SUCCESS.OK'),
+                            text: this.translate.get('LOGIN.PASSWORD_RESET_SUCCESS.OK'),
                             role: 'cancel'
                         }
                     ]
@@ -140,11 +140,11 @@ export class LoginPage {
                 }).present();
             } else {
                 this.alert.create({
-                    title: this.translate.get('LOGIN_PAGE.RESEND_EMAIL_SUCCESS.TITLE'),
-                    message: this.translate.get('LOGIN_PAGE.RESEND_EMAIL_SUCCESS.MESSAGE'),
+                    title: this.translate.get('LOGIN.RESEND_EMAIL_SUCCESS.TITLE'),
+                    message: this.translate.get('LOGIN.RESEND_EMAIL_SUCCESS.MESSAGE'),
                     buttons: [
                         {
-                            text: this.translate.get('LOGIN_PAGE.RESEND_EMAIL_SUCCESS.OK'),
+                            text: this.translate.get('LOGIN.RESEND_EMAIL_SUCCESS.OK'),
                             role: 'cancel'
                         }
                     ]

@@ -12,15 +12,15 @@
 <ion-content>
     <form [formGroup]="loginForm" (ngSubmit)="doLogin()">
         <ion-item>
-            <ion-label floating>{{'LOGIN_PAGE.EMAIL_OR_USERNAME' | translate}}</ion-label>
+            <ion-label floating>{{'LOGIN.EMAIL_OR_USERNAME' | translate}}</ion-label>
             <ion-input type="text" formControlName="emailOrUsername"></ion-input>
         </ion-item>
         <ion-item>
-            <ion-label floating>{{'LOGIN_PAGE.PASSWORD' | translate}}</ion-label>
+            <ion-label floating>{{'LOGIN.PASSWORD' | translate}}</ion-label>
             <ion-input type="password" formControlName="password"></ion-input>
         </ion-item>
-        <button ion-button type="submit" block [disabled]="!loginForm.valid">{{'LOGIN_PAGE.LOG_IN' | translate}}</button>
-        <button ion-button block *ngIf="hadInvalidPassword" (click)="showForgotPassword()">{{'LOGIN_PAGE.FORGOT_PASSWORD' | translate}}</button>
-        <button ion-button block *ngIf="hadInvalidEmail" (click)="showResendEmail(loginForm.controls['emailOrUsername'].value)">{{'LOGIN_PAGE.RESEND_EMAIL' | translate}}</button>
+        <button ion-button type="submit" block [disabled]="!loginForm.valid">{{'LOGIN.LOG_IN' | translate}}</button>
+        <button ion-button block *ngIf="hadInvalidPassword" (click)="showForgotPassword()">{{'LOGIN.FORGOT_PASSWORD' | translate}}</button>
+        <button ion-button block *ngIf="hadInvalidEmail" (click)="showResendEmail(loginForm.controls['emailOrUsername'].value)">{{'LOGIN.RESEND_EMAIL' | translate}}</button>
     </form>
 </ion-content>

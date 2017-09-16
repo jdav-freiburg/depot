@@ -179,8 +179,8 @@ export class SelectableItemSingle extends ExtendedItem implements SelectableItem
         if (this._selected) {
             this._filters.splice(this._filters.length - this._filterSelected.length, this._filterSelected.length);
         }
-        this._filterSelected = translate.get('ITEM.FILTER_TAG.SELECTED');
-        this._filtersSelected = translate.get('ITEM.FILTER_TAG.SELECTED').split('\0');
+        this._filterSelected = translate.get('ITEM.FILTER_TAGS.SELECTED');
+        this._filtersSelected = translate.get('ITEM.FILTER_TAGS.SELECTED').split('\0');
         if (this._selected) {
             Array.prototype.push.apply(this._filters, this._filtersSelected);
         }

@@ -8,17 +8,17 @@ import {NavParams} from "ionic-angular";
 })
 export class ItemListColumnsPage {
     private columnDefs = [
-        {key: 'name', translateKey: 'ITEM_CARD.NAME'},
-        {key: 'description', translateKey: 'ITEM_CARD.DESCRIPTION'},
-        {key: 'externalId', translateKey: 'ITEM_CARD.EXTERNAL_ID'},
-        {key: 'purchaseDate', translateKey: 'ITEM_CARD.PURCHASE_DATE'},
-        {key: 'lastService', translateKey: 'ITEM_CARD.LAST_SERVICE'},
-        {key: 'condition', translateKey: 'ITEM_CARD.CONDITION'},
-        {key: 'conditionComment', translateKey: 'ITEM_CARD.CONDITION_COMMENT'},
-        {key: 'itemGroup', translateKey: 'ITEM_CARD.ITEM_GROUP'},
-        {key: 'state', translateKey: 'ITEM_CARD.STATE'},
-        {key: 'tags', translateKey: 'ITEM_CARD.TAGS'},
-        {key: 'picture', translateKey: 'ITEM_CARD.PICTURE'},
+        {key: 'name', translateKey: 'ITEM.NAME'},
+        {key: 'description', translateKey: 'ITEM.DESCRIPTION'},
+        {key: 'externalId', translateKey: 'ITEM.EXTERNAL_ID'},
+        {key: 'purchaseDate', translateKey: 'ITEM.PURCHASE_DATE'},
+        {key: 'lastService', translateKey: 'ITEM.LAST_SERVICE'},
+        {key: 'condition', translateKey: 'ITEM.CONDITION'},
+        {key: 'conditionComment', translateKey: 'ITEM.CONDITION_COMMENT'},
+        {key: 'itemGroup', translateKey: 'ITEM.ITEM_GROUP'},
+        {key: 'state', translateKey: 'ITEM.STATE'},
+        {key: 'tags', translateKey: 'ITEM.TAGS'},
+        {key: 'picture', translateKey: 'ITEM.PICTURE'},
     ];
 
     private columns = {
