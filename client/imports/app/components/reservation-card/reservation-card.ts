@@ -89,7 +89,7 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
         }
         if (this.reservation) {
             this.itemsSubscription = new QueryObserverTransform<Item, ItemWithImage>({
-                query: this.itemsService.getPublicItems(),
+                query: this.itemsService.getItemList(this.reservation.itemIds),
                 zone: this.zone,
                 transformer: (item, transformed: ItemWithImage) => {
                     if (transformed) {
