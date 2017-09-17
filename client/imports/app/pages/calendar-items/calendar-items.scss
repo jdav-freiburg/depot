@@ -133,12 +133,27 @@
   border-right: 1px solid dodgerblue;
 }
 
-.event {
+.event, .state {
   position: absolute;
   display: block;
   height: 29px;
-  background-color: rgba(lightblue, 0.75);
   border-right: 1px solid lightgray;
+}
+
+.event {
+  background-color: rgba(lightblue, 0.75);
+}
+
+.state.good {
+  background-color: mix(#1de525, white, 25%);
+}
+
+.state.bad {
+  background-color: mix(#f5aa38, white, 25%);
+}
+
+.state.broken {
+  background-color: mix(#f53d3d, white, 25%);
 }
 
 .event a, .event a:active, .event a:visited {

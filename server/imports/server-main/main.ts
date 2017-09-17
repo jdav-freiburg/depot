@@ -19,6 +19,7 @@ import {UploadFS} from "meteor/jalik:ufs";
 import {Picture} from "../../../both/models/picture.model";
 import {Item} from "../../../both/models/item.model";
 import {UserCollection} from "../../../both/collections/user.collection";
+import {ItemState} from "../../../both/models/item-state.model";
 
 export class Main {
     start(): void {
@@ -63,7 +64,8 @@ export const Migrations = new MongoObservable.Collection<Migration>("migrations"
 Meteor.startup(function () {
     Meteor.users._ensureIndex({username: 1});
     Meteor.users._ensureIndex({email: 1});
-    ItemStateCollection.rawCollection().createIndex({itemId: 1});
+    ItemStateCollection.rawCollection().createIndex({itemId: 1, timestamp: 1});
+    ItemStateCollection.rawCollection().createIndex({timestamp: 1, 'fields.condition': 1});
     ItemCollection.rawCollection().createIndex({state: 1, name: 1, description: 1, condition: -1, externalId: 1});
     ReservationCollection.rawCollection().createIndex({start: -1, end: 1});
     ReservationCollection.rawCollection().createIndex({userId: 1, start: -1, end: 1});
@@ -138,6 +140,18 @@ Meteor.startup(function () {
             }
             console.log("Updating", item._id + ".status --> " + item._id + ".state");
             update({_id: item._id}, {$set: {state: (<any>item).status}, $unset: {status: 1}});
+        });
+    });
+
+    migrate('update-item-state-status-state', () => {
+        let itemStates = ItemStateCollection.find().fetch();
+        let update = Meteor.wrapAsync(ItemStateCollection.rawCollection().update, ItemStateCollection.rawCollection());
+        _.forEach(itemStates, (itemState: ItemState) => {
+            if (!(<any>itemState).fields || !(<any>itemState).fields.status) {
+                return;
+            }
+            console.log("Updating", itemState._id + ".fields.status --> " + itemState._id + ".fields.state");
+            update({_id: itemState._id}, {$set: {'fields.state': (<any>itemState).fields.status}, $unset: {'fields.status': 1}});
         });
     });
 

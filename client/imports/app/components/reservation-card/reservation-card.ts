@@ -105,7 +105,6 @@ export class ReservationCardComponent implements OnInit, OnChanges, OnDestroy {
             });
             this.itemsSubscriptionSubscription = this.itemsSubscription.dataChanged.subscribe((items) => {
                 this.items = items;
-                console.log("Items:", this.items);
             });
         } else {
             this.items = [];

@@ -6,6 +6,9 @@
         <button ion-button menuToggle>
             <ion-icon name="menu"></ion-icon>
         </button>
+        <ion-buttons right>
+            <button ion-button icon-only *ngIf="!itemStateSubscription" (click)="loadItemStates()"><ion-icon name="medkit"></ion-icon></button>
+        </ion-buttons>
     </ion-navbar>
     <ion-toolbar>
         <ion-searchbar [(ngModel)]="filter" [placeholder]="'CALENDAR_ITEMS_PAGE.FILTER' | translate"></ion-searchbar>
@@ -37,6 +40,12 @@
             </div>
             <div #timetableContainer class="timetable-container scroll" (scroll)="onScroll()">
                 <div #timetable class="timetable" [style.height.px]="filteredItems.length * elementHeight" [style.width.px]="days.length * elementWidth">
+                    <ng-container *ngFor="let item of itemCache" class="item-row">
+                        <div class="state" *ngFor="let state of filterStates(item.item?.states)"
+                             [style.left.px]="getStateStartPosition(state.start, state.end)" [style.top.px]="item.y"
+                             [style.width.px]="getStateWidth(state.start, state.end)" [ngClass]="state.condition" [style.display]="item.visible?'block':'none'">
+                        </div>
+                    </ng-container>
                     <div *ngFor="let day of dayCache" class="item-column" [style.top.px]="0" [style.bottom.px]="0" [style.left.px]="day.x" [style.display]="day.visible?'block':'none'">
                     </div>
                     <div *ngFor="let item of itemCache" class="item-row entry"

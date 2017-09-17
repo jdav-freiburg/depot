@@ -45,6 +45,13 @@ Meteor.publish('item.states.all', function() {
     this.ready();
 });
 
+Meteor.publish('item.states.all.condition', function() {
+    if (!this.userId) {
+        return [];
+    }
+    return ItemStateCollection.find({'fields.condition': {$exists: true}}, {fields: {'_id': 1, 'itemId': 1, 'timestamp': 1, 'fields.condition': 1}});
+});
+
 Meteor.publish('item.states', function(params: {itemId: string, start?: Date, end?: Date}) {
     if (!this.userId) {
         return [];

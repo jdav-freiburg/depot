@@ -9,11 +9,12 @@ import {AlertController, NavController, ScrollEvent, ToastController} from "ioni
 import {TranslateService} from "../../services/translate";
 import {QueryObserverTransform} from "../../util/query-observer";
 import {Subscription} from "rxjs/Subscription";
-import {ExtendedItem, FilterItem, ItemGroup} from "../../util/item";
-import {PictureService} from "../../services/picture";
+import {ExtendedItem} from "../../util/item";
 import {Reservation} from "../../../../../both/models/reservation.model";
 import {ReservationsDataService} from "../../services/reservations-data";
 import {ReservationPage} from "../reservation/reservation";
+import {ItemStateCollection} from "../../../../../both/collections/item-state.collection";
+import {ItemState} from "../../../../../both/models/item-state.model";
 
 class Day {
     public start: moment.Moment;
@@ -42,15 +43,32 @@ class Day {
     }
 }
 
-interface CalendarItem extends FilterItem {
-    reservations: CalendarReservation[];
-}
-
-class CalendarExtendedItem extends ExtendedItem implements CalendarItem {
+class CalendarItem extends ExtendedItem implements CalendarItem {
     reservations: CalendarReservation[] = [];
+    states: CalendarItemState[] = [];
 
     constructor(item: Item, translate: TranslateService) {
         super(item, translate);
+    }
+}
+
+class CalendarItemState {
+    public start: moment.Moment;
+    public end: moment.Moment;
+
+    public set nextState(nextState: CalendarItemState) {
+        this.end = moment(nextState.timestamp).startOf('day').subtract(1, 'days');
+    }
+
+    public update(itemId: string, timestamp: moment.Moment, condition: string) {
+        this.itemId = itemId;
+        this.timestamp = timestamp;
+        this.condition = condition;
+        this.start = moment(this.timestamp).startOf('day');
+    }
+
+    constructor(public _id: string, public itemId: string, public timestamp: moment.Moment, public condition: string) {
+        this.start = moment(this.timestamp).startOf('day');
     }
 }
 
@@ -123,10 +141,14 @@ class DayCache {
     styles: [ style ]
 })
 export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCheck {
-    private items: QueryObserverTransform<Item, CalendarExtendedItem>;
+    private items: QueryObserverTransform<Item, CalendarItem>;
     private itemsChangedSubscription: Subscription;
 
+    private itemStateSubscriptionHandle: Meteor.SubscriptionHandle = null;
+    private itemStateSubscription: QueryObserverTransform<ItemState, CalendarItemState> = null;
+
     private itemIndex: {[id:string]: CalendarItem} = {};
+    private itemStateIndex: {[id:string]: CalendarItemState[]} = {};
 
     private filteredItems: CalendarItem[] = [];
 
@@ -178,25 +200,32 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
 
     ngOnInit() {
         let self = this;
-        this.items = new QueryObserverTransform<Item, CalendarExtendedItem>({
+        this.items = new QueryObserverTransform<Item, CalendarItem>({
             query: this.itemsService.getPublicItems(),
             zone: this.ngZone,
-            transformer: (item, transformed: CalendarExtendedItem) => {
+            transformer: (item, transformed: CalendarItem) => {
                 if (transformed) {
                     transformed.updateFrom(item, this.translate);
                 } else {
-                    transformed = new CalendarExtendedItem(item, this.translate);
+                    transformed = new CalendarItem(item, this.translate);
+
+                    if (this.itemStateIndex.hasOwnProperty(transformed._id)) {
+                        transformed.states = this.itemStateIndex[transformed._id];
+                    }
                 }
                 this.itemIndex[transformed._id] = transformed;
+
                 return transformed;
             },
-            removed: (item, transformed: CalendarExtendedItem, index) => {
+            removed: (item, transformed: CalendarItem, index) => {
                 if (transformed) {
                     delete this.itemIndex[transformed._id];
+                    if (this.itemStateIndex.hasOwnProperty(transformed._id)) {
+                        delete this.itemStateIndex[transformed._id];
+                    }
                 }
             }
         });
-
         this.itemsChangedSubscription = this.items.dataChanged.subscribe(() => {
             this.updateFilter();
         });
@@ -234,16 +263,70 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
         });
     }
 
+    private loadItemStates() {
+        if (this.itemStateSubscriptionHandle == null) {
+            this.itemStateSubscriptionHandle = Meteor.subscribe('item.states.all.condition');
+        }
+        if (this.itemStateSubscription != null) {
+            this.itemStateSubscription.unsubscribe();
+            this.itemStateSubscription = null;
+        }
+        this.itemStateSubscription = new QueryObserverTransform<ItemState, CalendarItemState>({
+            query: ItemStateCollection.find({'fields.condition': {$exists: true}}, {sort: {timestamp: 1}}),
+            zone: this.ngZone,
+            transformer: (state, transformed) => {
+                if (transformed) {
+                    transformed.update(state.itemId, moment(state.timestamp), state.fields.condition);
+                } else {
+                    transformed = new CalendarItemState(state._id, state.itemId, moment(state.timestamp), state.fields.condition);
+                    let states: CalendarItemState[];
+                    if (this.itemStateIndex.hasOwnProperty(state.itemId)) {
+                        states = this.itemStateIndex[state.itemId];
+                        if (states[states.length - 1].timestamp.isBefore(transformed.timestamp)) {
+                            states[states.length - 1].nextState = transformed;
+                            states.push(transformed);
+                        } else {
+                            for (let i = 0; i < states.length; i++) {
+                                if (states[i].timestamp.isAfter(state.timestamp)) {
+                                    if (i > 0) {
+                                        states[i - 1].nextState = transformed;
+                                    }
+                                    transformed.nextState = states[i];
+                                    states.splice(i, 0, transformed);
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        states = this.itemStateIndex[state.itemId] = [transformed];
+                        if (this.itemIndex.hasOwnProperty(state.itemId)) {
+                            this.itemIndex[state.itemId].states = states;
+                        }
+                    }
+                }
+                return transformed;
+            },
+        });
+    }
+
     ngOnDestroy() {
-        if (this.itemsChangedSubscription) {
+        if (this.itemsChangedSubscription != null) {
             this.itemsChangedSubscription.unsubscribe();
             this.itemsChangedSubscription = null;
         }
-        if (this.items) {
+        if (this.itemStateSubscription != null) {
+            this.itemStateSubscription.unsubscribe();
+            this.itemStateSubscription = null;
+        }
+        if (this.itemStateSubscriptionHandle != null) {
+            this.itemStateSubscriptionHandle.stop();
+            this.itemStateSubscriptionHandle = null;
+        }
+        if (this.items != null) {
             this.items.unsubscribe();
             this.items = null;
         }
-        if (this.reservations) {
+        if (this.reservations != null) {
             this.reservations.unsubscribe();
             this.reservations = null;
         }
@@ -407,17 +490,35 @@ export class CalendarItemsPage implements OnInit, OnDestroy, AfterViewInit, DoCh
         return this.days.length && this.days[0].start.isBefore(end) && this.days[this.days.length - 1].end.isAfter(start);
     }
 
+    private isStateVisible(start: moment.Moment, end: moment.Moment): boolean {
+        return this.days.length && (!end || this.days[0].start.isBefore(end)) && (!start || this.days[this.days.length - 1].end.isAfter(start));
+    }
+
     private filterReservations(reservations: CalendarReservation[]) {
         return _.filter(reservations, (reservation) => this.isEventVisible(reservation.start, reservation.end))
     }
 
+    private filterStates(states: CalendarItemState[]) {
+        return _.filter(states, (state) => this.isStateVisible(state.start, state.end))
+    }
+
     private getEventStartPosition(start: moment.Moment): number {
-        return Math.max(start.diff(this.days[0].start, 'days') * this.elementWidth, 0);
+        return start?Math.max(start.diff(this.days[0].start, 'days') * this.elementWidth, 0):0;
     }
 
     private getEventWidth(start: moment.Moment, end: moment.Moment): number {
         let dayStart = Math.max(start.diff(this.days[0].start, 'days'), 0);
         let dayEnd = Math.min(end.diff(this.days[0].start, 'days') + 1, this.days.length);
+        return (dayEnd - dayStart) * this.elementWidth;
+    }
+
+    private getStateStartPosition(start: moment.Moment): number {
+        return start?Math.max(start.diff(this.days[0].start, 'days') * this.elementWidth, 0):0;
+    }
+
+    private getStateWidth(start: moment.Moment, end: moment.Moment): number {
+        let dayStart = start?Math.max(start.diff(this.days[0].start, 'days'), 0):0;
+        let dayEnd = end?Math.min(end.diff(this.days[0].start, 'days') + 1, this.days.length):this.days.length;
         return (dayEnd - dayStart) * this.elementWidth;
     }
 
